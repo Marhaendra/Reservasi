@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:reservasi/screens/landing_screen.dart';
 import 'package:reservasi/screens/login_screen.dart';
 
 class RegisterScreen extends StatelessWidget {
@@ -67,8 +68,12 @@ class RegisterScreen extends StatelessWidget {
         children: [
           ElevatedButton(
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()));
+              // Navigate to Login screen and remove all routes until the '/landing' route
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => LoginScreen()),
+                ModalRoute.withName('/landing'),
+              );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF6497F5),
@@ -181,7 +186,14 @@ class _PasswordFieldState extends State<PasswordField> {
 }
 
 void main() {
-  runApp(MaterialApp());
+  runApp(MaterialApp(
+    initialRoute: '/landing',
+    routes: {
+      '/': (context) => RegisterScreen(),
+      '/login': (context) => LoginScreen(),
+      '/landing': (context) => LandingScreen(),
+    },
+  ));
 }
 
 class MyApp extends StatelessWidget {

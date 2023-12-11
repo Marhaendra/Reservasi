@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:reservasi/screens/home_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key});
@@ -44,7 +45,7 @@ class LoginScreen extends StatelessWidget {
                 const SizedBox(
                   height: 32,
                 ),
-                _signUp(context)
+                _signIn(context)
               ],
             ),
           ],
@@ -53,7 +54,7 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Padding _signUp(BuildContext context) {
+  Padding _signIn(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -61,7 +62,10 @@ class LoginScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => const HomeScreen()));
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF6497F5),
               shape: RoundedRectangleBorder(

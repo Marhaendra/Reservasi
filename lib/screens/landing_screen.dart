@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/gestures.dart';
+import 'package:reservasi/screens/login_screen.dart';
 import 'package:reservasi/screens/register_screen.dart';
 
 class LandingScreen extends StatelessWidget {
@@ -37,13 +38,13 @@ class LandingScreen extends StatelessWidget {
               const SizedBox(
                 height: 24,
               ),
-              _signIn()
+              _signIn(context),
             ],
           ),
         ])));
   }
 
-  RichText _signIn() {
+  RichText _signIn(BuildContext context) {
     return RichText(
       textAlign: TextAlign.center,
       text: TextSpan(
@@ -58,19 +59,35 @@ class LandingScreen extends StatelessWidget {
               height: 0.14,
             ),
           ),
-          TextSpan(
-            text: 'Masuk',
-            style: const TextStyle(
-              color: Color(0xFF6497F5),
-              fontSize: 12,
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w400,
-              height: 0.14,
+          WidgetSpan(
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  left: 4.0), // Adjust the left padding as needed
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () {
+                  // Navigate to the login screen using the provided context
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LoginScreen()));
+                },
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 6, horizontal: 0),
+                  child: const Text(
+                    'Masuk',
+                    style: TextStyle(
+                      color: Color(0xFF6497F5),
+                      fontSize: 12,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w400,
+                      height: 0.17,
+                    ),
+                  ),
+                ),
+              ),
             ),
-            recognizer: TapGestureRecognizer()
-              ..onTap = () {
-                // logic
-              },
           ),
         ],
       ),
@@ -245,4 +262,15 @@ class LandingScreen extends StatelessWidget {
   }
 
   Image _landingImage() => Image.asset("assets/images/splash.png");
+}
+
+void main() {
+  runApp(MaterialApp(
+    initialRoute: '/',
+    routes: {
+      '/': (context) => LandingScreen(),
+      '/login': (context) => LoginScreen(),
+      '/register': (context) => RegisterScreen(),
+    },
+  ));
 }
