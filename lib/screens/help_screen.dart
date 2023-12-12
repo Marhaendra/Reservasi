@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:reservasi/screens/profile_screen.dart';
-import 'package:reservasi/theme.dart';
 
 class HelpScreen extends StatelessWidget {
   const HelpScreen({Key? key});
@@ -60,7 +58,7 @@ class HelpScreen extends StatelessWidget {
             Container(
               width: double.infinity,
               height: 18,
-              child: Column(
+              child: const Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,7 +107,7 @@ class HelpScreen extends StatelessWidget {
                                 decoration: ShapeDecoration(
                                   color: Color(0xFFF2F2F2),
                                   shape: RoundedRectangleBorder(
-                                    side: BorderSide(
+                                    side: const BorderSide(
                                       width: 1,
                                       strokeAlign:
                                           BorderSide.strokeAlignOutside,
@@ -118,7 +116,7 @@ class HelpScreen extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
-                                child: Row(
+                                child: const Row(
                                   mainAxisSize: MainAxisSize.min,
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -157,7 +155,7 @@ class HelpScreen extends StatelessWidget {
                           decoration: ShapeDecoration(
                             color: Color(0xFFF2F2F2),
                             shape: RoundedRectangleBorder(
-                              side: BorderSide(
+                              side: const BorderSide(
                                 width: 1,
                                 strokeAlign: BorderSide.strokeAlignOutside,
                                 color: Color(0xFFF2F2F2),
@@ -165,7 +163,7 @@ class HelpScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child: Row(
+                          child: const Row(
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -201,7 +199,7 @@ class HelpScreen extends StatelessWidget {
                           decoration: ShapeDecoration(
                             color: Color(0xFFF2F2F2),
                             shape: RoundedRectangleBorder(
-                              side: BorderSide(
+                              side: const BorderSide(
                                 width: 1,
                                 strokeAlign: BorderSide.strokeAlignOutside,
                                 color: Color(0xFFF2F2F2),
@@ -209,7 +207,7 @@ class HelpScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child: Row(
+                          child: const Row(
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -245,7 +243,7 @@ class HelpScreen extends StatelessWidget {
                           decoration: ShapeDecoration(
                             color: Color(0xFFF2F2F2),
                             shape: RoundedRectangleBorder(
-                              side: BorderSide(
+                              side: const BorderSide(
                                 width: 1,
                                 strokeAlign: BorderSide.strokeAlignOutside,
                                 color: Color(0xFFF2F2F2),
@@ -253,7 +251,7 @@ class HelpScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child: Row(
+                          child: const Row(
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -278,50 +276,6 @@ class HelpScreen extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _email() {
-    return Container(
-      height: 48,
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-      decoration: BoxDecoration(
-          color: const Color(0xFFF6F6F6),
-          borderRadius: BorderRadius.circular(6)),
-      child: TextFormField(
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          hintText: "example@mail.com",
-          hintStyle: GoogleFonts.poppins(
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-            color: const Color(0xFF8A8A8A),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _name() {
-    return Container(
-      height: 48,
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-      decoration: BoxDecoration(
-          color: const Color(0xFFF6F6F6),
-          borderRadius: BorderRadius.circular(6)),
-      child: TextFormField(
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          hintText: "Nama Lengkap",
-          hintStyle: GoogleFonts.poppins(
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-            color: const Color(0xFF8A8A8A),
-          ),
         ),
       ),
     );

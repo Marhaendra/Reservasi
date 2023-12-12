@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter/gestures.dart';
 import 'package:reservasi/screens/login_screen.dart';
 import 'package:reservasi/screens/register_screen.dart';
 import 'package:reservasi/theme.dart';
