@@ -69,10 +69,9 @@ class RegisterScreen extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               // Navigate to Login screen and remove all routes until the '/landing' route
-              Navigator.pushAndRemoveUntil(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => LoginScreen()),
-                ModalRoute.withName('/landing'),
               );
             },
             style: ElevatedButton.styleFrom(
