@@ -43,6 +43,10 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         children: [
           searchBox(),
+          const SizedBox(
+            height: 16,
+          ),
+          SessionCard(title: 'Lab. Techno', time: '24 Desember')
         ],
       ),
     );
@@ -52,38 +56,39 @@ class HomeScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: white,
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x19000000),
-              blurRadius: 10,
-              offset: Offset(0, 0),
-              spreadRadius: 0,
-            )
-          ]),
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x19000000),
+            blurRadius: 10,
+            offset: Offset(0, 0),
+            spreadRadius: 0,
+          )
+        ],
+      ),
       child: Column(
         children: [
           input(
-              placeholder: "Lokasi",
-              iconData: PhosphorIconsRegular.mapPin,
-              value: "Jakarta"),
+            placeholder: "Lokasi",
+            iconData: PhosphorIconsRegular.mapPin,
+            value: "Jakarta",
+          ),
           const SizedBox(
             height: 16,
           ),
           input(
-              placeholder: "Tanggal",
-              iconData: PhosphorIconsRegular.calendar,
-              value: "19 September"),
+            placeholder: "Tanggal",
+            iconData: PhosphorIconsRegular.calendar,
+            value: "19 September",
+          ),
           const SizedBox(
             height: 16,
           ),
           input(
-              placeholder: "Ruang",
-              iconData: PhosphorIconsRegular.couch,
-              value: "Lab. Techno"),
-          const SizedBox(
-            height: 16,
+            placeholder: "Ruang",
+            iconData: PhosphorIconsRegular.couch,
+            value: "Lab. Techno",
           ),
           const SizedBox(
             height: 16,
@@ -97,15 +102,17 @@ class HomeScreen extends StatelessWidget {
               padding:
                   const EdgeInsets.symmetric(horizontal: 10, vertical: 10.5),
               decoration: BoxDecoration(
-                  color: primary.withOpacity(.1),
-                  borderRadius: BorderRadius.circular(6)),
+                color: Colors.blue.withOpacity(.1),
+                borderRadius: BorderRadius.circular(6),
+              ),
               child: Center(
                 child: Text(
                   "Cari",
                   style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: primary),
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12,
+                    color: Colors.blue,
+                  ),
                 ),
               ),
             ),
@@ -128,7 +135,10 @@ class HomeScreen extends StatelessWidget {
           Text(
             placeholder,
             style: GoogleFonts.poppins(
-                fontWeight: FontWeight.w500, fontSize: 12, color: gray),
+              fontWeight: FontWeight.w500,
+              fontSize: 12,
+              color: Colors.grey,
+            ),
           ),
           const SizedBox(
             height: 8,
@@ -146,7 +156,10 @@ class HomeScreen extends StatelessWidget {
               Text(
                 value,
                 style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w500, fontSize: 12, color: black),
+                  fontWeight: FontWeight.w500,
+                  fontSize: 12,
+                  color: Colors.black,
+                ),
               )
             ],
           ),
@@ -158,8 +171,7 @@ class HomeScreen extends StatelessWidget {
 
   Padding _header(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(
-          top: 60), // Adjust the top padding to position the text
+      padding: const EdgeInsets.only(top: 60), // Adjust the top padding
       child: Row(
         children: [
           Padding(
@@ -221,4 +233,185 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+class SessionCard extends StatelessWidget {
+  final String title;
+  final String time;
+
+  SessionCard({required this.title, required this.time});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x26000000),
+            blurRadius: 10,
+            offset: Offset(0, 0),
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 14,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w500,
+              height: 1.0,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            time,
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 12,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w400,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: List.generate(
+              10,
+              (index) => Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 4), // Adjust the padding as needed
+                child: buildNumberContainer(index + 1),
+              ),
+            ),
+          ),
+          SizedBox(height: 8),
+          Row(
+            children: [
+              buildLegend('Kosong', Color(0xFDFDFDFD)),
+              SizedBox(width: 8),
+              buildLegend('Terisi', Color(0xBF8A8A8A)),
+              SizedBox(width: 8),
+              buildLegend('Dipilih', Color(0xFD6497F5)),
+            ],
+          ),
+          SizedBox(height: 16),
+          Container(
+            height: 40,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Center(
+              child: Text(
+                'Pesan',
+                style: TextStyle(
+                  color: primary,
+                  fontSize: 12,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w500,
+                  height: 1.4,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildNumberContainer(int number) {
+    return Container(
+      width: 20,
+      height: 20,
+      decoration: ShapeDecoration(
+        color: (number == 4) ? Color(0xFF6497F5) : Color(0xFDFDFDFD),
+        shape: RoundedRectangleBorder(
+          side: BorderSide(
+            width: 0.50,
+            color: (number == 4) ? Color(0xFF6497F5) : Colors.black,
+          ),
+          borderRadius: BorderRadius.circular(4),
+        ),
+      ),
+      child: Center(
+        child: Text(
+          number.toString(),
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: (number == 4) ? Colors.white : Colors.black,
+            fontSize: 12,
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.w400,
+            height: 1.4,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildLegend(String text, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(4),
+      child: Row(
+        children: [
+          Container(
+            width: 12,
+            height: 12,
+            decoration: ShapeDecoration(
+              color: color,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(
+                  width: 0.50,
+                  color: (color == Color(0xFF6497F5))
+                      ? Color(0xFF6497F5)
+                      : Colors.black,
+                ),
+                borderRadius: BorderRadius.circular(3),
+              ),
+            ),
+          ),
+          const SizedBox(width: 4),
+          Text(
+            text,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 8,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w400,
+              height: 1.6,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: SessionCard(
+              title: 'Lab. Techno',
+              time: '24 Desember 2023',
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
 }
