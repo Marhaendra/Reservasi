@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:reservasi/screens/landing_screen.dart';
 import 'package:reservasi/screens/login_screen.dart';
+import 'package:reservasi/theme.dart';
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({Key? key});
@@ -66,26 +67,24 @@ class RegisterScreen extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ElevatedButton(
-            onPressed: () {
+          GestureDetector(
+            onTap: () {
               // Navigate to Login screen and remove all routes until the '/landing' route
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => LoginScreen()),
               );
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF6497F5),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+            child: Container(
+              height: 40,
+              decoration: BoxDecoration(
+                color: const Color(0xFF6497F5).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(4),
               ),
-            ),
-            child: SizedBox(
-              height: 36,
               child: Center(
                 child: Text(
                   'Buat Akun',
-                  style: GoogleFonts.poppins(fontSize: 14, color: Colors.white),
+                  style: GoogleFonts.poppins(fontSize: 14, color: primary),
                 ),
               ),
             ),
@@ -97,11 +96,12 @@ class RegisterScreen extends StatelessWidget {
 
   Widget _email() {
     return Container(
+      height: 48,
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
       decoration: BoxDecoration(
           color: const Color(0xFFF6F6F6),
-          borderRadius: BorderRadius.circular(12)),
+          borderRadius: BorderRadius.circular(6)),
       child: TextFormField(
         decoration: InputDecoration(
           border: InputBorder.none,
@@ -118,11 +118,12 @@ class RegisterScreen extends StatelessWidget {
 
   Widget _name() {
     return Container(
+      height: 48,
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
       decoration: BoxDecoration(
           color: const Color(0xFFF6F6F6),
-          borderRadius: BorderRadius.circular(12)),
+          borderRadius: BorderRadius.circular(6)),
       child: TextFormField(
         decoration: InputDecoration(
           border: InputBorder.none,
@@ -149,11 +150,12 @@ class _PasswordFieldState extends State<PasswordField> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 48,
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
       decoration: BoxDecoration(
         color: const Color(0xFFF6F6F6),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(6),
       ),
       child: TextFormField(
         obscureText: _obscureText,

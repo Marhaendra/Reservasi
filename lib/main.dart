@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:reservasi/screens/editProfile_screen.dart';
+import 'package:reservasi/screens/help_screen.dart';
 import 'package:reservasi/screens/home_screen.dart';
 import 'package:reservasi/screens/landing_screen.dart';
 import 'package:reservasi/screens/login_screen.dart';
 import 'package:reservasi/screens/order_screen.dart';
+import 'package:reservasi/screens/profile_screen.dart';
 import 'package:reservasi/screens/register_screen.dart';
 
 void main() {
@@ -29,6 +32,9 @@ class MyApp extends StatelessWidget {
         '/register': (context) => const RegisterScreen(),
         '/home': (context) => const HomeScreen(),
         '/order': (context) => const OrderScreen(),
+        '/profile': (context) => const ProfileScreen(),
+        '/eprofile': (context) => const EditProfileScreen(),
+        '/help': (context) => const HelpScreen(),
       },
     );
   }

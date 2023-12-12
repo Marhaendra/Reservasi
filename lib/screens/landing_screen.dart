@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/gestures.dart';
 import 'package:reservasi/screens/login_screen.dart';
 import 'package:reservasi/screens/register_screen.dart';
+import 'package:reservasi/theme.dart';
 
 class LandingScreen extends StatelessWidget {
   const LandingScreen({super.key});
@@ -140,25 +141,23 @@ class LandingScreen extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ElevatedButton(
-            onPressed: () {
+          GestureDetector(
+            onTap: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const RegisterScreen()));
+                context,
+                MaterialPageRoute(builder: (context) => const RegisterScreen()),
+              );
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF6497F5),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+            child: Container(
+              height: 40,
+              decoration: BoxDecoration(
+                color: const Color(0xFF6497F5).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(6),
               ),
-            ),
-            child: SizedBox(
-              height: 36,
               child: Center(
                 child: Text(
                   'Buat Akun',
-                  style: GoogleFonts.poppins(fontSize: 14, color: Colors.white),
+                  style: GoogleFonts.poppins(fontSize: 14, color: primary),
                 ),
               ),
             ),

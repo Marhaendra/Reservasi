@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:reservasi/screens/order_screen.dart';
+import 'package:reservasi/screens/profile_screen.dart';
 import 'package:reservasi/theme.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -200,9 +201,11 @@ class HomeScreen extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 8),
                   child: GestureDetector(
                     onTap: () {
-                      // Handle the tap action for the user icon
-                      print("User icon tapped");
-                      // Add your specific action here
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ProfileScreen()),
+                      );
                     },
                     child: const PhosphorIcon(
                       PhosphorIconsRegular.user,
