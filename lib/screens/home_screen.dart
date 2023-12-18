@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:reservasi/screens/order_screen.dart';
 import 'package:reservasi/screens/profile_screen.dart';
+import 'package:reservasi/screens/reservation_screen.dart';
 import 'package:reservasi/theme.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -46,7 +47,7 @@ class HomeScreen extends StatelessWidget {
           const SizedBox(
             height: 38,
           ),
-          searchBox(),
+          searchBox(context),
           const SizedBox(
             height: 20,
           ),
@@ -171,7 +172,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Container searchBox() {
+  Container searchBox(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -215,6 +216,11 @@ class HomeScreen extends StatelessWidget {
           GestureDetector(
             onTap: () {
               // TODO: On search tap
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const ReservationScreen()),
+              );
             },
             child: Container(
               width: double.maxFinite,

@@ -39,115 +39,102 @@ class OrderScreen extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(right: 16, left: 16, top: 126),
       child: Column(
-        children: [orderCard(), history()],
+        children: [
+          orderCard(),
+          const SizedBox(
+            height: 24,
+          ),
+          history()
+        ],
       ),
     );
   }
 
-  Container history() {
-    return Container(
-      padding: const EdgeInsets.only(
-        top: 24,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 4, bottom: 12),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Riwayat",
-                style: GoogleFonts.poppins(
-                    color: black, fontSize: 16, fontWeight: FontWeight.w700),
-              ),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: white,
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color(0x19000000),
-                    blurRadius: 10,
-                    offset: Offset(0, 0),
-                    spreadRadius: 0,
-                  )
-                ]),
-            child: Column(
+  Column history() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Riwayat',
+          style: GoogleFonts.poppins(
+              fontSize: 16, fontWeight: FontWeight.w700, color: MyTheme.black),
+          textAlign: TextAlign.left,
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: MyTheme.white,
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x19000000),
+                  blurRadius: 10,
+                  offset: Offset(0, 0),
+                  spreadRadius: 0,
+                )
+              ]),
+          child: Column(children: [
+            const Row(
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Lab. Techno",
-                              style: GoogleFonts.poppins(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 12,
-                                color: MyTheme.black,
-                              ),
-                            ),
-                            Text(
-                              "24 Desember",
-                              style: GoogleFonts.poppins(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 12,
-                                color: MyTheme.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                // Divider
-                const Divider(
-                  color: MyTheme.grey, // Choose your divider color
-                  thickness: 0.5, // Set the thickness of the divider
-                ),
-                Container(
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            "Sesi 1",
-                            style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 12,
-                              color: black,
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 4,
-                          ),
-                          Text(
-                            "08.00-11.00",
-                            style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 12,
-                              color: gray,
-                            ),
-                          ),
-                        ],
-                      ),
-                      // Additional content here
-                    ],
-                  ),
-                ),
+                Text('Lab. Techno',
+                    style: TextStyle(
+                      color: MyTheme.black,
+                      fontSize: 12,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w400,
+                    )),
+                Spacer(),
+                Text('10 Desember 2023',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Color(0xFF8A8A8A),
+                      fontSize: 12,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w400,
+                    ))
               ],
             ),
-          ),
-        ],
-      ),
+            const SizedBox(
+              height: 8,
+            ),
+            Column(
+              children: [
+                const Row(
+                  children: [
+                    Text('Sesi 1',
+                        style: TextStyle(
+                          color: MyTheme.black,
+                          fontSize: 12,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w400,
+                        )),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Text('08.00 - 11.00',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color(0xFF8A8A8A),
+                          fontSize: 10,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w400,
+                        ))
+                  ],
+                ),
+                const SizedBox(
+                  height: 4,
+                ),
+                Row(
+                  children: generateContainersWithPadding(['4', '6', '7'], 8),
+                )
+              ],
+            ),
+          ]),
+        ),
+      ],
     );
   }
 
@@ -431,4 +418,51 @@ class OrderScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+class CustomColoredContainer extends StatelessWidget {
+  final String text;
+  final Color color;
+
+  const CustomColoredContainer({
+    Key? key,
+    required this.text,
+    required this.color,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      height: 20,
+      width: 20,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(4),
+        color: color,
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: MyTheme.white, // You can use MyTheme.white if needed
+          fontSize: 12,
+          fontFamily: 'Poppins',
+          fontWeight: FontWeight.w400,
+        ),
+      ),
+    );
+  }
+}
+
+List<Widget> generateContainersWithPadding(List<String> texts, double padding) {
+  List<Widget> containers = [];
+  for (int i = 0; i < texts.length; i++) {
+    containers.add(CustomColoredContainer(
+      text: texts[i],
+      color: MyTheme.primary,
+    ));
+    if (i < texts.length - 1) {
+      containers.add(SizedBox(width: padding));
+    }
+  }
+  return containers;
 }

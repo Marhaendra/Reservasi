@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
           // Your theme configurations here
           // ...
           ),
-      home: const ReservationScreen(),
+      home: const HomeScreen(),
       debugShowCheckedModeBanner:
           false, // Set this to false to remove the debug banner
       routes: {
