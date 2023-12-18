@@ -7,6 +7,7 @@ import 'package:reservasi/screens/login_screen.dart';
 import 'package:reservasi/screens/order_screen.dart';
 import 'package:reservasi/screens/profile_screen.dart';
 import 'package:reservasi/screens/register_screen.dart';
+import 'package:reservasi/screens/reservation_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
           // Your theme configurations here
           // ...
           ),
-      home: const LandingScreen(),
+      home: const ReservationScreen(),
       debugShowCheckedModeBanner:
           false, // Set this to false to remove the debug banner
       routes: {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reservasi/theme.dart';
 
 class HelpScreen extends StatelessWidget {
   const HelpScreen({Key? key});
@@ -23,7 +24,7 @@ class HelpScreen extends StatelessWidget {
                     'Bantuan',
                     style: GoogleFonts.poppins(
                       fontSize: 24,
-                      color: Colors.black,
+                      color: MyTheme.black,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -47,7 +48,7 @@ class HelpScreen extends StatelessWidget {
   Padding faq(BuildContext context) {
     return Padding(
       padding: EdgeInsets.zero,
-      child: Container(
+      child: SizedBox(
         width: 330,
         height: 606,
         child: Column(
@@ -55,10 +56,10 @@ class HelpScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
+            const SizedBox(
               width: double.infinity,
               height: 18,
-              child: const Column(
+              child: Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -262,7 +263,7 @@ class _AccordionFAQState extends State<AccordionFAQ> {
                   child: Text(
                     additionalText,
                     style: TextStyle(
-                      color: Colors.black,
+                      color: MyTheme.black,
                       fontSize: 14,
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w400,

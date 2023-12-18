@@ -27,8 +27,7 @@ class HomeScreen extends StatelessWidget {
                     fit: BoxFit.fill,
                   ),
                 ),
-                _header(context),
-                main(),
+                main(context),
               ],
             ),
           ],
@@ -37,18 +36,138 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget main() {
+  Widget main(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 126),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _header(context),
+          const SizedBox(
+            height: 38,
+          ),
           searchBox(),
           const SizedBox(
-            height: 16,
+            height: 20,
           ),
-          SessionCard(title: 'Lab. Techno', time: '24 Desember')
+          lastBooked()
         ],
       ),
+    );
+  }
+
+  Column lastBooked() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Terakhir dipesan',
+          style: GoogleFonts.poppins(
+              fontSize: 16, fontWeight: FontWeight.w700, color: MyTheme.black),
+          textAlign: TextAlign.left,
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: MyTheme.white,
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x19000000),
+                  blurRadius: 10,
+                  offset: Offset(0, 0),
+                  spreadRadius: 0,
+                )
+              ]),
+          child: Column(children: [
+            const Row(
+              children: [
+                Text('Lab. Techno',
+                    style: TextStyle(
+                      color: MyTheme.black,
+                      fontSize: 12,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w400,
+                    )),
+                Spacer(),
+                Text('10 Desember 2023',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Color(0xFF8A8A8A),
+                      fontSize: 12,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w400,
+                    ))
+              ],
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Column(
+              children: [
+                const Row(
+                  children: [
+                    Text('Sesi 1',
+                        style: TextStyle(
+                          color: MyTheme.black,
+                          fontSize: 12,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w400,
+                        )),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Text('08.00 - 11.00',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color(0xFF8A8A8A),
+                          fontSize: 10,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w400,
+                        ))
+                  ],
+                ),
+                const SizedBox(
+                  height: 4,
+                ),
+                Row(
+                  children: generateContainersWithPadding(['4', '6', '7'], 8),
+                )
+              ],
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            GestureDetector(
+              onTap: () {
+                // TODO: On search tap
+              },
+              child: Container(
+                width: double.maxFinite,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10.5),
+                decoration: BoxDecoration(
+                  color: MyTheme.primary.withOpacity(.1),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Center(
+                  child: Text(
+                    "Pesan lagi untuk hari ini",
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                      color: MyTheme.primary,
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ]),
+        ),
+      ],
     );
   }
 
@@ -57,7 +176,7 @@ class HomeScreen extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: Colors.white,
+        color: MyTheme.white,
         boxShadow: const [
           BoxShadow(
             color: Color(0x19000000),
@@ -102,7 +221,7 @@ class HomeScreen extends StatelessWidget {
               padding:
                   const EdgeInsets.symmetric(horizontal: 10, vertical: 10.5),
               decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(.1),
+                color: MyTheme.primary.withOpacity(.1),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Center(
@@ -111,7 +230,7 @@ class HomeScreen extends StatelessWidget {
                   style: GoogleFonts.poppins(
                     fontWeight: FontWeight.w500,
                     fontSize: 12,
-                    color: Colors.blue,
+                    color: MyTheme.primary,
                   ),
                 ),
               ),
@@ -137,7 +256,7 @@ class HomeScreen extends StatelessWidget {
             style: GoogleFonts.poppins(
               fontWeight: FontWeight.w500,
               fontSize: 12,
-              color: Colors.grey,
+              color: MyTheme.grey,
             ),
           ),
           const SizedBox(
@@ -147,7 +266,7 @@ class HomeScreen extends StatelessWidget {
             children: [
               PhosphorIcon(
                 iconData, // Use the provided IconData
-                color: Colors.black,
+                color: MyTheme.black,
                 size: 18,
               ),
               const SizedBox(
@@ -158,7 +277,7 @@ class HomeScreen extends StatelessWidget {
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w500,
                   fontSize: 12,
-                  color: Colors.black,
+                  color: MyTheme.black,
                 ),
               )
             ],
@@ -175,19 +294,19 @@ class HomeScreen extends StatelessWidget {
       child: Row(
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 16),
+            padding: EdgeInsets.zero,
             child: Text(
               'Reservasi',
               style: GoogleFonts.poppins(
                 fontSize: 24,
-                color: Colors.white,
+                color: MyTheme.white,
                 fontWeight: FontWeight.w700,
               ),
             ),
           ),
           const Spacer(),
           Padding(
-            padding: const EdgeInsets.only(right: 16),
+            padding: EdgeInsets.zero,
             child: Row(
               children: [
                 // Padding for the Ticket icon
@@ -203,7 +322,7 @@ class HomeScreen extends StatelessWidget {
                     },
                     child: const PhosphorIcon(
                       PhosphorIconsRegular.ticket,
-                      color: Colors.white,
+                      color: MyTheme.white,
                       size: 32,
                     ),
                   ),
@@ -221,7 +340,7 @@ class HomeScreen extends StatelessWidget {
                     },
                     child: const PhosphorIcon(
                       PhosphorIconsRegular.user,
-                      color: Colors.white,
+                      color: MyTheme.white,
                       size: 32,
                     ),
                   ),
@@ -235,183 +354,49 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class SessionCard extends StatelessWidget {
-  final String title;
-  final String time;
+class CustomColoredContainer extends StatelessWidget {
+  final String text;
+  final Color color;
 
-  SessionCard({required this.title, required this.time});
+  const CustomColoredContainer({
+    Key? key,
+    required this.text,
+    required this.color,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x26000000),
-            blurRadius: 10,
-            offset: Offset(0, 0),
-            spreadRadius: 0,
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.black,
-              fontSize: 14,
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w500,
-              height: 1.0,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            time,
-            style: const TextStyle(
-              color: Colors.black,
-              fontSize: 12,
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w400,
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: List.generate(
-              10,
-              (index) => Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 4), // Adjust the padding as needed
-                child: buildNumberContainer(index + 1),
-              ),
-            ),
-          ),
-          SizedBox(height: 8),
-          Row(
-            children: [
-              buildLegend('Kosong', Color(0xFDFDFDFD)),
-              SizedBox(width: 8),
-              buildLegend('Terisi', Color(0xBF8A8A8A)),
-              SizedBox(width: 8),
-              buildLegend('Dipilih', Color(0xFD6497F5)),
-            ],
-          ),
-          SizedBox(height: 16),
-          Container(
-            height: 40,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Center(
-              child: Text(
-                'Pesan',
-                style: TextStyle(
-                  color: primary,
-                  fontSize: 12,
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w500,
-                  height: 1.4,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildNumberContainer(int number) {
-    return Container(
-      width: 20,
+      alignment: Alignment.center,
       height: 20,
-      decoration: ShapeDecoration(
-        color: (number == 4) ? Color(0xFF6497F5) : Color(0xFDFDFDFD),
-        shape: RoundedRectangleBorder(
-          side: BorderSide(
-            width: 0.50,
-            color: (number == 4) ? Color(0xFF6497F5) : Colors.black,
-          ),
-          borderRadius: BorderRadius.circular(4),
-        ),
+      width: 20,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(4),
+        color: color,
       ),
-      child: Center(
-        child: Text(
-          number.toString(),
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: (number == 4) ? Colors.white : Colors.black,
-            fontSize: 12,
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.w400,
-            height: 1.4,
-          ),
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: MyTheme.white, // You can use MyTheme.white if needed
+          fontSize: 12,
+          fontFamily: 'Poppins',
+          fontWeight: FontWeight.w400,
         ),
-      ),
-    );
-  }
-
-  Widget buildLegend(String text, Color color) {
-    return Container(
-      padding: const EdgeInsets.all(4),
-      child: Row(
-        children: [
-          Container(
-            width: 12,
-            height: 12,
-            decoration: ShapeDecoration(
-              color: color,
-              shape: RoundedRectangleBorder(
-                side: BorderSide(
-                  width: 0.50,
-                  color: (color == Color(0xFF6497F5))
-                      ? Color(0xFF6497F5)
-                      : Colors.black,
-                ),
-                borderRadius: BorderRadius.circular(3),
-              ),
-            ),
-          ),
-          const SizedBox(width: 4),
-          Text(
-            text,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 8,
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w400,
-              height: 1.6,
-            ),
-          ),
-        ],
       ),
     );
   }
 }
 
-void main() {
-  runApp(
-    MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: SessionCard(
-              title: 'Lab. Techno',
-              time: '24 Desember 2023',
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
+List<Widget> generateContainersWithPadding(List<String> texts, double padding) {
+  List<Widget> containers = [];
+  for (int i = 0; i < texts.length; i++) {
+    containers.add(CustomColoredContainer(
+      text: texts[i],
+      color: MyTheme.primary,
+    ));
+    if (i < texts.length - 1) {
+      containers.add(SizedBox(width: padding));
+    }
+  }
+  return containers;
 }

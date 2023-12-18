@@ -91,7 +91,7 @@ class OrderScreen extends StatelessWidget {
                               style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 12,
-                                color: Colors.black,
+                                color: MyTheme.black,
                               ),
                             ),
                             Text(
@@ -99,7 +99,7 @@ class OrderScreen extends StatelessWidget {
                               style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w400,
                                 fontSize: 12,
-                                color: Colors.grey,
+                                color: MyTheme.grey,
                               ),
                             ),
                           ],
@@ -110,7 +110,7 @@ class OrderScreen extends StatelessWidget {
                 ),
                 // Divider
                 const Divider(
-                  color: Colors.grey, // Choose your divider color
+                  color: MyTheme.grey, // Choose your divider color
                   thickness: 0.5, // Set the thickness of the divider
                 ),
                 Container(
@@ -172,7 +172,7 @@ class OrderScreen extends StatelessWidget {
                   number,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: MyTheme.white,
                     fontSize: 12,
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w400,
@@ -338,7 +338,7 @@ class OrderScreen extends StatelessWidget {
             children: [
               PhosphorIcon(
                 iconData, // Use the provided IconData
-                color: Colors.black,
+                color: MyTheme.black,
                 size: 18,
               ),
               const SizedBox(
@@ -373,13 +373,13 @@ class OrderScreen extends StatelessWidget {
                 children: [
                   const PhosphorIcon(
                     PhosphorIconsRegular.caretLeft,
-                    color: Colors.white,
+                    color: MyTheme.white,
                   ),
                   Text(
                     'Pesanan',
                     style: GoogleFonts.poppins(
                       fontSize: 24,
-                      color: Colors.white,
+                      color: MyTheme.white,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -403,7 +403,7 @@ class OrderScreen extends StatelessWidget {
                     },
                     child: const PhosphorIcon(
                       PhosphorIconsRegular.ticket,
-                      color: Colors.white,
+                      color: MyTheme.white,
                       size: 32,
                     ),
                   ),
@@ -419,7 +419,7 @@ class OrderScreen extends StatelessWidget {
                     },
                     child: const PhosphorIcon(
                       PhosphorIconsRegular.user,
-                      color: Colors.white,
+                      color: MyTheme.white,
                       size: 32,
                     ),
                   ),

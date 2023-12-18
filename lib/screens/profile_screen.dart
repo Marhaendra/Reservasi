@@ -60,7 +60,7 @@ class ProfileScreen extends StatelessWidget {
               style: GoogleFonts.poppins(
                 fontWeight: FontWeight.w700,
                 fontSize: 16,
-                color: Colors.white,
+                color: MyTheme.white,
               ),
             ),
           ),
@@ -176,7 +176,7 @@ class ProfileScreen extends StatelessWidget {
             children: [
               PhosphorIcon(
                 iconData, // Use the provided IconData
-                color: Colors.black,
+                color: MyTheme.black,
                 size: 18,
               ),
               const SizedBox(
@@ -211,13 +211,13 @@ class ProfileScreen extends StatelessWidget {
                 children: [
                   const PhosphorIcon(
                     PhosphorIconsRegular.caretLeft,
-                    color: Colors.white,
+                    color: MyTheme.white,
                   ),
                   Text(
                     'Profil',
                     style: GoogleFonts.poppins(
                       fontSize: 24,
-                      color: Colors.white,
+                      color: MyTheme.white,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -241,7 +241,7 @@ class ProfileScreen extends StatelessWidget {
                     },
                     child: const PhosphorIcon(
                       PhosphorIconsRegular.ticket,
-                      color: Colors.white,
+                      color: MyTheme.white,
                       size: 32,
                     ),
                   ),
@@ -257,7 +257,7 @@ class ProfileScreen extends StatelessWidget {
                     },
                     child: const PhosphorIcon(
                       PhosphorIconsRegular.user,
-                      color: Colors.white,
+                      color: MyTheme.white,
                       size: 32,
                     ),
                   ),
