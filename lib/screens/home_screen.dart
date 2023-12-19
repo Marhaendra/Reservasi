@@ -4,6 +4,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:reservasi/screens/order_screen.dart';
 import 'package:reservasi/screens/profile_screen.dart';
 import 'package:reservasi/screens/reservation_screen.dart';
+import 'package:reservasi/screens/search_screen.dart';
 import 'package:reservasi/theme.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -190,26 +191,36 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         children: [
           input(
-            placeholder: "Lokasi",
-            iconData: PhosphorIconsRegular.mapPin,
-            value: "Jakarta",
-          ),
+              placeholder: "Lokasi",
+              iconData: PhosphorIconsRegular.mapPin,
+              value: "Lokasi",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SearchScreen()),
+                );
+              }),
           const SizedBox(
             height: 16,
           ),
           input(
-            placeholder: "Tanggal",
-            iconData: PhosphorIconsRegular.calendar,
-            value: "19 September",
-          ),
+              placeholder: "Tanggal",
+              iconData: PhosphorIconsRegular.calendar,
+              value: "",
+              onTap: () {}),
           const SizedBox(
             height: 16,
           ),
           input(
-            placeholder: "Ruang",
-            iconData: PhosphorIconsRegular.couch,
-            value: "Lab. Techno",
-          ),
+              placeholder: "Ruang",
+              iconData: PhosphorIconsRegular.couch,
+              value: "Ruang",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SearchScreen()),
+                );
+              }),
           const SizedBox(
             height: 16,
           ),
@@ -246,13 +257,12 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget input({
-    required String placeholder,
-    required IconData iconData,
-    required String value,
-  }) {
-    return SizedBox(
-      width: double.maxFinite,
+  Widget input(
+      {required String placeholder,
+      required IconData iconData,
+      required String value,
+      required Function onTap}) {
+    return GestureDetector(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

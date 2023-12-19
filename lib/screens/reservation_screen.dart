@@ -30,15 +30,18 @@ class _ReservationScreenState extends State<ReservationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SizedBox(
-      child: Column(children: [
-        _header(context),
-        tabBarReservation(),
+      body: SizedBox(
+        child: Column(
+          children: [
+            _header(context),
+            tabBarReservation(),
 
-        /// MAIN BODY
-        contentReservation(),
-      ]),
-    ));
+            /// MAIN BODY
+            contentReservation(),
+          ],
+        ),
+      ),
+    );
   }
 
   Container contentReservation() {
@@ -80,12 +83,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
             children: [
               GestureDetector(
                 onTap: () {
-                  setState(() {
-                    current = index;
-                    DateTime selectedDate =
-                        DateTime.now().add(Duration(days: index - current));
-                    dateList = DateListModel.getDateList(selectedDate);
-                  });
+                  _updateDateList(index);
                   pageController.animateToPage(
                     current,
                     duration: const Duration(milliseconds: 200),
@@ -135,6 +133,15 @@ class _ReservationScreenState extends State<ReservationScreen> {
         },
       ),
     );
+  }
+
+  void _updateDateList(int index) {
+    setState(() {
+      current = index;
+      DateTime selectedDate =
+          DateTime.now().add(Duration(days: index - current));
+      dateList = DateListModel.getDateList(selectedDate);
+    });
   }
 
   Padding _header(BuildContext context) {
