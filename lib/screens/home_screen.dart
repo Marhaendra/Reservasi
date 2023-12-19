@@ -218,8 +218,7 @@ class HomeScreen extends StatelessWidget {
               // TODO: On search tap
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => const ReservationScreen()),
+                MaterialPageRoute(builder: (context) => ReservationScreen()),
               );
             },
             child: Container(

@@ -1,40 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:reservasi/models/date_list_model.dart';
 import 'package:reservasi/screens/home_screen.dart';
 import 'package:reservasi/screens/order_screen.dart';
 import 'package:reservasi/theme.dart';
 
 class ReservationScreen extends StatefulWidget {
-  const ReservationScreen({Key? key}) : super(key: key);
+  ReservationScreen({Key? key}) : super(key: key);
 
   @override
   State<ReservationScreen> createState() => _ReservationScreenState();
 }
 
 class _ReservationScreenState extends State<ReservationScreen> {
-  List<String> tabs = [
-    "sat, 16",
-    "sun, 17",
-    "mon, 18",
-    "tue, 19",
-    "wed, 20",
-    "thu, 21"
-  ];
-  List<IconData> icons = [
-    Icons.home,
-    Icons.explore,
-    Icons.search,
-    Icons.feed,
-    Icons.post_add,
-    Icons.local_activity,
-    Icons.settings,
-    Icons.person
-  ];
+  late PageController pageController;
+  late int current;
+  late List<DateListModel> dateList;
 
-  int current = 0;
-
-  PageController pageController = PageController();
+  @override
+  void initState() {
+    super.initState();
+    DateTime selectedDate = DateTime.now();
+    dateList = DateListModel.getDateList(selectedDate);
+    current = 0; // Set initial position to the middle
+    pageController = PageController(initialPage: current);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,14 +47,14 @@ class _ReservationScreenState extends State<ReservationScreen> {
       width: double.infinity,
       height: 550,
       child: PageView.builder(
-        itemCount: tabs.length,
+        itemCount: dateList.length,
         controller: pageController,
         physics: const NeverScrollableScrollPhysics(),
         itemBuilder: (context, index) {
           return Column(
             children: [
               Text(
-                "${tabs[current]} Tab Content",
+                "Tab Content",
                 style: GoogleFonts.poppins(
                     fontWeight: FontWeight.w400,
                     fontSize: 30,
@@ -81,62 +72,68 @@ class _ReservationScreenState extends State<ReservationScreen> {
       width: double.infinity,
       height: 80,
       child: ListView.builder(
-          physics: const BouncingScrollPhysics(),
-          itemCount: tabs.length,
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (ctx, index) {
-            return Column(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      current = index;
-                    });
-                    pageController.animateToPage(
-                      current,
-                      duration: const Duration(milliseconds: 200),
-                      curve: Curves.ease,
-                    );
-                  },
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    margin: const EdgeInsets.all(0),
-                    width: 100,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: current == index ? MyTheme.white : MyTheme.white1,
-                    ),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            tabs[index],
-                            style: GoogleFonts.poppins(
-                                fontWeight: FontWeight.w400,
-                                color: current == index
-                                    ? MyTheme.primary
-                                    : MyTheme.grey1),
+        physics: const BouncingScrollPhysics(),
+        itemCount: dateList.length,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (ctx, index) {
+          return Column(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    current = index;
+                    DateTime selectedDate =
+                        DateTime.now().add(Duration(days: index - current));
+                    dateList = DateListModel.getDateList(selectedDate);
+                  });
+                  pageController.animateToPage(
+                    current,
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.ease,
+                  );
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  margin: const EdgeInsets.all(0),
+                  width: 100,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: current == index ? MyTheme.white : MyTheme.white1,
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          dateList[index].date,
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w400,
+                            color: current == index
+                                ? MyTheme.primary
+                                : MyTheme.grey1,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                Visibility(
-                  visible: current == index,
-                  child: Container(
-                    width: 52,
-                    height: 1,
-                    decoration: const BoxDecoration(
-                        color: MyTheme.primary,
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.all(Radius.circular(4))),
+              ),
+              Visibility(
+                visible: current == index,
+                child: Container(
+                  width: 52,
+                  height: 1,
+                  decoration: const BoxDecoration(
+                    color: MyTheme.primary,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.all(Radius.circular(4)),
                   ),
-                )
-              ],
-            );
-          }),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 
