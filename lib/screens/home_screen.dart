@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -7,9 +9,13 @@ import 'package:reservasi/screens/reservation_screen.dart';
 import 'package:reservasi/screens/search_screen.dart';
 import 'package:reservasi/theme.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key});
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
 
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -197,7 +203,8 @@ class HomeScreen extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SearchScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => SearchScreen(showLocations: true)),
                 );
               }),
           const SizedBox(
@@ -216,9 +223,13 @@ class HomeScreen extends StatelessWidget {
               iconData: PhosphorIconsRegular.couch,
               value: "Ruang",
               onTap: () {
+                print('ok');
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SearchScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => SearchScreen(
+                            showLocations: false,
+                          )),
                 );
               }),
           const SizedBox(
@@ -226,6 +237,7 @@ class HomeScreen extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () {
+              print('hehe');
               // TODO: On search tap
               Navigator.push(
                 context,
@@ -257,12 +269,16 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget input(
-      {required String placeholder,
-      required IconData iconData,
-      required String value,
-      required Function onTap}) {
+  Widget input({
+    required String placeholder,
+    required IconData iconData,
+    required String value,
+    required Function onTap,
+  }) {
     return GestureDetector(
+      onTap: () {
+        onTap();
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -280,24 +296,26 @@ class HomeScreen extends StatelessWidget {
           Row(
             children: [
               PhosphorIcon(
-                iconData, // Use the provided IconData
+                iconData,
                 color: MyTheme.black,
                 size: 18,
               ),
               const SizedBox(
                 width: 3,
               ),
-              Text(
-                value,
-                style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 12,
-                  color: MyTheme.black,
+              Expanded(
+                child: Text(
+                  value,
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12,
+                    color: MyTheme.black,
+                  ),
                 ),
-              )
+              ),
             ],
           ),
-          const Divider()
+          const Divider(),
         ],
       ),
     );

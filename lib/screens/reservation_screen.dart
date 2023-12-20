@@ -4,7 +4,9 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:reservasi/models/date_list_model.dart';
 import 'package:reservasi/screens/home_screen.dart';
 import 'package:reservasi/screens/order_screen.dart';
+import 'package:reservasi/controllers/reservation_controller.dart';
 import 'package:reservasi/theme.dart';
+import 'package:get/get.dart';
 
 class ReservationScreen extends StatefulWidget {
   ReservationScreen({Key? key}) : super(key: key);
@@ -17,10 +19,12 @@ class _ReservationScreenState extends State<ReservationScreen> {
   late PageController pageController;
   late int current;
   late List<DateListModel> dateList;
+  late ReservationController controller;
 
   @override
   void initState() {
     super.initState();
+    controller = ReservationController();
     DateTime selectedDate = DateTime.now();
     dateList = DateListModel.getDateList(selectedDate);
     current = 0; // Set initial position to the middle
@@ -30,25 +34,28 @@ class _ReservationScreenState extends State<ReservationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SizedBox(
-        child: Column(
-          children: [
-            _header(context),
-            tabBarReservation(),
-
-            /// MAIN BODY
-            contentReservation(),
-          ],
-        ),
+      body: GetBuilder<ReservationController>(
+        init: controller,
+        builder: (_) {
+          return SafeArea(
+            child: Column(
+              children: [
+                _header(context),
+                tabBarReservation(),
+                contentReservation(),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
 
   Container contentReservation() {
     return Container(
-      margin: const EdgeInsets.only(top: 0),
+      margin: EdgeInsets.only(top: 4),
       width: double.infinity,
-      height: 550,
+      height: 610,
       child: PageView.builder(
         itemCount: dateList.length,
         controller: pageController,
@@ -56,13 +63,212 @@ class _ReservationScreenState extends State<ReservationScreen> {
         itemBuilder: (context, index) {
           return Column(
             children: [
-              Text(
-                "Tab Content",
-                style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w400,
-                    fontSize: 30,
-                    color: MyTheme.primary),
+              Container(
+                height: 50,
+                padding: const EdgeInsets.only(left: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Pilih Kursi',
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: MyTheme.black,
+                      ),
+                    ),
+                    Container(
+                      height: 50,
+                      padding: const EdgeInsets.only(right: 16),
+                      child: Row(
+                        children: [
+                          ItemStatus(
+                            status: "Kosong",
+                            color: MyTheme.white,
+                            border: MyTheme.primary,
+                          ),
+                          const SizedBox(
+                            width: 12,
+                          ),
+                          ItemStatus(
+                            status: "Terisi",
+                            color: MyTheme.grey,
+                            border: MyTheme.grey,
+                          ),
+                          const SizedBox(
+                            width: 12,
+                          ),
+                          ItemStatus(
+                            status: "Dipilih",
+                            color: MyTheme.primary,
+                            border: MyTheme.primary,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
+              const SizedBox(
+                height: 24,
+              ),
+              Expanded(
+                  child: Container(
+                decoration: const BoxDecoration(
+                  color: MyTheme.white,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10)),
+                ),
+                child: Column(children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 60,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.vertical,
+                              child: Obx(
+                                () => Column(
+                                  children: List.generate(
+                                    controller.gerbong.length,
+                                    (index) => GestureDetector(
+                                      onTap: () =>
+                                          controller.gantiGerbong(index),
+                                      child: Container(
+                                        margin: EdgeInsets.all(8),
+                                        height: 150,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: MyTheme.primary,
+                                          ),
+                                          color:
+                                              controller.indexGerbong.value ==
+                                                      index
+                                                  ? MyTheme.primary
+                                                  : Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "Sesi ${index + 1}",
+                                            style: GoogleFonts.poppins(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w400),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Container(
+                              child: Obx(
+                                () => GridView.builder(
+                                  padding: EdgeInsets.all(8),
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    mainAxisSpacing: 10,
+                                    crossAxisSpacing: 10,
+                                    crossAxisCount: 7,
+                                  ),
+                                  itemCount: controller
+                                      .gerbong[controller.indexGerbong.value]
+                                      .length,
+                                  itemBuilder: (context, index) =>
+                                      GestureDetector(
+                                    onTap: () => controller.selectKursi(index),
+                                    child: Container(
+                                        width: 30,
+                                        height: 30,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: controller.gerbong[
+                                                              controller
+                                                                  .indexGerbong
+                                                                  .value][index]
+                                                          ["status"] ==
+                                                      "available"
+                                                  ? MyTheme.primary
+                                                  : controller.gerbong[controller
+                                                                  .indexGerbong
+                                                                  .value][index]
+                                                              ["status"] ==
+                                                          "filled"
+                                                      ? MyTheme.grey
+                                                      : MyTheme.primary),
+                                          color: controller.gerbong[controller
+                                                          .indexGerbong.value]
+                                                      [index]["status"] ==
+                                                  "available"
+                                              ? Colors.white
+                                              : controller.gerbong[controller
+                                                              .indexGerbong
+                                                              .value][index]
+                                                          ["status"] ==
+                                                      "filled"
+                                                  ? MyTheme.grey
+                                                  : MyTheme.primary,
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "${index + 1}",
+                                            style: GoogleFonts.poppins(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w400),
+                                          ),
+                                        )),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ]),
+              )),
+              Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  height: 60,
+                  child: GestureDetector(
+                    onTap: () {
+                      // TODO: On search tap
+                      // Navigator.pop(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) => HomeScreen()),
+                      // );
+                    },
+                    child: Container(
+                      width: double.maxFinite,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10.5),
+                      decoration: BoxDecoration(
+                        color: MyTheme.primary.withOpacity(.1),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Pesan",
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                            color: MyTheme.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )),
             ],
           );
         },
@@ -73,7 +279,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
   SizedBox tabBarReservation() {
     return SizedBox(
       width: double.infinity,
-      height: 80,
+      height: 45,
       child: ListView.builder(
         physics: const BouncingScrollPhysics(),
         itemCount: dateList.length,
@@ -96,7 +302,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                   width: 100,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: current == index ? MyTheme.white : MyTheme.white1,
+                    color: current == index ? MyTheme.white : MyTheme.white,
                   ),
                   child: Center(
                     child: Column(
@@ -105,7 +311,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                         Text(
                           dateList[index].date,
                           style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w400,
+                            fontWeight: FontWeight.w500,
                             color: current == index
                                 ? MyTheme.primary
                                 : MyTheme.grey1,
@@ -149,7 +355,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
       padding: EdgeInsets.zero, // Adjust the top padding
       child: Container(
         width: double.maxFinite,
-        height: 160,
+        height: 135,
         color: MyTheme.primary, // Set the background color
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -194,6 +400,48 @@ class _ReservationScreenState extends State<ReservationScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class ItemStatus extends StatelessWidget {
+  ItemStatus({
+    Key? key,
+    required this.status,
+    required this.color,
+    required this.border,
+  }) : super(key: key);
+
+  final String status;
+  final Color color;
+  final Color border;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          height: 12,
+          width: 12,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(3),
+            border: Border.all(
+              color: border, // Set the color of the stroke
+              width: 2.0, // Set the width of the stroke
+            ),
+          ),
+        ),
+        SizedBox(width: 4),
+        Text(
+          status,
+          style: TextStyle(
+            fontFamily: GoogleFonts.poppins()
+                .fontFamily, // Use GoogleFonts.poppins() correctly
+            fontSize: 10,
+          ),
+        ),
+      ],
     );
   }
 }

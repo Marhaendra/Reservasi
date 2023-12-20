@@ -32,11 +32,14 @@ class MyApp extends StatelessWidget {
         '/landing': (context) => const LandingScreen(),
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
-        '/home': (context) => const HomeScreen(),
+        '/home': (context) => HomeScreen(),
         '/order': (context) => const OrderScreen(),
         '/profile': (context) => const ProfileScreen(),
         '/eprofile': (context) => const EditProfileScreen(),
         '/help': (context) => const HelpScreen(),
+        '/search': (context) => SearchScreen(
+              showLocations: true,
+            ),
       },
     );
   }
