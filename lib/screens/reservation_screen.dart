@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:reservasi/models/date_list_model.dart';
 import 'package:reservasi/screens/home_screen.dart';
-import 'package:reservasi/screens/order_screen.dart';
 import 'package:reservasi/controllers/reservation_controller.dart';
 import 'package:reservasi/theme.dart';
 import 'package:get/get.dart';
@@ -53,7 +52,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
 
   Container contentReservation() {
     return Container(
-      margin: EdgeInsets.only(top: 4),
+      margin: const EdgeInsets.only(top: 4),
       width: double.infinity,
       height: 610,
       child: PageView.builder(
@@ -109,137 +108,23 @@ class _ReservationScreenState extends State<ReservationScreen> {
                   ],
                 ),
               ),
-              const SizedBox(
-                height: 24,
-              ),
-              Expanded(
-                  child: Container(
-                decoration: const BoxDecoration(
-                  color: MyTheme.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(10)),
-                ),
-                child: Column(children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 60,
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.vertical,
-                              child: Obx(
-                                () => Column(
-                                  children: List.generate(
-                                    controller.gerbong.length,
-                                    (index) => GestureDetector(
-                                      onTap: () =>
-                                          controller.gantiGerbong(index),
-                                      child: Container(
-                                        margin: EdgeInsets.all(8),
-                                        height: 150,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: MyTheme.primary,
-                                          ),
-                                          color:
-                                              controller.indexGerbong.value ==
-                                                      index
-                                                  ? MyTheme.primary
-                                                  : Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            "Sesi ${index + 1}",
-                                            style: GoogleFonts.poppins(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w400),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 8),
-                          Expanded(
-                            child: Container(
-                              child: Obx(
-                                () => GridView.builder(
-                                  padding: EdgeInsets.all(8),
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    mainAxisSpacing: 10,
-                                    crossAxisSpacing: 10,
-                                    crossAxisCount: 7,
-                                  ),
-                                  itemCount: controller
-                                      .gerbong[controller.indexGerbong.value]
-                                      .length,
-                                  itemBuilder: (context, index) =>
-                                      GestureDetector(
-                                    onTap: () => controller.selectKursi(index),
-                                    child: Container(
-                                        width: 30,
-                                        height: 30,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: controller.gerbong[
-                                                              controller
-                                                                  .indexGerbong
-                                                                  .value][index]
-                                                          ["status"] ==
-                                                      "available"
-                                                  ? MyTheme.primary
-                                                  : controller.gerbong[controller
-                                                                  .indexGerbong
-                                                                  .value][index]
-                                                              ["status"] ==
-                                                          "filled"
-                                                      ? MyTheme.grey
-                                                      : MyTheme.primary),
-                                          color: controller.gerbong[controller
-                                                          .indexGerbong.value]
-                                                      [index]["status"] ==
-                                                  "available"
-                                              ? Colors.white
-                                              : controller.gerbong[controller
-                                                              .indexGerbong
-                                                              .value][index]
-                                                          ["status"] ==
-                                                      "filled"
-                                                  ? MyTheme.grey
-                                                  : MyTheme.primary,
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            "${index + 1}",
-                                            style: GoogleFonts.poppins(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w400),
-                                          ),
-                                        )),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ]),
-              )),
               Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                height: 24,
+                alignment: Alignment.centerLeft, // Add this line
+                child: Text(
+                  dateList[current].longDateFormat,
+                  style: GoogleFonts.poppins(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              seat(),
+              Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   height: 60,
                   child: GestureDetector(
                     onTap: () {
@@ -276,6 +161,160 @@ class _ReservationScreenState extends State<ReservationScreen> {
     );
   }
 
+  Expanded seat() {
+    return Expanded(
+        child: Container(
+      decoration: const BoxDecoration(
+        color: MyTheme.white,
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+      ),
+      child: Column(children: [
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 60,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Obx(
+                      () => Row(
+                        children: List.generate(
+                          controller.session.length,
+                          (index) => GestureDetector(
+                            onTap: () => controller.changeSession(index),
+                            child: Container(
+                              margin: EdgeInsets.all(8),
+                              width: 150,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: controller.indexSession.value == index
+                                      ? MyTheme.primary
+                                      : MyTheme.grey1,
+                                ),
+                                color: controller.indexSession.value == index
+                                    ? MyTheme.primary.withOpacity(.1)
+                                    : Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Center(
+                                    child: Text(
+                                      "Sesi ${index + 1}",
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                        color: controller.indexSession.value ==
+                                                index
+                                            ? MyTheme.primary
+                                            : MyTheme.black,
+                                      ),
+                                    ),
+                                  ),
+                                  Center(
+                                    child: Text(
+                                      "00.00 - 00.00",
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 8,
+                                        fontWeight: FontWeight.w400,
+                                        color: controller.indexSession.value ==
+                                                index
+                                            ? MyTheme.primary
+                                            : MyTheme.black,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Container(
+                    child: Obx(
+                      () => GridView.builder(
+                        padding: const EdgeInsets.all(8),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 10,
+                          crossAxisCount: 7,
+                        ),
+                        itemCount: controller
+                            .session[controller.indexSession.value].length,
+                        itemBuilder: (context, index) => GestureDetector(
+                          onTap: () => controller.selectSeat(index),
+                          onDoubleTap: () => controller.selectSeat(index),
+                          child: Container(
+                              width: 30,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: controller.session[controller
+                                                .indexSession
+                                                .value][index]["status"] ==
+                                            "available"
+                                        ? MyTheme.primary
+                                        : controller.session[controller
+                                                    .indexSession
+                                                    .value][index]["status"] ==
+                                                "filled"
+                                            ? MyTheme.grey
+                                            : MyTheme.primary),
+                                color: controller.session[controller
+                                            .indexSession
+                                            .value][index]["status"] ==
+                                        "available"
+                                    ? MyTheme.white
+                                    : controller.session[controller.indexSession
+                                                .value][index]["status"] ==
+                                            "filled"
+                                        ? MyTheme.grey
+                                        : MyTheme.primary,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "${index + 1}",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w400,
+                                    color: controller.session[controller
+                                                .indexSession
+                                                .value][index]["status"] ==
+                                            "available"
+                                        ? MyTheme.black
+                                        : controller.session[controller
+                                                    .indexSession
+                                                    .value][index]["status"] ==
+                                                "filled"
+                                            ? MyTheme.black1
+                                            : MyTheme.white,
+                                  ),
+                                ),
+                              )),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ]),
+    ));
+  }
+
   SizedBox tabBarReservation() {
     return SizedBox(
       width: double.infinity,
@@ -309,7 +348,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          dateList[index].date,
+                          dateList[index].shortDateFormat,
                           style: GoogleFonts.poppins(
                             fontWeight: FontWeight.w500,
                             color: current == index
@@ -432,7 +471,7 @@ class ItemStatus extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(width: 4),
+        const SizedBox(width: 4),
         Text(
           status,
           style: TextStyle(

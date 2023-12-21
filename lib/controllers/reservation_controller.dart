@@ -1,68 +1,81 @@
 import 'package:get/get.dart';
 
 class ReservationController extends GetxController {
-  var indexGerbong = 0.obs;
+  var indexSession = 0.obs;
+  var selectedSeats = <String>[].obs; // List to store selected seat IDs
 
   void reset() {
-    gerbong.forEach((element) {
+    session.forEach((element) {
       element.forEach((element) {
         if (element["status"] != "filled") {
           element.update("status", (value) => "available");
         }
       });
     });
+    selectedSeats.clear(); // Clear the list of selected seats
   }
 
-  void gantiGerbong(int indexGerbongTerpilih) {
-    indexGerbong.value = indexGerbongTerpilih;
-    gerbong.refresh();
+  void changeSession(int indexSessionSelected) {
+    indexSession.value = indexSessionSelected;
+    session.refresh();
   }
 
-  void selectKursi(int indexKursiTerpilih) {
-    print(gerbong[indexGerbong.value][indexKursiTerpilih]);
-    if (gerbong[indexGerbong.value][indexKursiTerpilih]["status"] ==
-        "available") {
-      reset();
-      gerbong[indexGerbong.value][indexKursiTerpilih]
+  void selectSeat(int indexSeatSelected) {
+    if (session[indexSession.value][indexSeatSelected]["status"] ==
+        "selected") {
+      // Deselect the seat on double tap
+      session[indexSession.value][indexSeatSelected]
+          .update("status", (value) => "available");
+      selectedSeats.remove(
+          session[indexSession.value][indexSeatSelected]["id"] as String);
+    } else if (session[indexSession.value][indexSeatSelected]["status"] ==
+            "available" &&
+        selectedSeats.length < 4) {
+      // Select the seat if it's available and not already selected
+      session[indexSession.value][indexSeatSelected]
           .update("status", (value) => "selected");
+      selectedSeats
+          .add(session[indexSession.value][indexSeatSelected]["id"] as String);
     }
-    gerbong.refresh();
+    session.refresh();
+    print(session[indexSession.value][indexSeatSelected]);
   }
 
-  var gerbong = List.generate(
+  var session = List.generate(
     4,
-    (indexG) => List<Map<String, dynamic>>.generate(
+    (indexSession) => List<Map<String, dynamic>>.generate(
       75,
-      (indexK) {
-        if (indexG == 0) {
-          // gerbong ke 1
-          if (indexK >= 24 && indexK <= 26 || indexK >= 40 && indexK <= 44) {
+      (indexSeat) {
+        if (indexSession == 0) {
+          // session ke 1
+          if (indexSeat >= 24 && indexSeat <= 26 ||
+              indexSeat >= 40 && indexSeat <= 44) {
             return {
-              "id": "ID-${indexG + 1}-${indexK + 1}",
+              "id": "ID-${indexSession + 1}-${indexSeat + 1}",
               "status": "filled",
             };
           } else {
             return {
-              "id": "ID-${indexG + 1}-${indexK + 1}",
+              "id": "ID-${indexSession + 1}-${indexSeat + 1}",
               "status": "available",
             };
           }
-        } else if (indexG == 1) {
-          // gerbong ke 2
-          if (indexK >= 5 && indexK <= 35) {
+        } else if (indexSession == 1) {
+          // session ke 2
+          if (indexSeat >= 5 && indexSeat <= 35) {
             return {
-              "id": "ID-${indexG + 1}-${indexK + 1}",
+              "id": "ID-${indexSession + 1}-${indexSeat + 1}",
               "status": "filled",
             };
           } else {
             return {
-              "id": "ID-${indexG + 1}-${indexK + 1}",
+              "id": "ID-${indexSession + 1}-${indexSeat + 1}",
               "status": "available",
             };
           }
         } else {
           return {
-            "id": "ID-${indexG + 1}-${indexK + 1}",
+            "id": "ID-${indexSession + 1}-${indexSeat + 1}",
             "status": "available",
           };
         }

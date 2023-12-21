@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reservasi/bindings/location_binding.dart';
 import 'package:reservasi/screens/editProfile_screen.dart';
 import 'package:reservasi/screens/help_screen.dart';
 import 'package:reservasi/screens/home_screen.dart';
@@ -9,6 +10,7 @@ import 'package:reservasi/screens/profile_screen.dart';
 import 'package:reservasi/screens/register_screen.dart';
 import 'package:reservasi/screens/reservation_screen.dart';
 import 'package:reservasi/screens/search_screen.dart';
+import 'package:get/get.dart';
 
 void main() {
   runApp(MyApp());
@@ -19,7 +21,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
+      initialBinding: AppBindings(),
       title: 'Reservasi',
       theme: ThemeData(
           // Your theme configurations here
@@ -40,6 +43,7 @@ class MyApp extends StatelessWidget {
         '/search': (context) => SearchScreen(
               showLocations: true,
             ),
+        '/reservation': (context) => ReservationScreen(),
       },
     );
   }

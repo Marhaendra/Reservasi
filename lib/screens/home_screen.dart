@@ -1,13 +1,14 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:reservasi/controllers/location_controller.dart';
+import 'package:reservasi/controllers/space_controller.dart';
 import 'package:reservasi/screens/order_screen.dart';
 import 'package:reservasi/screens/profile_screen.dart';
 import 'package:reservasi/screens/reservation_screen.dart';
 import 'package:reservasi/screens/search_screen.dart';
 import 'package:reservasi/theme.dart';
+import 'package:get/get.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key});
@@ -16,6 +17,17 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late SpaceController _spaceController;
+  late LocationController _locationController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize controllers in the initState method
+    _spaceController = Get.put(SpaceController());
+    _locationController = Get.put(LocationController());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     fit: BoxFit.fill,
                   ),
                 ),
-                main(context),
+                main(context, _spaceController, _locationController),
               ],
             ),
           ],
@@ -44,7 +56,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget main(BuildContext context) {
+  Widget main(BuildContext context, SpaceController spaceController,
+      LocationController locationController) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
       child: Column(
@@ -54,11 +67,11 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(
             height: 38,
           ),
-          searchBox(context),
+          searchBox(context, locationController, spaceController),
           const SizedBox(
             height: 20,
           ),
-          lastBooked()
+          lastBooked(),
         ],
       ),
     );
@@ -179,7 +192,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Container searchBox(BuildContext context) {
+  Container searchBox(BuildContext context,
+      LocationController locationController, SpaceController spaceController) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -194,77 +208,67 @@ class _HomeScreenState extends State<HomeScreen> {
           )
         ],
       ),
-      child: Column(
-        children: [
-          input(
-              placeholder: "Lokasi",
-              iconData: PhosphorIconsRegular.mapPin,
-              value: "Lokasi",
+      child: Obx(
+        () => Column(
+          children: [
+            input(
+                placeholder: "Lokasi",
+                iconData: PhosphorIconsRegular.mapPin,
+                value: locationController.selectedLocation.value,
+                onTap: () {
+                  Get.to(() => SearchScreen(showLocations: true));
+                }),
+            const SizedBox(
+              height: 16,
+            ),
+            input(
+                placeholder: "Tanggal",
+                iconData: PhosphorIconsRegular.calendar,
+                value: "",
+                onTap: () {}),
+            const SizedBox(
+              height: 16,
+            ),
+            input(
+                placeholder: "Ruang",
+                iconData: PhosphorIconsRegular.couch,
+                value: spaceController.selectedSpace.value,
+                onTap: () {
+                  Get.to(() => SearchScreen(showLocations: false));
+                }),
+            const SizedBox(
+              height: 16,
+            ),
+            GestureDetector(
               onTap: () {
+                // TODO: On search tap
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => SearchScreen(showLocations: true)),
+                  MaterialPageRoute(builder: (context) => ReservationScreen()),
                 );
-              }),
-          const SizedBox(
-            height: 16,
-          ),
-          input(
-              placeholder: "Tanggal",
-              iconData: PhosphorIconsRegular.calendar,
-              value: "",
-              onTap: () {}),
-          const SizedBox(
-            height: 16,
-          ),
-          input(
-              placeholder: "Ruang",
-              iconData: PhosphorIconsRegular.couch,
-              value: "Ruang",
-              onTap: () {
-                print('ok');
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => SearchScreen(
-                            showLocations: false,
-                          )),
-                );
-              }),
-          const SizedBox(
-            height: 16,
-          ),
-          GestureDetector(
-            onTap: () {
-              print('hehe');
-              // TODO: On search tap
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ReservationScreen()),
-              );
-            },
-            child: Container(
-              width: double.maxFinite,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 10.5),
-              decoration: BoxDecoration(
-                color: MyTheme.primary.withOpacity(.1),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Center(
-                child: Text(
-                  "Cari",
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 12,
-                    color: MyTheme.primary,
+              },
+              child: Container(
+                width: double.maxFinite,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10.5),
+                decoration: BoxDecoration(
+                  color: MyTheme.primary.withOpacity(.1),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Center(
+                  child: Text(
+                    "Cari",
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                      color: MyTheme.primary,
+                    ),
                   ),
                 ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }
