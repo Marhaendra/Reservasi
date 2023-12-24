@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:reservasi/controllers/location_controller.dart';
 import 'package:reservasi/controllers/space_controller.dart';
+import 'package:reservasi/controllers/calendar_controller.dart';
 import 'package:reservasi/screens/order_screen.dart';
 import 'package:reservasi/screens/profile_screen.dart';
 import 'package:reservasi/screens/reservation_screen.dart';
 import 'package:reservasi/screens/search_screen.dart';
 import 'package:reservasi/theme.dart';
 import 'package:get/get.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key});
@@ -19,6 +22,15 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late SpaceController _spaceController;
   late LocationController _locationController;
+  late CalendarController _calendarController;
+
+  // GlobalKey for TableCalendar
+  final GlobalKey _tableCalendarKey = GlobalKey();
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -26,6 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // Initialize controllers in the initState method
     _spaceController = Get.put(SpaceController());
     _locationController = Get.put(LocationController());
+    _calendarController = Get.put(CalendarController());
   }
 
   @override
@@ -47,7 +60,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     fit: BoxFit.fill,
                   ),
                 ),
-                main(context, _spaceController, _locationController),
+                main(context, _spaceController, _locationController,
+                    _calendarController),
               ],
             ),
           ],
@@ -56,8 +70,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget main(BuildContext context, SpaceController spaceController,
-      LocationController locationController) {
+  Widget main(
+      BuildContext context,
+      SpaceController spaceController,
+      LocationController locationController,
+      CalendarController calendarController) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
       child: Column(
@@ -67,7 +84,8 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(
             height: 38,
           ),
-          searchBox(context, locationController, spaceController),
+          searchBox(
+              context, locationController, spaceController, calendarController),
           const SizedBox(
             height: 20,
           ),
@@ -192,8 +210,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Container searchBox(BuildContext context,
-      LocationController locationController, SpaceController spaceController) {
+  Container searchBox(
+      BuildContext context,
+      LocationController locationController,
+      SpaceController spaceController,
+      CalendarController calendarController) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -222,10 +243,52 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 16,
             ),
             input(
-                placeholder: "Tanggal",
-                iconData: PhosphorIconsRegular.calendar,
-                value: "",
-                onTap: () {}),
+              placeholder: "Tanggal",
+              iconData: PhosphorIconsRegular.calendar,
+              value: calendarController.dateFormat
+                  .format(calendarController.selectedDay),
+              onTap: () {
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) {
+                    return Column(
+                      children: [
+                        Container(
+                          child: TableCalendar(
+                            key: _tableCalendarKey, // Add this line
+                            headerStyle:
+                                HeaderStyle(formatButtonVisible: false),
+                            availableGestures: AvailableGestures.all,
+                            focusedDay: calendarController.focusedDay,
+                            firstDay: calendarController.firstDay,
+                            lastDay: calendarController.lastDay,
+                            selectedDayPredicate: (selectedDay) => isSameDay(
+                                selectedDay, calendarController.focusedDay),
+                            calendarFormat: calendarController.calendarFormat,
+                            onDaySelected: (selectedDay, focusedDay) {
+                              calendarController.daySelect(
+                                  selectedDay, focusedDay);
+                            },
+
+                            calendarStyle: CalendarStyle(
+                              selectedDecoration: const BoxDecoration(
+                                color: MyTheme.primary,
+                                shape: BoxShape.circle,
+                              ),
+                              todayDecoration: BoxDecoration(
+                                color: MyTheme.primary.withOpacity(0.1),
+                                shape: BoxShape
+                                    .circle, // Add this line to make today a circle
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
             const SizedBox(
               height: 16,
             ),
