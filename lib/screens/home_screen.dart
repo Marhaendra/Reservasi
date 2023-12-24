@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:reservasi/controllers/location_controller.dart';
 import 'package:reservasi/controllers/space_controller.dart';
-import 'package:reservasi/controllers/calendar_controller.dart';
 import 'package:reservasi/screens/order_screen.dart';
 import 'package:reservasi/screens/profile_screen.dart';
 import 'package:reservasi/screens/reservation_screen.dart';
@@ -22,14 +21,27 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late SpaceController _spaceController;
   late LocationController _locationController;
-  late CalendarController _calendarController;
+
+  // Initialize for datepicker
+  DateTime _focusedDay = DateTime.now();
+  DateTime _firstDay = DateTime(2023, 1, 1);
+  DateTime _lastDay = DateTime(2033, 12, 31);
+  CalendarFormat _calendarFormat = CalendarFormat.month;
+  DateFormat _dateFormat = DateFormat('dd MMMM yyyy', 'en_US');
 
   // GlobalKey for TableCalendar
   final GlobalKey _tableCalendarKey = GlobalKey();
 
-  @override
-  void dispose() {
-    super.dispose();
+  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+    print("Selected Day: $selectedDay");
+    print("Focused Day: $focusedDay");
+
+    setState(() {
+      _focusedDay = selectedDay;
+    });
+
+    print("After setState - Focused Day: $_focusedDay");
+    print("After setState - Selected Day: $selectedDay");
   }
 
   @override
@@ -38,7 +50,6 @@ class _HomeScreenState extends State<HomeScreen> {
     // Initialize controllers in the initState method
     _spaceController = Get.put(SpaceController());
     _locationController = Get.put(LocationController());
-    _calendarController = Get.put(CalendarController());
   }
 
   @override
@@ -60,8 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     fit: BoxFit.fill,
                   ),
                 ),
-                main(context, _spaceController, _locationController,
-                    _calendarController),
+                main(context, _spaceController, _locationController),
               ],
             ),
           ],
@@ -70,11 +80,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget main(
-      BuildContext context,
-      SpaceController spaceController,
-      LocationController locationController,
-      CalendarController calendarController) {
+  Widget main(BuildContext context, SpaceController spaceController,
+      LocationController locationController) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
       child: Column(
@@ -84,8 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(
             height: 38,
           ),
-          searchBox(
-              context, locationController, spaceController, calendarController),
+          searchBox(context, locationController, spaceController),
           const SizedBox(
             height: 20,
           ),
@@ -210,11 +216,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Container searchBox(
-      BuildContext context,
-      LocationController locationController,
-      SpaceController spaceController,
-      CalendarController calendarController) {
+  Container searchBox(BuildContext context,
+      LocationController locationController, SpaceController spaceController) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -245,8 +248,7 @@ class _HomeScreenState extends State<HomeScreen> {
             input(
               placeholder: "Tanggal",
               iconData: PhosphorIconsRegular.calendar,
-              value: calendarController.dateFormat
-                  .format(calendarController.selectedDay),
+              value: _dateFormat.format(_focusedDay).toString(),
               onTap: () {
                 showModalBottomSheet(
                   context: context,
@@ -259,17 +261,18 @@ class _HomeScreenState extends State<HomeScreen> {
                             headerStyle:
                                 HeaderStyle(formatButtonVisible: false),
                             availableGestures: AvailableGestures.all,
-                            focusedDay: calendarController.focusedDay,
-                            firstDay: calendarController.firstDay,
-                            lastDay: calendarController.lastDay,
-                            selectedDayPredicate: (selectedDay) => isSameDay(
-                                selectedDay, calendarController.focusedDay),
-                            calendarFormat: calendarController.calendarFormat,
-                            onDaySelected: (selectedDay, focusedDay) {
-                              calendarController.daySelect(
-                                  selectedDay, focusedDay);
+                            focusedDay: _focusedDay,
+                            firstDay: _firstDay,
+                            lastDay: _lastDay,
+                            selectedDayPredicate: (selectedDay) =>
+                                isSameDay(selectedDay, _focusedDay),
+                            calendarFormat: _calendarFormat,
+                            onDaySelected: (date, focusedDay) {
+                              setState(() {
+                                _focusedDay = date;
+                              });
+                              Navigator.of(context).pop(_focusedDay);
                             },
-
                             calendarStyle: CalendarStyle(
                               selectedDecoration: const BoxDecoration(
                                 color: MyTheme.primary,
