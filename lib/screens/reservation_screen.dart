@@ -455,9 +455,11 @@ class _ReservationScreenState extends State<ReservationScreen> {
                   ),
                   // Padding for the User icon
                   Text(
-                    'Lab. Techno',
+                    spaceController.selectedSpace.value.toString(),
                     style: GoogleFonts.poppins(
-                      fontSize: 24,
+                      fontSize: spaceController.selectedSpace.value.length < 18
+                          ? 24
+                          : 18,
                       color: MyTheme.white,
                       fontWeight: FontWeight.w700,
                     ),
