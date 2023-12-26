@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:reservasi/controllers/calendar_controller.dart';
 
 class DateListModel {
   String shortDateFormat; // Example: "Mon, 25"
@@ -6,18 +7,26 @@ class DateListModel {
 
   DateListModel({required this.shortDateFormat, required this.longDateFormat});
 
-  static List<DateListModel> getDateList(DateTime selectedDate,
-      {int limit = 5}) {
+  static List<DateListModel> getDateList(
+    CalendarController calendarController, {
+    int limit = 5,
+  }) {
     List<DateListModel> dateList = [];
-    DateTime currentDate = selectedDate;
+    DateTime currentDate = calendarController.selectedDay;
 
-    // Add dates for the previous 4 days and the next 4 days
-    for (int i = 0; i < limit; i++) {
+    // Set the selected date as the first date in the list
+    dateList.add(DateListModel(
+      shortDateFormat: _formatShortDate(currentDate),
+      longDateFormat: _formatLongDate(currentDate),
+    ));
+
+    // Add dates for the next 4 days
+    for (int i = 1; i < limit; i++) {
+      currentDate = currentDate.add(Duration(days: 1));
       dateList.add(DateListModel(
         shortDateFormat: _formatShortDate(currentDate),
         longDateFormat: _formatLongDate(currentDate),
       ));
-      currentDate = currentDate.add(Duration(days: 1));
     }
 
     return dateList;

@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class SpacesModel {
   String name;
 

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:reservasi/controllers/calendar_controller.dart';
 import 'package:reservasi/controllers/location_controller.dart';
 import 'package:reservasi/controllers/space_controller.dart';
 import 'package:reservasi/screens/order_screen.dart';
@@ -19,41 +21,24 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late SpaceController _spaceController;
-  late LocationController _locationController;
+  late SpaceController spaceController;
+  late LocationController locationController;
+  late CalendarController calendarController;
 
-  // Initialize for datepicker
-  DateTime _focusedDay = DateTime.now();
-  DateTime _firstDay = DateTime(2023, 1, 1);
-  DateTime _lastDay = DateTime(2033, 12, 31);
-  CalendarFormat _calendarFormat = CalendarFormat.month;
-  DateFormat _dateFormat = DateFormat('dd MMMM yyyy', 'en_US');
-
-  // GlobalKey for TableCalendar
   final GlobalKey _tableCalendarKey = GlobalKey();
-
-  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-    print("Selected Day: $selectedDay");
-    print("Focused Day: $focusedDay");
-
-    setState(() {
-      _focusedDay = selectedDay;
-    });
-
-    print("After setState - Focused Day: $_focusedDay");
-    print("After setState - Selected Day: $selectedDay");
-  }
 
   @override
   void initState() {
     super.initState();
     // Initialize controllers in the initState method
-    _spaceController = Get.put(SpaceController());
-    _locationController = Get.put(LocationController());
+    spaceController = Get.put(SpaceController());
+    locationController = Get.put(LocationController());
+    calendarController = Get.put(CalendarController());
   }
 
   @override
   Widget build(BuildContext context) {
+    _tableCalendarKey;
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -71,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     fit: BoxFit.fill,
                   ),
                 ),
-                main(context, _spaceController, _locationController),
+                main(context, spaceController, locationController),
               ],
             ),
           ],
@@ -216,24 +201,24 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Container searchBox(BuildContext context,
-      LocationController locationController, SpaceController spaceController) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: MyTheme.white,
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x19000000),
-            blurRadius: 10,
-            offset: Offset(0, 0),
-            spreadRadius: 0,
-          )
-        ],
-      ),
-      child: Obx(
-        () => Column(
+  Obx searchBox(BuildContext context, LocationController locationController,
+      SpaceController spaceController) {
+    return Obx(
+      () => Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: MyTheme.white,
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x19000000),
+              blurRadius: 10,
+              offset: Offset(0, 0),
+              spreadRadius: 0,
+            )
+          ],
+        ),
+        child: Column(
           children: [
             input(
                 placeholder: "Lokasi",
@@ -248,30 +233,35 @@ class _HomeScreenState extends State<HomeScreen> {
             input(
               placeholder: "Tanggal",
               iconData: PhosphorIconsRegular.calendar,
-              value: _dateFormat.format(_focusedDay).toString(),
-              onTap: () {
-                showModalBottomSheet(
+              value: calendarController.dateFormat
+                  .format(calendarController.focusedDay)
+                  .toString(),
+              onTap: () async {
+                var result = await showModalBottomSheet<Map<String, DateTime?>>(
                   context: context,
                   builder: (context) {
                     return Column(
                       children: [
                         Container(
                           child: TableCalendar(
-                            key: _tableCalendarKey, // Add this line
                             headerStyle:
                                 HeaderStyle(formatButtonVisible: false),
                             availableGestures: AvailableGestures.all,
-                            focusedDay: _focusedDay,
-                            firstDay: _firstDay,
-                            lastDay: _lastDay,
-                            selectedDayPredicate: (selectedDay) =>
-                                isSameDay(selectedDay, _focusedDay),
-                            calendarFormat: _calendarFormat,
-                            onDaySelected: (date, focusedDay) {
-                              setState(() {
-                                _focusedDay = date;
+                            focusedDay: calendarController.focusedDay,
+                            firstDay: calendarController.firstDay,
+                            lastDay: calendarController.lastDay,
+                            selectedDayPredicate: (selectedDay) => isSameDay(
+                                selectedDay, calendarController.focusedDay),
+                            calendarFormat: calendarController.calendarFormat,
+                            onDaySelected: (selectedDay, focusedDay) {
+                              calendarController.daySelect(
+                                  selectedDay, focusedDay);
+                              calendarController.animateToDay(selectedDay);
+                              calendarController.refreshCalendar();
+                              Navigator.of(context).pop({
+                                'selectedDay': selectedDay,
+                                'focusedDay': focusedDay
                               });
-                              Navigator.of(context).pop(_focusedDay);
                             },
                             calendarStyle: CalendarStyle(
                               selectedDecoration: const BoxDecoration(
@@ -290,6 +280,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                 );
+
+                if (result != null && result['focusedDay'] != null) {
+                  // Update the value of Tanggal
+                  calendarController.daySelect(
+                      result['selectedDay']!, result['focusedDay']!);
+                }
+                setState(() {});
               },
             ),
             const SizedBox(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:reservasi/controllers/calendar_controller.dart';
 import 'package:reservasi/models/date_reservation_model.dart';
 import 'package:reservasi/screens/home_screen.dart';
 import 'package:reservasi/controllers/reservation_controller.dart';
@@ -18,14 +19,15 @@ class _ReservationScreenState extends State<ReservationScreen> {
   late PageController pageController;
   late int current;
   late List<DateListModel> dateList;
-  late ReservationController controller;
+  late ReservationController reservationController;
+  late CalendarController calendarController;
 
   @override
   void initState() {
     super.initState();
-    controller = ReservationController();
-    DateTime selectedDate = DateTime.now();
-    dateList = DateListModel.getDateList(selectedDate);
+    reservationController = ReservationController();
+    calendarController = Get.put(CalendarController());
+    dateList = DateListModel.getDateList(calendarController);
     current = 0; // Set initial position to the middle
     pageController = PageController(initialPage: current);
   }
@@ -34,7 +36,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: GetBuilder<ReservationController>(
-        init: controller,
+        init: reservationController,
         builder: (_) {
           return SafeArea(
             child: Column(
@@ -182,21 +184,26 @@ class _ReservationScreenState extends State<ReservationScreen> {
                     child: Obx(
                       () => Row(
                         children: List.generate(
-                          controller.session.length,
+                          reservationController.session.length,
                           (index) => GestureDetector(
-                            onTap: () => controller.changeSession(index),
+                            onTap: () =>
+                                reservationController.changeSession(index),
                             child: Container(
                               margin: EdgeInsets.all(8),
                               width: 150,
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: controller.indexSession.value == index
+                                  color: reservationController
+                                              .indexSession.value ==
+                                          index
                                       ? MyTheme.primary
                                       : MyTheme.grey1,
                                 ),
-                                color: controller.indexSession.value == index
-                                    ? MyTheme.primary.withOpacity(.1)
-                                    : Colors.white,
+                                color:
+                                    reservationController.indexSession.value ==
+                                            index
+                                        ? MyTheme.primary.withOpacity(.1)
+                                        : Colors.white,
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Column(
@@ -208,7 +215,8 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                       style: GoogleFonts.poppins(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w500,
-                                        color: controller.indexSession.value ==
+                                        color: reservationController
+                                                    .indexSession.value ==
                                                 index
                                             ? MyTheme.primary
                                             : MyTheme.black,
@@ -221,7 +229,8 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                       style: GoogleFonts.poppins(
                                         fontSize: 8,
                                         fontWeight: FontWeight.w400,
-                                        color: controller.indexSession.value ==
+                                        color: reservationController
+                                                    .indexSession.value ==
                                                 index
                                             ? MyTheme.primary
                                             : MyTheme.black,
@@ -249,34 +258,40 @@ class _ReservationScreenState extends State<ReservationScreen> {
                           crossAxisSpacing: 10,
                           crossAxisCount: 7,
                         ),
-                        itemCount: controller
-                            .session[controller.indexSession.value].length,
+                        itemCount: reservationController
+                            .session[reservationController.indexSession.value]
+                            .length,
                         itemBuilder: (context, index) => GestureDetector(
-                          onTap: () => controller.selectSeat(index),
-                          onDoubleTap: () => controller.selectSeat(index),
+                          onTap: () => reservationController.selectSeat(index),
+                          onDoubleTap: () =>
+                              reservationController.selectSeat(index),
                           child: Container(
                               width: 30,
                               height: 30,
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                    color: controller.session[controller
-                                                .indexSession
-                                                .value][index]["status"] ==
-                                            "available"
-                                        ? MyTheme.primary
-                                        : controller.session[controller
+                                    color: reservationController.session[
+                                                reservationController
                                                     .indexSession
                                                     .value][index]["status"] ==
+                                            "available"
+                                        ? MyTheme.primary
+                                        : reservationController.session[
+                                                        reservationController
+                                                            .indexSession.value]
+                                                    [index]["status"] ==
                                                 "filled"
                                             ? MyTheme.grey
                                             : MyTheme.primary),
-                                color: controller.session[controller
-                                            .indexSession
-                                            .value][index]["status"] ==
+                                color: reservationController.session[
+                                            reservationController.indexSession
+                                                .value][index]["status"] ==
                                         "available"
                                     ? MyTheme.white
-                                    : controller.session[controller.indexSession
-                                                .value][index]["status"] ==
+                                    : reservationController.session[
+                                                reservationController
+                                                    .indexSession
+                                                    .value][index]["status"] ==
                                             "filled"
                                         ? MyTheme.grey
                                         : MyTheme.primary,
@@ -288,14 +303,16 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                   style: GoogleFonts.poppins(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w400,
-                                    color: controller.session[controller
-                                                .indexSession
-                                                .value][index]["status"] ==
-                                            "available"
-                                        ? MyTheme.black
-                                        : controller.session[controller
+                                    color: reservationController.session[
+                                                reservationController
                                                     .indexSession
                                                     .value][index]["status"] ==
+                                            "available"
+                                        ? MyTheme.black
+                                        : reservationController.session[
+                                                        reservationController
+                                                            .indexSession.value]
+                                                    [index]["status"] ==
                                                 "filled"
                                             ? MyTheme.black1
                                             : MyTheme.white,
@@ -384,8 +401,8 @@ class _ReservationScreenState extends State<ReservationScreen> {
     setState(() {
       current = index;
       DateTime selectedDate =
-          DateTime.now().add(Duration(days: index - current));
-      dateList = DateListModel.getDateList(selectedDate);
+          calendarController.selectedDay.add(Duration(days: index - current));
+      dateList = DateListModel.getDateList(calendarController);
     });
   }
 
