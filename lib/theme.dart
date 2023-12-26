@@ -23,6 +23,7 @@ class MyTheme {
   static const Color black = const Color(0xFF121212);
   static const Color black1 = const Color(0xFF5A5A5A);
 
-  static const Color red = const Color(0xffEB3D00);
+  static const Color red = const Color(0xffE53935);
+  static const Color green = const Color(0xff45BF55);
   // Add other colors as needed
 }

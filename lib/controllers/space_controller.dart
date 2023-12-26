@@ -7,4 +7,9 @@ class SpaceController extends GetxController {
     selectedSpace.value = spaceName;
     update();
   }
+
+  void reset() {
+    selectedSpace.value = "Ruang";
+    update();
+  }
 }

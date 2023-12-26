@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:reservasi/controllers/calendar_controller.dart';
+import 'package:reservasi/controllers/location_controller.dart';
+import 'package:reservasi/controllers/space_controller.dart';
 import 'package:reservasi/models/date_reservation_model.dart';
 import 'package:reservasi/screens/home_screen.dart';
 import 'package:reservasi/controllers/reservation_controller.dart';
@@ -9,7 +11,10 @@ import 'package:reservasi/theme.dart';
 import 'package:get/get.dart';
 
 class ReservationScreen extends StatefulWidget {
-  ReservationScreen({Key? key}) : super(key: key);
+  final VoidCallback onReservationMade;
+
+  ReservationScreen({Key? key, required this.onReservationMade})
+      : super(key: key);
 
   @override
   State<ReservationScreen> createState() => _ReservationScreenState();
@@ -21,6 +26,8 @@ class _ReservationScreenState extends State<ReservationScreen> {
   late List<DateListModel> dateList;
   late ReservationController reservationController;
   late CalendarController calendarController;
+  late SpaceController spaceController;
+  late LocationController locationController;
 
   @override
   void initState() {
@@ -30,6 +37,8 @@ class _ReservationScreenState extends State<ReservationScreen> {
     dateList = DateListModel.getDateList(calendarController);
     current = 0; // Set initial position to the middle
     pageController = PageController(initialPage: current);
+    spaceController = Get.put(SpaceController());
+    locationController = Get.put(LocationController());
   }
 
   @override
@@ -131,10 +140,13 @@ class _ReservationScreenState extends State<ReservationScreen> {
                   child: GestureDetector(
                     onTap: () {
                       // TODO: On search tap
-                      // Navigator.pop(
-                      //   context,
-                      //   MaterialPageRoute(builder: (context) => HomeScreen()),
-                      // );
+                      Navigator.pop(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                      );
+                      locationController.reset();
+                      calendarController.reset();
+                      spaceController.reset();
                     },
                     child: Container(
                       width: double.maxFinite,

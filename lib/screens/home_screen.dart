@@ -225,7 +225,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 iconData: PhosphorIconsRegular.mapPin,
                 value: locationController.selectedLocation.value,
                 onTap: () {
-                  Get.to(() => SearchScreen(showLocations: true));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SearchScreen(
+                              showLocations: true,
+                            )),
+                  );
                 }),
             const SizedBox(
               height: 16,
@@ -297,18 +303,55 @@ class _HomeScreenState extends State<HomeScreen> {
                 iconData: PhosphorIconsRegular.couch,
                 value: spaceController.selectedSpace.value,
                 onTap: () {
-                  Get.to(() => SearchScreen(showLocations: false));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SearchScreen(
+                              showLocations: false,
+                            )),
+                  );
                 }),
             const SizedBox(
               height: 16,
             ),
             GestureDetector(
-              onTap: () {
-                // TODO: On search tap
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ReservationScreen()),
-                );
+              onTap: () async {
+                if (locationController.selectedLocation.value == "Lokasi" ||
+                    spaceController.selectedSpace.value == "Ruang") {
+                  // Show Snackbar if either Lokasi or Ruang is in the default state
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                      'Silakan pilih Lokasi dan Ruang sebelum melakukan pencarian.',
+                      style: GoogleFonts.poppins(
+                          fontSize: 10, color: MyTheme.white),
+                    ),
+                    duration: const Duration(milliseconds: 1500),
+                    // Width of the SnackBar.
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 16 // Inner padding for SnackBar content.
+                        ),
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    backgroundColor: MyTheme.red,
+                  ));
+                } else {
+                  // Navigate to ReservationScreen if Lokasi and Ruang are not in default state
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ReservationScreen(
+                        onReservationMade: () {
+                          locationController.reset();
+                          calendarController.reset();
+                          spaceController.reset();
+                        },
+                      ),
+                    ),
+                  );
+                }
               },
               child: Container(
                 width: double.maxFinite,
@@ -416,8 +459,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => const OrderScreen()),
+                        MaterialPageRoute(builder: (context) => OrderScreen()),
                       );
                     },
                     child: const PhosphorIcon(

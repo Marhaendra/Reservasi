@@ -7,4 +7,9 @@ class LocationController extends GetxController {
     selectedLocation.value = locationName;
     update();
   }
+
+  void reset() {
+    selectedLocation.value = "Lokasi";
+    update();
+  }
 }

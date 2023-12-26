@@ -89,7 +89,10 @@ class _SearchScreenState extends State<SearchScreen> {
                       onTap: () {
                         String selectedSpaceName = space[index].name;
                         _spaceController.updateSpace(selectedSpaceName);
-                        Get.to(() => HomeScreen(), binding: AppBindings());
+                        Navigator.pop(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomeScreen()),
+                        );
                       },
                       child: Text(
                         space[index].name,
@@ -147,7 +150,10 @@ class _SearchScreenState extends State<SearchScreen> {
                         String selectedLocationName = location[index].name;
                         _locationController
                             .updateLocation(selectedLocationName);
-                        Get.to(() => HomeScreen(), binding: AppBindings());
+                        Navigator.pop(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomeScreen()),
+                        );
                       },
                       child: Text(
                         location[index].name,

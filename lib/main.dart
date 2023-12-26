@@ -43,7 +43,9 @@ class MyApp extends StatelessWidget {
         '/search': (context) => SearchScreen(
               showLocations: true,
             ),
-        '/reservation': (context) => ReservationScreen(),
+        '/reservation': (context) => ReservationScreen(
+              onReservationMade: () {},
+            ),
       },
     );
   }

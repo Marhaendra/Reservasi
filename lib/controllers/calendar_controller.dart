@@ -45,4 +45,9 @@ class CalendarController extends GetxController {
     // Trigger a rebuild
     update();
   }
+
+  void reset() {
+    _focusedDay = DateTime.now();
+    update();
+  }
 }
