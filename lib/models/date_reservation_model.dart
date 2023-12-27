@@ -8,11 +8,10 @@ class DateListModel {
   DateListModel({required this.shortDateFormat, required this.longDateFormat});
 
   static List<DateListModel> getDateList(
-    CalendarController calendarController, {
-    int limit = 5,
-  }) {
+      CalendarController calendarController) {
     List<DateListModel> dateList = [];
     DateTime currentDate = calendarController.selectedDay;
+    DateTime newestDate = currentDate.add(Duration(days: 1));
 
     // Set the selected date as the first date in the list
     dateList.add(DateListModel(
@@ -20,8 +19,8 @@ class DateListModel {
       longDateFormat: _formatLongDate(currentDate),
     ));
 
-    // Add dates for the next 4 days
-    for (int i = 1; i < limit; i++) {
+    // Add dates for the remaining days in the year
+    for (int i = 1; i < 365; i++) {
       currentDate = currentDate.add(Duration(days: 1));
       dateList.add(DateListModel(
         shortDateFormat: _formatShortDate(currentDate),

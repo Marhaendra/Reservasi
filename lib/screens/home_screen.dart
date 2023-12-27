@@ -254,7 +254,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 HeaderStyle(formatButtonVisible: false),
                             availableGestures: AvailableGestures.all,
                             focusedDay: calendarController.focusedDay,
-                            firstDay: calendarController.firstDay,
+                            firstDay: DateTime.now(),
                             lastDay: calendarController.lastDay,
                             selectedDayPredicate: (selectedDay) => isSameDay(
                                 selectedDay, calendarController.focusedDay),

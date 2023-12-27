@@ -13,6 +13,7 @@ class CalendarController extends GetxController {
   DateTime _lastDay = DateTime(2033, 12, 31);
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateFormat _dateFormat = DateFormat('dd MMMM yyyy', 'en_US');
+  DateTime _now = DateTime.now();
 
   DateTime get focusedDay => _focusedDay;
   DateTime get firstDay => _firstDay;
@@ -32,7 +33,7 @@ class CalendarController extends GetxController {
     update();
 
     print("After update - Focused Day: $_focusedDay");
-    print("After update - Selected Day: $selectedDay");
+    print("$selectedDay");
   }
 
   void animateToDay(DateTime day) {

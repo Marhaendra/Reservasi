@@ -23,11 +23,15 @@ class ReservationScreen extends StatefulWidget {
 class _ReservationScreenState extends State<ReservationScreen> {
   late PageController pageController;
   late int current;
+  late int itemCount;
+  late int maxItemCount;
   late List<DateListModel> dateList;
   late ReservationController reservationController;
   late CalendarController calendarController;
   late SpaceController spaceController;
   late LocationController locationController;
+
+  bool isSeatSelected = false;
 
   @override
   void initState() {
@@ -36,6 +40,8 @@ class _ReservationScreenState extends State<ReservationScreen> {
     calendarController = Get.put(CalendarController());
     dateList = DateListModel.getDateList(calendarController);
     current = 0; // Set initial position to the middle
+    itemCount = 5;
+    maxItemCount = 9;
     pageController = PageController(initialPage: current);
     spaceController = Get.put(SpaceController());
     locationController = Get.put(LocationController());
@@ -134,11 +140,12 @@ class _ReservationScreenState extends State<ReservationScreen> {
               ),
               seat(),
               Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  height: 60,
-                  child: GestureDetector(
-                    onTap: () {
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                height: 60,
+                child: GestureDetector(
+                  onTap: () {
+                    if (isSeatSelected) {
                       // TODO: On search tap
                       Navigator.pop(
                         context,
@@ -147,27 +154,53 @@ class _ReservationScreenState extends State<ReservationScreen> {
                       locationController.reset();
                       calendarController.reset();
                       spaceController.reset();
-                    },
-                    child: Container(
-                      width: double.maxFinite,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 10.5),
-                      decoration: BoxDecoration(
-                        color: MyTheme.primary.withOpacity(.1),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Center(
-                        child: Text(
-                          "Pesan",
+                    } else {
+                      // Show a Snackbar indicating that no seat is selected
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(
+                          'Silakan pilih setidaknya satu kursi.',
                           style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                            color: MyTheme.primary,
-                          ),
+                              fontSize: 10, color: MyTheme.white),
+                        ),
+                        duration: const Duration(milliseconds: 1500),
+                        // Width of the SnackBar.
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 16 // Inner padding for SnackBar content.
+                            ),
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        backgroundColor: MyTheme.red,
+                      ));
+                    }
+                  },
+                  child: Container(
+                    width: double.maxFinite,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 10.5),
+                    decoration: BoxDecoration(
+                      color: isSeatSelected
+                          ? MyTheme.primary.withOpacity(.1)
+                          : MyTheme.primary.withOpacity(.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Pesan",
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12,
+                          color: isSeatSelected
+                              ? MyTheme.primary
+                              : MyTheme.primary,
                         ),
                       ),
                     ),
-                  )),
+                  ),
+                ),
+              ),
             ],
           );
         },
@@ -176,6 +209,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
   }
 
   Expanded seat() {
+    isSeatSelected = reservationController.isSeatSelected();
     return Expanded(
         child: Container(
       decoration: const BoxDecoration(
@@ -274,7 +308,10 @@ class _ReservationScreenState extends State<ReservationScreen> {
                             .session[reservationController.indexSession.value]
                             .length,
                         itemBuilder: (context, index) => GestureDetector(
-                          onTap: () => reservationController.selectSeat(index),
+                          onTap: () {
+                            reservationController.selectSeat(index);
+                            _updateSeat();
+                          },
                           onDoubleTap: () =>
                               reservationController.selectSeat(index),
                           child: Container(
@@ -350,7 +387,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
       height: 45,
       child: ListView.builder(
         physics: const BouncingScrollPhysics(),
-        itemCount: dateList.length,
+        itemCount: itemCount,
         scrollDirection: Axis.horizontal,
         itemBuilder: (ctx, index) {
           return Column(
@@ -409,12 +446,16 @@ class _ReservationScreenState extends State<ReservationScreen> {
     );
   }
 
+  void _updateSeat() {
+    setState(() {});
+  }
+
   void _updateDateList(int index) {
     setState(() {
       current = index;
-      DateTime selectedDate =
-          calendarController.selectedDay.add(Duration(days: index - current));
-      dateList = DateListModel.getDateList(calendarController);
+      if (itemCount < maxItemCount) {
+        itemCount += 1;
+      }
     });
   }
 

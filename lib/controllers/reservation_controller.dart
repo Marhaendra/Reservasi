@@ -9,6 +9,7 @@ class ReservationController extends GetxController {
       element.forEach((element) {
         if (element["status"] != "filled") {
           element.update("status", (value) => "available");
+          element.update("isSelected", (value) => false);
         }
       });
     });
@@ -21,24 +22,26 @@ class ReservationController extends GetxController {
   }
 
   void selectSeat(int indexSeatSelected) {
-    if (session[indexSession.value][indexSeatSelected]["status"] ==
-        "selected") {
+    final seat = session[indexSession.value][indexSeatSelected];
+
+    if (seat["status"] == "selected") {
       // Deselect the seat on double tap
-      session[indexSession.value][indexSeatSelected]
-          .update("status", (value) => "available");
-      selectedSeats.remove(
-          session[indexSession.value][indexSeatSelected]["id"] as String);
-    } else if (session[indexSession.value][indexSeatSelected]["status"] ==
-            "available" &&
-        selectedSeats.length < 4) {
+      seat.update("status", (value) => "available");
+      seat.update("isSelected", (value) => false);
+      selectedSeats.remove(seat["id"] as String);
+    } else if (seat["status"] == "available" && selectedSeats.length < 4) {
       // Select the seat if it's available and not already selected
-      session[indexSession.value][indexSeatSelected]
-          .update("status", (value) => "selected");
-      selectedSeats
-          .add(session[indexSession.value][indexSeatSelected]["id"] as String);
+      seat.update("status", (value) => "selected");
+      seat.update("isSelected", (value) => true);
+      selectedSeats.add(seat["id"] as String);
     }
     session.refresh();
-    print(session[indexSession.value][indexSeatSelected]);
+    print(
+        "Session ${indexSession.value + 1}, Seat ${indexSeatSelected + 1}: $seat");
+  }
+
+  bool isSeatSelected() {
+    return selectedSeats.isNotEmpty;
   }
 
   var session = List.generate(
@@ -46,39 +49,18 @@ class ReservationController extends GetxController {
     (indexSession) => List<Map<String, dynamic>>.generate(
       75,
       (indexSeat) {
-        if (indexSession == 0) {
-          // session ke 1
-          if (indexSeat >= 24 && indexSeat <= 26 ||
-              indexSeat >= 40 && indexSeat <= 44) {
-            return {
-              "id": "ID-${indexSession + 1}-${indexSeat + 1}",
-              "status": "filled",
-            };
-          } else {
-            return {
-              "id": "ID-${indexSession + 1}-${indexSeat + 1}",
-              "status": "available",
-            };
-          }
-        } else if (indexSession == 1) {
-          // session ke 2
-          if (indexSeat >= 5 && indexSeat <= 35) {
-            return {
-              "id": "ID-${indexSession + 1}-${indexSeat + 1}",
-              "status": "filled",
-            };
-          } else {
-            return {
-              "id": "ID-${indexSession + 1}-${indexSeat + 1}",
-              "status": "available",
-            };
-          }
-        } else {
-          return {
-            "id": "ID-${indexSession + 1}-${indexSeat + 1}",
-            "status": "available",
-          };
-        }
+        final isFilled = indexSession == 0
+            ? (indexSeat >= 24 && indexSeat <= 26) ||
+                (indexSeat >= 40 && indexSeat <= 44)
+            : indexSession == 1
+                ? (indexSeat >= 5 && indexSeat <= 35)
+                : false;
+
+        return {
+          "id": "ID-${indexSession + 1}-${indexSeat + 1}",
+          "status": isFilled ? "filled" : "available",
+          "isSelected": false,
+        };
       },
     ),
   ).obs;
