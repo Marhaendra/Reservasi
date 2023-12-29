@@ -11,6 +11,11 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: _header(context),
+        backgroundColor: MyTheme.primary,
+        automaticallyImplyLeading: false,
+      ),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -18,16 +23,18 @@ class ProfileScreen extends StatelessWidget {
             // Use a Stack to overlay the text on top of the image
             Stack(
               children: [
-                Container(
-                  alignment: Alignment.topCenter,
-                  height: 261,
-                  width: 636,
-                  child: Image.asset(
-                    "assets/images/bg.png",
-                    fit: BoxFit.fill,
+                Positioned(
+                  left: MediaQuery.of(context).size.width / 2 - 636 / 2,
+                  top: -49,
+                  child: Container(
+                    width: 636,
+                    height: 261,
+                    decoration: const ShapeDecoration(
+                      color: MyTheme.primary,
+                      shape: OvalBorder(),
+                    ),
                   ),
                 ),
-                _header(context),
                 main(context),
               ],
             ),
@@ -39,7 +46,7 @@ class ProfileScreen extends StatelessWidget {
 
   Widget main(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 16, left: 16, top: 126),
+      padding: const EdgeInsets.only(right: 16, left: 16, top: 70),
       child: Column(
         children: [
           profileButton(context),
@@ -197,7 +204,7 @@ class ProfileScreen extends StatelessWidget {
 
   Padding _header(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 60),
+      padding: const EdgeInsets.only(top: 30),
       child: Row(
         children: [
           GestureDetector(
@@ -205,24 +212,21 @@ class ProfileScreen extends StatelessWidget {
               print("Icon and text tapped");
               Navigator.pop(context);
             },
-            child: Padding(
-              padding: const EdgeInsets.only(left: 16),
-              child: Row(
-                children: [
-                  const PhosphorIcon(
-                    PhosphorIconsRegular.caretLeft,
+            child: Row(
+              children: [
+                const PhosphorIcon(
+                  PhosphorIconsRegular.caretLeft,
+                  color: MyTheme.white,
+                ),
+                Text(
+                  'Profil',
+                  style: GoogleFonts.poppins(
+                    fontSize: 24,
                     color: MyTheme.white,
+                    fontWeight: FontWeight.w700,
                   ),
-                  Text(
-                    'Profil',
-                    style: GoogleFonts.poppins(
-                      fontSize: 24,
-                      color: MyTheme.white,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
           const Spacer(),

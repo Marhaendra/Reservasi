@@ -9,33 +9,18 @@ class EditProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: _header(),
+        automaticallyImplyLeading: false,
+      ),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(
-              height: 60,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    'Edit Profil',
-                    style: GoogleFonts.poppins(
-                      fontSize: 24,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                )
-              ],
-            ),
             Column(
               children: [
                 const SizedBox(
-                  height: 32,
+                  height: 48,
                 ),
                 _name(),
                 const SizedBox(
@@ -51,6 +36,25 @@ class EditProfileScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Column _header() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 30),
+          child: Text(
+            'Edit Profil',
+            style: GoogleFonts.poppins(
+              fontSize: 24,
+              color: Colors.black,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        )
+      ],
     );
   }
 

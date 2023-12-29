@@ -40,6 +40,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     _tableCalendarKey;
     return Scaffold(
+      appBar: AppBar(
+        title: _header(context),
+        backgroundColor: MyTheme.primary,
+        automaticallyImplyLeading: false,
+      ),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -47,13 +52,16 @@ class _HomeScreenState extends State<HomeScreen> {
             // Use a Stack to overlay the text on top of the image
             Stack(
               children: [
-                Container(
-                  alignment: Alignment.topCenter,
-                  height: 261,
-                  width: 636,
-                  child: Image.asset(
-                    "assets/images/bg.png",
-                    fit: BoxFit.fill,
+                Positioned(
+                  left: MediaQuery.of(context).size.width / 2 - 636 / 2,
+                  top: -49,
+                  child: Container(
+                    width: 636,
+                    height: 261,
+                    decoration: const ShapeDecoration(
+                      color: MyTheme.primary,
+                      shape: OvalBorder(),
+                    ),
                   ),
                 ),
                 main(context, spaceController, locationController),
@@ -72,7 +80,6 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _header(context),
           const SizedBox(
             height: 38,
           ),
@@ -433,7 +440,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Padding _header(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 60), // Adjust the top padding
+      padding: const EdgeInsets.only(top: 30), // Adjust the top padding
       child: Row(
         children: [
           Padding(

@@ -50,13 +50,21 @@ class _ReservationScreenState extends State<ReservationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: _header(context),
+        backgroundColor: MyTheme.primary,
+        automaticallyImplyLeading: false,
+      ),
       body: GetBuilder<ReservationController>(
         init: reservationController,
         builder: (_) {
           return SafeArea(
             child: Column(
               children: [
-                _header(context),
+                Container(
+                  height: 28,
+                  color: MyTheme.primary,
+                ),
                 tabBarReservation(),
                 contentReservation(),
               ],
@@ -470,28 +478,22 @@ class _ReservationScreenState extends State<ReservationScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 60),
+              padding: const EdgeInsets.only(top: 30),
               child: Row(
                 children: [
                   // Padding for the Ticket icon
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      right: 8,
-                      left: 16,
-                    ),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.pop(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const HomeScreen()),
-                        );
-                      },
-                      child: const PhosphorIcon(
-                        PhosphorIconsRegular.caretLeft,
-                        color: MyTheme.white,
-                        size: 24,
-                      ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const HomeScreen()),
+                      );
+                    },
+                    child: const PhosphorIcon(
+                      PhosphorIconsRegular.caretLeft,
+                      color: MyTheme.white,
+                      size: 24,
                     ),
                   ),
                   // Padding for the User icon

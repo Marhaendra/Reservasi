@@ -8,33 +8,17 @@ class HelpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: _header(),
+        automaticallyImplyLeading: false,
+      ),
       body: SafeArea(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(
-              height: 60,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    'Bantuan',
-                    style: GoogleFonts.poppins(
-                      fontSize: 24,
-                      color: MyTheme.black,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                )
-              ],
-            ),
             Column(
               children: [
                 const SizedBox(
-                  height: 32,
+                  height: 48,
                 ),
                 AccordionFAQ()
               ],
@@ -45,16 +29,35 @@ class HelpScreen extends StatelessWidget {
     );
   }
 
+  Column _header() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 30),
+          child: Text(
+            'Bantuan',
+            style: GoogleFonts.poppins(
+              fontSize: 24,
+              color: MyTheme.black,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
   Padding faq(BuildContext context) {
     return Padding(
       padding: EdgeInsets.zero,
       child: SizedBox(
-        width: 330,
+        width: 380,
         height: 606,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(
               width: double.infinity,
@@ -162,9 +165,9 @@ class _AccordionFAQState extends State<AccordionFAQ> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.zero,
+      padding: EdgeInsets.symmetric(horizontal: 16),
       child: Container(
-        width: 330,
+        width: 460,
         height: 606,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -194,7 +197,7 @@ class _AccordionFAQState extends State<AccordionFAQ> {
             ),
             const SizedBox(height: 16),
             Container(
-              width: 330,
+              width: 420,
               child: Column(
                 children: [
                   for (int i = 0; i < faqItems.length; i++)
