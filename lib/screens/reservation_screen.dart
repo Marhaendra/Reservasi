@@ -159,6 +159,9 @@ class _ReservationScreenState extends State<ReservationScreen> {
                         context,
                         MaterialPageRoute(builder: (context) => HomeScreen()),
                       );
+                      reservationController
+                          .orderDate(dateList[current].longDateFormat);
+                      reservationController.orderSeat();
                       locationController.reset();
                       calendarController.reset();
                       spaceController.reset();

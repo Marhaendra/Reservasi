@@ -11,7 +11,6 @@ class DateListModel {
       CalendarController calendarController) {
     List<DateListModel> dateList = [];
     DateTime currentDate = calendarController.selectedDay;
-    DateTime newestDate = currentDate.add(Duration(days: 1));
 
     // Set the selected date as the first date in the list
     dateList.add(DateListModel(

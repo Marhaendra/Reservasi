@@ -3,9 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:reservasi/models/date_reservation_model.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarController extends GetxController {
+  late List<DateListModel> dateList;
   final ValueNotifier<DateTime> selectedDateNotifier =
       ValueNotifier(DateTime.now());
   DateTime _focusedDay = DateTime.now();

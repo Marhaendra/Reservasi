@@ -47,7 +47,7 @@ class OrderScreen extends StatelessWidget {
       padding: const EdgeInsets.only(right: 16, left: 16, top: 70),
       child: Column(
         children: [
-          orderCard(),
+          orderCardBlank(),
           const SizedBox(
             height: 24,
           ),
@@ -145,99 +145,98 @@ class OrderScreen extends StatelessWidget {
     );
   }
 
-  Widget buildNumberContainer(String number) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 6, top: 8, bottom: 20),
-      child: Column(
-        children: [
-          Container(
-            width: 20,
-            height: 20,
-            decoration: BoxDecoration(
-              color: primary,
-              borderRadius: BorderRadius.circular(4),
+  Container orderCardBlank() {
+    return Container(
+      child: Container(
+        height: 160,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: white,
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x19000000),
+                blurRadius: 10,
+                offset: Offset(0, 0),
+                spreadRadius: 0,
+              )
+            ]),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 28),
+              child: Text("Tidak ada pesanan hari ini",
+                  style: GoogleFonts.poppins(
+                      fontSize: 12, fontWeight: FontWeight.w700)),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  number,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: MyTheme.white,
-                    fontSize: 12,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w400,
-                    height: 0.14,
+            Padding(
+              padding: EdgeInsets.zero,
+              child: Row(
+                children: [
+                  // Adds a flexible space between the two containers
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10.5),
+                      decoration: BoxDecoration(
+                        color: primary.withOpacity(.1),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Pesan Sekarang",
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                            color: primary,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Container orderCard() {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: white,
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x19000000),
-              blurRadius: 10,
-              offset: Offset(0, 0),
-              spreadRadius: 0,
-            )
-          ]),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Container(
-                  child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Lab. Techno",
-                    style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12,
-                        color: black),
-                  ),
-                  Text(
-                    "24 Desember",
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 12,
-                      color: gray,
-                    ),
-                  ),
-                ],
-              )),
-              const Spacer(),
-              Container(
-                child: Row(
+      child: Container(
+        height: 160,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: white,
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x19000000),
+                blurRadius: 10,
+                offset: Offset(0, 0),
+                spreadRadius: 0,
+              )
+            ]),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Container(
+                    child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Sesi 1",
+                      "Lab. Techno",
                       style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12,
-                        color: black,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 4,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12,
+                          color: black),
                     ),
                     Text(
-                      "08.00-11.00",
+                      "24 Desember",
                       style: GoogleFonts.poppins(
                         fontWeight: FontWeight.w400,
                         fontSize: 12,
@@ -245,67 +244,99 @@ class OrderScreen extends StatelessWidget {
                       ),
                     ),
                   ],
-                ),
-              )
-            ],
-          ),
-          Row(
-            children: [
-              buildNumberContainer('4'),
-              buildNumberContainer('4'),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 10.5),
-                    decoration: BoxDecoration(
-                      color: red.withOpacity(.1),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "Cancel",
-                        style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12,
-                          color: red,
+                )),
+                const Spacer(),
+                Container(
+                  child: Column(children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Sesi 1",
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                            color: black,
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                    width:
-                        8), // Adds a flexible space between the two containers
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 10.5),
-                    decoration: BoxDecoration(
-                      color: primary.withOpacity(.1),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "Check In",
-                        style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12,
-                          color: primary,
+                        const SizedBox(
+                          width: 4,
                         ),
-                      ),
+                        Text(
+                          "08.00-11.00",
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 12,
+                            color: gray,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ),
+                  ]),
+                )
               ],
             ),
-          ),
-        ],
+            const SizedBox(
+              height: 8,
+            ),
+            Row(
+              children: generateContainersWithPadding(['4', '6', '7'], 8),
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            Padding(
+              padding: EdgeInsets.zero,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10.5),
+                      decoration: BoxDecoration(
+                        color: red.withOpacity(.1),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Cancel",
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                            color: red,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                      width:
+                          8), // Adds a flexible space between the two containers
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10.5),
+                      decoration: BoxDecoration(
+                        color: primary.withOpacity(.1),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Check In",
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                            color: primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
