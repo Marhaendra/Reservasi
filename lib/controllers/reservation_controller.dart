@@ -2,9 +2,17 @@ import 'package:get/get.dart';
 
 class ReservationController extends GetxController {
   var indexSession = 0.obs;
-  var selectedSeats = <String>[].obs; // List to store selected seat IDs
+  var selectedSeats = <String>[].obs;
   var reservedSeat = <String>[].obs;
   var reservedDate = "".obs;
+  var reservedSeatDate = <String>[].obs;
+
+  void ordered() {
+    List<String> combinedList = [...reservedSeat, reservedDate.value];
+    reservedSeatDate.addAll(combinedList);
+
+    print("ordered: $reservedSeatDate");
+  }
 
   void orderDate(String date) {
     reservedDate.value = date;
@@ -60,18 +68,18 @@ class ReservationController extends GetxController {
     // Print the selected seats for confirmation (you can remove this line if not needed)
     print("Reserved Seats: $reservedSeat");
 
-    print("Selected Date: $reservedDate");
+    print("Reserved Date: $reservedDate");
 
     // Clear the selected seats list
-    selectedSeats.clear();
+    // selectedSeats.clear();
 
     // Refresh the session
-    session.refresh();
+    // session.refresh();
   }
 
-  void clearReservedSeats() {
+  void clearReservedSeatsAndDate() {
     reservedSeat.clear();
-    print("Reserved Seats: $reservedSeat");
+    reservedDate.value = "";
   }
 
   bool isSeatSelected() {

@@ -1,10 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:reservasi/controllers/reservation_controller.dart';
 import 'package:reservasi/theme.dart';
 
-class OrderScreen extends StatelessWidget {
+class OrderScreen extends StatefulWidget {
   const OrderScreen({Key? key});
+  @override
+  _OrderScreenState createState() => _OrderScreenState();
+}
+
+class _OrderScreenState extends State<OrderScreen> {
+  late ReservationController reservationController;
+
+  @override
+  void initState() {
+    super.initState();
+    reservationController = Get.put(ReservationController());
+  }
+
+  Widget _getReserved() {
+    return reservationController.reservedSeatDate.isEmpty
+        ? orderCardBlank()
+        : orderCard();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,14 +65,16 @@ class OrderScreen extends StatelessWidget {
   Widget main() {
     return Padding(
       padding: const EdgeInsets.only(right: 16, left: 16, top: 70),
-      child: Column(
-        children: [
-          orderCardBlank(),
-          const SizedBox(
-            height: 24,
-          ),
-          history()
-        ],
+      child: Obx(
+        () => Column(
+          children: [
+            _getReserved(),
+            const SizedBox(
+              height: 24,
+            ),
+            history()
+          ],
+        ),
       ),
     );
   }
@@ -174,22 +196,26 @@ class OrderScreen extends StatelessWidget {
               padding: EdgeInsets.zero,
               child: Row(
                 children: [
-                  // Adds a flexible space between the two containers
                   Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 10.5),
-                      decoration: BoxDecoration(
-                        color: primary.withOpacity(.1),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Center(
-                        child: Text(
-                          "Pesan Sekarang",
-                          style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                            color: primary,
+                    child: GestureDetector(
+                      onTap: () {
+                        print(reservationController.reservedSeatDate);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 10.5),
+                        decoration: BoxDecoration(
+                          color: primary.withOpacity(.1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Pesan Sekarang",
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 12,
+                              color: primary,
+                            ),
                           ),
                         ),
                       ),
@@ -221,6 +247,7 @@ class OrderScreen extends StatelessWidget {
               )
             ]),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
               children: [
@@ -276,16 +303,10 @@ class OrderScreen extends StatelessWidget {
                 )
               ],
             ),
-            const SizedBox(
-              height: 8,
-            ),
             Row(
               children: generateContainersWithPadding(['4', '6', '7'], 8),
             ),
-            const SizedBox(
-              height: 16,
-            ),
-            Padding(
+            Container(
               padding: EdgeInsets.zero,
               child: Row(
                 children: [

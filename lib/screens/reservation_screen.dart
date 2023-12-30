@@ -36,7 +36,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
   @override
   void initState() {
     super.initState();
-    reservationController = ReservationController();
+    reservationController = Get.put(ReservationController());
     calendarController = Get.put(CalendarController());
     dateList = DateListModel.getDateList(calendarController);
     current = 0; // Set initial position to the middle
@@ -162,9 +162,12 @@ class _ReservationScreenState extends State<ReservationScreen> {
                       reservationController
                           .orderDate(dateList[current].longDateFormat);
                       reservationController.orderSeat();
+                      reservationController.ordered();
                       locationController.reset();
                       calendarController.reset();
                       spaceController.reset();
+                      reservationController.reset();
+                      reservationController.clearReservedSeatsAndDate();
                     } else {
                       // Show a Snackbar indicating that no seat is selected
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(

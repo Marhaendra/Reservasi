@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:reservasi/controllers/calendar_controller.dart';
 import 'package:reservasi/controllers/location_controller.dart';
+import 'package:reservasi/controllers/reservation_controller.dart';
 import 'package:reservasi/controllers/space_controller.dart';
 import 'package:reservasi/screens/order_screen.dart';
 import 'package:reservasi/screens/profile_screen.dart';
@@ -24,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late SpaceController spaceController;
   late LocationController locationController;
   late CalendarController calendarController;
+  late ReservationController reservationController;
 
   final GlobalKey _tableCalendarKey = GlobalKey();
 
@@ -34,6 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
     spaceController = Get.put(SpaceController());
     locationController = Get.put(LocationController());
     calendarController = Get.put(CalendarController());
+    reservationController = Get.put(ReservationController());
   }
 
   @override
@@ -120,19 +123,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 )
               ]),
           child: Column(children: [
-            const Row(
+            Row(
               children: [
-                Text('Lab. Techno',
-                    style: TextStyle(
+                inputLastBooked(
+                    value: 'Lab. Techno',
+                    tStyle: const TextStyle(
                       color: MyTheme.black,
                       fontSize: 12,
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w400,
                     )),
-                Spacer(),
-                Text('10 Desember 2023',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
+                const Spacer(),
+                inputLastBooked(
+                    value: '10 Desember 2023',
+                    tStyle: const TextStyle(
                       color: Color(0xFF8A8A8A),
                       fontSize: 12,
                       fontFamily: 'Poppins',
@@ -181,6 +185,10 @@ class _HomeScreenState extends State<HomeScreen> {
             GestureDetector(
               onTap: () {
                 // TODO: On search tap
+                print(reservationController.selectedSeats);
+                print(reservationController.reservedSeat);
+                print(reservationController.reservedDate);
+                print(reservationController.reservedSeatDate);
               },
               child: Container(
                 width: double.maxFinite,
@@ -227,7 +235,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         child: Column(
           children: [
-            input(
+            inputSearchBox(
                 placeholder: "Lokasi",
                 iconData: PhosphorIconsRegular.mapPin,
                 value: locationController.selectedLocation.value,
@@ -243,7 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(
               height: 16,
             ),
-            input(
+            inputSearchBox(
               placeholder: "Tanggal",
               iconData: PhosphorIconsRegular.calendar,
               value: calendarController.dateFormat
@@ -305,7 +313,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(
               height: 16,
             ),
-            input(
+            inputSearchBox(
                 placeholder: "Ruang",
                 iconData: PhosphorIconsRegular.couch,
                 value: spaceController.selectedSpace.value,
@@ -386,7 +394,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget input({
+  Widget inputLastBooked({required String value, required TextStyle tStyle}) {
+    return Text(value, style: tStyle);
+  }
+
+  Widget inputSearchBox({
     required String placeholder,
     required IconData iconData,
     required String value,
