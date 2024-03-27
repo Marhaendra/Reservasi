@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
           ),
       home: LandingScreen(),
       debugShowCheckedModeBanner:
-          false, // Set this to false to remove the debug banner
+          true, // Set this to false to remove the debug banner
       routes: {
         '/landing': (context) => LandingScreen(),
         '/login': (context) => LoginScreen(),

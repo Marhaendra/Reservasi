@@ -6,7 +6,7 @@ class LoginController extends GetxController {
   final ApiService _apiService = Get.find<ApiService>();
 
   var loginUser = RxList<LoginModel?>();
-  var tokenlog = "token";
+  var token = ''.obs; // Observable variable to hold the token
 
   Future<void> postLogin({
     required String email,
@@ -21,12 +21,11 @@ class LoginController extends GetxController {
       final response = await _apiService.login(body);
       loginUser.add(response);
 
-      final token = response.token;
-      tokenlog = token;
-      print('Token: $token');
-      print("$tokenlog");
+      // Access the token directly from the LoginModel object
+      token.value = response.token;
     } catch (e) {
       // Handle error
+      print('Error: $e');
     }
   }
 }

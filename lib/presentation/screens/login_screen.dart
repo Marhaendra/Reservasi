@@ -80,11 +80,8 @@ class LoginScreen extends StatelessWidget {
               String password = _passwordText.text;
 
               // Call postRegister method from the controller with the input values
-              loginController.postLogin(
-                email: email,
-                password: password,
-              );
-              print(loginController.tokenlog);
+              loginController.postLogin(email: email, password: password);
+              print(loginController.token.toString());
 
               // Navigator.pushReplacement(
               //   context,

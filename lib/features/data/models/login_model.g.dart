@@ -7,18 +7,26 @@ part of 'login_model.dart';
 // **************************************************************************
 
 LoginModel _$LoginModelFromJson(Map<String, dynamic> json) => LoginModel(
-      id: json['id'] as String,
-      nama: json['nama'] as String,
-      email: json['email'] as String,
-      password: json['password'] as String,
       token: json['token'] as String,
+      userData: (json['userData'] as List<dynamic>)
+          .map((e) => UserData.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$LoginModelToJson(LoginModel instance) =>
     <String, dynamic>{
-      'id': instance.id,
-      'nama': instance.nama,
-      'email': instance.email,
-      'password': instance.password,
       'token': instance.token,
+      'userData': instance.userData,
+    };
+
+UserData _$UserDataFromJson(Map<String, dynamic> json) => UserData(
+      id: json['id'] as int,
+      role: json['role'] as String,
+      nama: json['nama'] as String,
+    );
+
+Map<String, dynamic> _$UserDataToJson(UserData instance) => <String, dynamic>{
+      'id': instance.id,
+      'role': instance.role,
+      'nama': instance.nama,
     };
