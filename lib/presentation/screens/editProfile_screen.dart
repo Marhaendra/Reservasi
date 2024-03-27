@@ -1,52 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
-import 'package:reservasi/screens/home_screen.dart';
+import 'package:reservasi/presentation/screens/profile_screen.dart';
 import 'package:reservasi/theme.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({Key? key});
+class EditProfileScreen extends StatelessWidget {
+  const EditProfileScreen({Key? key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: _header(),
+        automaticallyImplyLeading: false,
+      ),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(
-              height: 60,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    'Masuk',
-                    style: GoogleFonts.poppins(
-                      fontSize: 24,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                )
-              ],
-            ),
             Column(
               children: [
                 const SizedBox(
-                  height: 32,
+                  height: 48,
                 ),
-                _email(),
+                _name(),
                 const SizedBox(
                   height: 16,
                 ),
-                PasswordField(),
+                _email(),
                 const SizedBox(
                   height: 32,
                 ),
-                _signIn(context)
+                _signUp(context)
               ],
             ),
           ],
@@ -55,7 +39,26 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Padding _signIn(BuildContext context) {
+  Column _header() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 30),
+          child: Text(
+            'Edit Profil',
+            style: GoogleFonts.poppins(
+              fontSize: 24,
+              color: Colors.black,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Padding _signUp(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -64,20 +67,21 @@ class LoginScreen extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () {
-              Navigator.pushReplacement(
+              // Navigate to Login screen and remove all routes until the '/landing' route
+              Navigator.pop(
                 context,
-                MaterialPageRoute(builder: (context) => const HomeScreen()),
+                MaterialPageRoute(builder: (context) => ProfileScreen()),
               );
             },
             child: Container(
               height: 40,
               decoration: BoxDecoration(
                 color: const Color(0xFF6497F5).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(6),
+                borderRadius: BorderRadius.circular(4),
               ),
               child: Center(
                 child: Text(
-                  'Masuk',
+                  'Simpan',
                   style: GoogleFonts.poppins(fontSize: 14, color: primary),
                 ),
               ),
@@ -95,7 +99,7 @@ class LoginScreen extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
       decoration: BoxDecoration(
           color: const Color(0xFFF6F6F6),
-          borderRadius: BorderRadius.circular(12)),
+          borderRadius: BorderRadius.circular(6)),
       child: TextFormField(
         decoration: InputDecoration(
           border: InputBorder.none,
@@ -109,57 +113,26 @@ class LoginScreen extends StatelessWidget {
       ),
     );
   }
-}
 
-class PasswordField extends StatefulWidget {
-  @override
-  _PasswordFieldState createState() => _PasswordFieldState();
-}
-
-class _PasswordFieldState extends State<PasswordField> {
-  bool _obscureText = true;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _name() {
     return Container(
       height: 48,
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF6F6F6),
-        borderRadius: BorderRadius.circular(12),
-      ),
+          color: const Color(0xFFF6F6F6),
+          borderRadius: BorderRadius.circular(6)),
       child: TextFormField(
-        obscureText: _obscureText,
         decoration: InputDecoration(
           border: InputBorder.none,
-          hintText: "Masukkan kata sandi",
-          hintStyle: const TextStyle(
+          hintText: "Nama Lengkap",
+          hintStyle: GoogleFonts.poppins(
             fontSize: 14,
             fontWeight: FontWeight.w400,
-            color: Color(0xFF8A8A8A),
-          ),
-          suffixIcon: GestureDetector(
-            onTap: () {
-              setState(() {
-                _obscureText = !_obscureText;
-              });
-            },
-            child: PhosphorIcon(
-              _obscureText
-                  ? PhosphorIconsRegular.eye
-                  : PhosphorIconsRegular.eyeSlash,
-              color: const Color(0XFF8A8A8A),
-            ),
+            color: const Color(0xFF8A8A8A),
           ),
         ),
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: LoginScreen(),
-  ));
 }

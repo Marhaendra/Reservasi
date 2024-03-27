@@ -3,14 +3,14 @@ import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import 'package:reservasi/controllers/calendar_controller.dart';
-import 'package:reservasi/controllers/location_controller.dart';
-import 'package:reservasi/controllers/reservation_controller.dart';
-import 'package:reservasi/controllers/space_controller.dart';
-import 'package:reservasi/screens/order_screen.dart';
-import 'package:reservasi/screens/profile_screen.dart';
-import 'package:reservasi/screens/reservation_screen.dart';
-import 'package:reservasi/screens/search_screen.dart';
+import 'package:reservasi/presentation/controllers/calendar_controller.dart';
+import 'package:reservasi/presentation/controllers/location_controller.dart';
+import 'package:reservasi/presentation/controllers/reservation_controller.dart';
+import 'package:reservasi/presentation/controllers/space_controller.dart';
+import 'package:reservasi/presentation/screens/order_screen.dart';
+import 'package:reservasi/presentation/screens/profile_screen.dart';
+import 'package:reservasi/presentation/screens/reservation_screen.dart';
+import 'package:reservasi/presentation/screens/search_screen.dart';
 import 'package:reservasi/theme.dart';
 import 'package:get/get.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -22,21 +22,17 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late SpaceController spaceController;
-  late LocationController locationController;
-  late CalendarController calendarController;
-  late ReservationController reservationController;
+  SpaceController spaceController = Get.find<SpaceController>();
+  LocationController locationController = Get.find<LocationController>();
+  CalendarController calendarController = Get.find<CalendarController>();
+  ReservationController reservationController =
+      Get.find<ReservationController>();
 
   final GlobalKey _tableCalendarKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    // Initialize controllers in the initState method
-    spaceController = Get.put(SpaceController());
-    locationController = Get.put(LocationController());
-    calendarController = Get.put(CalendarController());
-    reservationController = Get.put(ReservationController());
   }
 
   @override
@@ -189,6 +185,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 print(reservationController.reservedSeat);
                 print(reservationController.reservedDate);
                 print(reservationController.reservedSeatDate);
+                print(calendarController.dateList);
+                print(calendarController.nowDay);
               },
               child: Container(
                 width: double.maxFinite,
@@ -243,9 +241,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => SearchScreen(
-                              showLocations: true,
-                            )),
+                      builder: (context) => SearchScreen(
+                        showLocations: true,
+                      ),
+                    ),
                   );
                 }),
             const SizedBox(
@@ -279,6 +278,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   selectedDay, focusedDay);
                               calendarController.animateToDay(selectedDay);
                               calendarController.refreshCalendar();
+                              calendarController.tabDateList();
                               Navigator.of(context).pop({
                                 'selectedDay': selectedDay,
                                 'focusedDay': focusedDay
@@ -359,9 +359,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     MaterialPageRoute(
                       builder: (context) => ReservationScreen(
                         onReservationMade: () {
-                          locationController.reset();
-                          calendarController.reset();
-                          spaceController.reset();
+                          // locationController.reset();
+                          // calendarController.reset();
+                          // spaceController.reset();
                         },
                       ),
                     ),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import 'package:reservasi/screens/editProfile_screen.dart';
-import 'package:reservasi/screens/help_screen.dart';
+import 'package:reservasi/presentation/screens/editProfile_screen.dart';
+import 'package:reservasi/presentation/screens/help_screen.dart';
 import 'package:reservasi/theme.dart';
 
 class ProfileScreen extends StatelessWidget {

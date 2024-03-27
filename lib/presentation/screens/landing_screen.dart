@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:reservasi/screens/login_screen.dart';
-import 'package:reservasi/screens/register_screen.dart';
+import 'package:reservasi/presentation/screens/login_screen.dart';
+import 'package:reservasi/presentation/screens/register_screen.dart';
 import 'package:reservasi/theme.dart';
 
 class LandingScreen extends StatelessWidget {
-  const LandingScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,10 +65,8 @@ class LandingScreen extends StatelessWidget {
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
                   // Navigate to the login screen using the provided context
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const LoginScreen()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => LoginScreen()));
                 },
                 child: Container(
                   padding:
@@ -144,7 +140,7 @@ class LandingScreen extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                MaterialPageRoute(builder: (context) => RegisterScreen()),
               );
             },
             child: Container(

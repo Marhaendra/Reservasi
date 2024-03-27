@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:reservasi/bindings/location_binding.dart';
-import 'package:reservasi/screens/editProfile_screen.dart';
-import 'package:reservasi/screens/help_screen.dart';
-import 'package:reservasi/screens/home_screen.dart';
-import 'package:reservasi/screens/landing_screen.dart';
-import 'package:reservasi/screens/login_screen.dart';
-import 'package:reservasi/screens/order_screen.dart';
-import 'package:reservasi/screens/profile_screen.dart';
-import 'package:reservasi/screens/register_screen.dart';
-import 'package:reservasi/screens/reservation_screen.dart';
-import 'package:reservasi/screens/search_screen.dart';
+import 'package:reservasi/presentation/widgets/binding.dart';
+import 'package:reservasi/presentation/screens/editProfile_screen.dart';
+import 'package:reservasi/presentation/screens/help_screen.dart';
+import 'package:reservasi/presentation/screens/home_screen.dart';
+import 'package:reservasi/presentation/screens/landing_screen.dart';
+import 'package:reservasi/presentation/screens/login_screen.dart';
+import 'package:reservasi/presentation/screens/order_screen.dart';
+import 'package:reservasi/presentation/screens/profile_screen.dart';
+import 'package:reservasi/presentation/screens/register_screen.dart';
+import 'package:reservasi/presentation/screens/reservation_screen.dart';
+import 'package:reservasi/presentation/screens/search_screen.dart';
 import 'package:get/get.dart';
 
 void main() {
@@ -22,19 +22,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      initialBinding: AppBindings(),
+      initialBinding: InitialBinding(),
       title: 'Reservasi',
       theme: ThemeData(
           // Your theme configurations here
           // ...
           ),
-      home: HomeScreen(),
+      home: LandingScreen(),
       debugShowCheckedModeBanner:
           false, // Set this to false to remove the debug banner
       routes: {
-        '/landing': (context) => const LandingScreen(),
-        '/login': (context) => const LoginScreen(),
-        '/register': (context) => const RegisterScreen(),
+        '/landing': (context) => LandingScreen(),
+        '/login': (context) => LoginScreen(),
+        '/register': (context) => RegisterScreen(),
         '/home': (context) => HomeScreen(),
         '/order': (context) => const OrderScreen(),
         '/profile': (context) => const ProfileScreen(),

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import 'package:reservasi/bindings/location_binding.dart';
-import 'package:reservasi/controllers/location_controller.dart';
-import 'package:reservasi/controllers/space_controller.dart';
-import 'package:reservasi/models/location_model.dart';
-import 'package:reservasi/models/space_model.dart';
-import 'package:reservasi/screens/home_screen.dart';
+import 'package:reservasi/presentation/controllers/location_controller.dart';
+import 'package:reservasi/presentation/controllers/space_controller.dart';
+import 'package:reservasi/features/data/models/location_model.dart';
+import 'package:reservasi/features/data/models/space_model.dart';
+import 'package:reservasi/presentation/screens/home_screen.dart';
 import 'package:reservasi/theme.dart';
 import 'package:get/get.dart';
 

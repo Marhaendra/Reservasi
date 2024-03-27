@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import 'package:reservasi/controllers/reservation_controller.dart';
+import 'package:reservasi/presentation/controllers/reservation_controller.dart';
 import 'package:reservasi/theme.dart';
 
 class OrderScreen extends StatefulWidget {
@@ -17,7 +17,6 @@ class _OrderScreenState extends State<OrderScreen> {
   @override
   void initState() {
     super.initState();
-    reservationController = Get.put(ReservationController());
   }
 
   Widget _getReserved() {

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import 'package:reservasi/controllers/calendar_controller.dart';
-import 'package:reservasi/controllers/location_controller.dart';
-import 'package:reservasi/controllers/space_controller.dart';
-import 'package:reservasi/models/date_reservation_model.dart';
-import 'package:reservasi/screens/home_screen.dart';
-import 'package:reservasi/controllers/reservation_controller.dart';
+import 'package:reservasi/presentation/controllers/calendar_controller.dart';
+import 'package:reservasi/presentation/controllers/location_controller.dart';
+import 'package:reservasi/presentation/controllers/space_controller.dart';
+import 'package:reservasi/features/data/models/date_reservation_model.dart';
+import 'package:reservasi/presentation/screens/home_screen.dart';
+import 'package:reservasi/presentation/controllers/reservation_controller.dart';
 import 'package:reservasi/theme.dart';
 import 'package:get/get.dart';
 
@@ -36,15 +36,11 @@ class _ReservationScreenState extends State<ReservationScreen> {
   @override
   void initState() {
     super.initState();
-    reservationController = Get.put(ReservationController());
-    calendarController = Get.put(CalendarController());
     dateList = DateListModel.getDateList(calendarController);
     current = 0; // Set initial position to the middle
-    itemCount = 5;
-    maxItemCount = 9;
+    itemCount = 7;
+    maxItemCount = 7;
     pageController = PageController(initialPage: current);
-    spaceController = Get.put(SpaceController());
-    locationController = Get.put(LocationController());
   }
 
   @override
@@ -81,7 +77,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
       width: double.infinity,
       height: 610,
       child: PageView.builder(
-        itemCount: dateList.length,
+        itemCount: calendarController.dateList.length,
         controller: pageController,
         physics: const NeverScrollableScrollPhysics(),
         itemBuilder: (context, index) {
@@ -138,7 +134,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                 height: 24,
                 alignment: Alignment.centerLeft, // Add this line
                 child: Text(
-                  dateList[current].longDateFormat,
+                  calendarController.dateListLong[index],
                   style: GoogleFonts.poppins(
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
@@ -160,7 +156,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                         MaterialPageRoute(builder: (context) => HomeScreen()),
                       );
                       reservationController
-                          .orderDate(dateList[current].longDateFormat);
+                          .orderDate(calendarController.dateList[current]);
                       reservationController.orderSeat();
                       reservationController.ordered();
                       locationController.reset();
@@ -427,13 +423,15 @@ class _ReservationScreenState extends State<ReservationScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          dateList[index].shortDateFormat,
-                          style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w500,
-                            color: current == index
-                                ? MyTheme.primary
-                                : MyTheme.grey1,
+                        Obx(
+                          () => Text(
+                            calendarController.dateList[index],
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w500,
+                              color: current == index
+                                  ? MyTheme.primary
+                                  : MyTheme.grey1,
+                            ),
                           ),
                         ),
                       ],
@@ -467,9 +465,9 @@ class _ReservationScreenState extends State<ReservationScreen> {
   void _updateDateList(int index) {
     setState(() {
       current = index;
-      if (itemCount < maxItemCount) {
-        itemCount += 1;
-      }
+      // if (itemCount < maxItemCount) {
+      //   itemCount += 1;
+      // }
     });
   }
 
