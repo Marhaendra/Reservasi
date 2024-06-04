@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reservasi/features/data/data_sources/local/app_database.dart';
 import 'package:reservasi/presentation/widgets/binding.dart';
 import 'package:reservasi/presentation/screens/editProfile_screen.dart';
 import 'package:reservasi/presentation/screens/help_screen.dart';
@@ -12,8 +13,15 @@ import 'package:reservasi/presentation/screens/reservation_screen.dart';
 import 'package:reservasi/presentation/screens/search_screen.dart';
 import 'package:get/get.dart';
 
-void main() {
-  runApp(MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize AppDatabase using Get.putAsync
+  await Get.putAsync<AppDatabase>(() async {
+    return $FloorAppDatabase.databaseBuilder('app_database.db').build();
+  });
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -30,7 +38,7 @@ class MyApp extends StatelessWidget {
           ),
       home: LandingScreen(),
       debugShowCheckedModeBanner:
-          true, // Set this to false to remove the debug banner
+          false, // Set this to false to remove the debug banner
       routes: {
         '/landing': (context) => LandingScreen(),
         '/login': (context) => LoginScreen(),

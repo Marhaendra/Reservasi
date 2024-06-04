@@ -3,6 +3,8 @@ import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:reservasi/features/data/data_sources/local/app_database.dart';
+import 'package:reservasi/helper/token_manager.dart';
 import 'package:reservasi/presentation/controllers/calendar_controller.dart';
 import 'package:reservasi/presentation/controllers/location_controller.dart';
 import 'package:reservasi/presentation/controllers/reservation_controller.dart';
@@ -179,7 +181,13 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 16,
             ),
             GestureDetector(
-              onTap: () {
+              onTap: () async {
+                final token = await TokenManager.getToken();
+                if (token != null) {
+                  print('Token: $token');
+                } else {
+                  print('Token not found');
+                }
                 // TODO: On search tap
                 print(reservationController.selectedSeats);
                 print(reservationController.reservedSeat);

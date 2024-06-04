@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:reservasi/features/data/data_sources/local/DAO/login_dao.dart';
+import 'package:reservasi/features/data/data_sources/local/app_database.dart';
 import 'package:reservasi/features/data/data_sources/remote/api_service.dart';
 import 'package:reservasi/presentation/controllers/login_controller.dart';
 import 'package:reservasi/presentation/screens/home_screen.dart';
@@ -72,7 +74,7 @@ class LoginScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           GestureDetector(
-            onTap: () {
+            onTap: () async {
               LoginController loginController = Get.put(LoginController());
 
               // Get the values entered in the text fields
@@ -81,12 +83,10 @@ class LoginScreen extends StatelessWidget {
 
               // Call postRegister method from the controller with the input values
               loginController.postLogin(email: email, password: password);
-              print(loginController.token.toString());
-
-              // Navigator.pushReplacement(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => const HomeScreen()),
-              // );
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const HomeScreen()),
+              );
             },
             child: Container(
               height: 40,

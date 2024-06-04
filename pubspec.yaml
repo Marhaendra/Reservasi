@@ -48,10 +48,13 @@ dependencies:
 
   table_calendar: ^3.0.9
   retrofit: ">=4.0.0 <5.0.0"
-  json_annotation: ^4.8.1
+  json_annotation: ^4.0.1
   dio: ^5.4.1
   logger: ^2.2.0
   shared_preferences: ^2.2.2
+
+  floor: ^1.4.2
+  sqflite: ^2.3.3+1
 
 dev_dependencies:
   flutter_test:
@@ -66,6 +69,7 @@ dev_dependencies:
   build_runner: ^2.4.7
   json_serializable: ^6.7.1
   flutter_lints: ^3.0.1
+  floor_generator: ^1.4.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

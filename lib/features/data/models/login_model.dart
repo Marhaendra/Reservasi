@@ -1,35 +1,25 @@
+import 'package:floor/floor.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'login_model.g.dart';
 
+@entity
 @JsonSerializable()
 class LoginModel {
-  String token;
-  List<UserData> userData;
+  @PrimaryKey()
+  final String? token;
+  final String? id;
+  final String? role;
+  final String? nama;
 
   LoginModel({
     required this.token,
-    required this.userData,
-  });
-
-  factory LoginModel.fromJson(Map<String, dynamic> json) =>
-      _$LoginModelFromJson(json);
-  Map<String, dynamic> toJson() => _$LoginModelToJson(this);
-}
-
-@JsonSerializable()
-class UserData {
-  int id;
-  String role;
-  String nama;
-
-  UserData({
     required this.id,
     required this.role,
     required this.nama,
   });
 
-  factory UserData.fromJson(Map<String, dynamic> json) =>
-      _$UserDataFromJson(json);
-  Map<String, dynamic> toJson() => _$UserDataToJson(this);
+  factory LoginModel.fromJson(Map<String, dynamic> map) =>
+      _$LoginModelFromJson(map);
+  Map<String, dynamic> toJson() => _$LoginModelToJson(this);
 }
