@@ -5,11 +5,11 @@ import 'dart:async';
 @dao
 abstract class LoginDao {
   @Insert(onConflict: OnConflictStrategy.replace)
-  Future<void> insertLogin(LoginModel loginModel);
+  Future<void> insertLogin(LoginModel auth);
 
-  @Query('SELECT * FROM LoginModel')
+  @Query('SELECT * FROM auth')
   Future<List<LoginModel>> getUserData();
 
-  @Query('SELECT * FROM LoginModel WHERE token = :token')
+  @Query('SELECT * FROM auth WHERE token = :token')
   Future<LoginModel?> findLoginByToken(String token);
 }

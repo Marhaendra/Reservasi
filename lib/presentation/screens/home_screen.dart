@@ -3,6 +3,7 @@ import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:reservasi/features/data/data_sources/local/DAO/login_dao.dart';
 import 'package:reservasi/features/data/data_sources/local/app_database.dart';
 import 'package:reservasi/helper/token_manager.dart';
 import 'package:reservasi/presentation/controllers/calendar_controller.dart';
@@ -182,12 +183,16 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             GestureDetector(
               onTap: () async {
-                final token = await TokenManager.getToken();
-                if (token != null) {
-                  print('Token: $token');
-                } else {
-                  print('Token not found');
-                }
+                // final tokenM = await TokenManager.getToken();
+                // final LoginDao _loginDao = Get.find<LoginDao>();
+                // String token = 'token';
+                // final token2 = await _loginDao.findLoginByToken(token);
+                // if (tokenM != null) {
+                //   print('Token: $tokenM');
+                //   print('tokensss: $token2');
+                // } else {
+                //   print('Token not found');
+                // }
                 // TODO: On search tap
                 print(reservationController.selectedSeats);
                 print(reservationController.reservedSeat);

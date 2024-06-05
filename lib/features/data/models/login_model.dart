@@ -1,25 +1,31 @@
 import 'package:floor/floor.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:reservasi/domain/entities/login_entity.dart';
 
 part 'login_model.g.dart';
 
-@entity
+@Entity(tableName: 'auth', primaryKeys: ['id'])
 @JsonSerializable()
-class LoginModel {
-  @PrimaryKey()
+class LoginModel extends LoginEntity {
   final String? token;
-  final String? id;
-  final String? role;
-  final String? nama;
 
   LoginModel({
-    required this.token,
-    required this.id,
-    required this.role,
-    required this.nama,
-  });
+    required int id,
+    required String role,
+    required String nama,
+    this.token,
+  }) : super(id: id, role: role, nama: nama);
 
-  factory LoginModel.fromJson(Map<String, dynamic> map) =>
-      _$LoginModelFromJson(map);
+  factory LoginModel.fromJson(Map<String, dynamic> map) => LoginModel(
+        id: map['userData'][0]['id'],
+        token: map['token'],
+        role: map['userData'][0]['role'],
+        nama: map['userData'][0]['nama'],
+      );
+
+  @override
   Map<String, dynamic> toJson() => _$LoginModelToJson(this);
+
+  @override
+  List<Object?> get props => super.props..addAll([token]);
 }

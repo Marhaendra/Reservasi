@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:reservasi/features/data/data_sources/local/app_database.dart';
 import 'package:reservasi/presentation/widgets/binding.dart';
 import 'package:reservasi/presentation/screens/editProfile_screen.dart';
@@ -12,10 +13,12 @@ import 'package:reservasi/presentation/screens/register_screen.dart';
 import 'package:reservasi/presentation/screens/reservation_screen.dart';
 import 'package:reservasi/presentation/screens/search_screen.dart';
 import 'package:get/get.dart';
+import 'package:sqflite/sqflite.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // await deleteDatabaseFile();
   // Initialize AppDatabase using Get.putAsync
   await Get.putAsync<AppDatabase>(() async {
     return $FloorAppDatabase.databaseBuilder('app_database.db').build();
@@ -23,6 +26,14 @@ Future<void> main() async {
 
   runApp(const MyApp());
 }
+
+// Future<void> deleteDatabaseFile() async {
+//   final databasesPath = await getDatabasesPath();
+//   final path = join(databasesPath, 'app_database.db');
+
+//   // Delete the database
+//   await deleteDatabase(path);
+// }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);

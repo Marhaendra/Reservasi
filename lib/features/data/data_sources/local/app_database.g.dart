@@ -96,7 +96,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `LoginModel` (`token` TEXT, `id` TEXT, `role` TEXT, `nama` TEXT, PRIMARY KEY (`token`))');
+            'CREATE TABLE IF NOT EXISTS `auth` (`token` TEXT, `id` INTEGER NOT NULL, `role` TEXT NOT NULL, `nama` TEXT NOT NULL, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -117,7 +117,7 @@ class _$LoginDao extends LoginDao {
   )   : _queryAdapter = QueryAdapter(database),
         _loginModelInsertionAdapter = InsertionAdapter(
             database,
-            'LoginModel',
+            'auth',
             (LoginModel item) => <String, Object?>{
                   'token': item.token,
                   'id': item.id,
@@ -135,28 +135,27 @@ class _$LoginDao extends LoginDao {
 
   @override
   Future<List<LoginModel>> getUserData() async {
-    return _queryAdapter.queryList('SELECT * FROM LoginModel',
+    return _queryAdapter.queryList('SELECT * FROM auth',
         mapper: (Map<String, Object?> row) => LoginModel(
-            token: row['token'] as String?,
-            id: row['id'] as String?,
-            role: row['role'] as String?,
-            nama: row['nama'] as String?));
+            id: row['id'] as int,
+            role: row['role'] as String,
+            nama: row['nama'] as String,
+            token: row['token'] as String?));
   }
 
   @override
   Future<LoginModel?> findLoginByToken(String token) async {
-    return _queryAdapter.query('SELECT * FROM LoginModel WHERE token = ?1',
+    return _queryAdapter.query('SELECT * FROM auth WHERE token = ?1',
         mapper: (Map<String, Object?> row) => LoginModel(
-            token: row['token'] as String?,
-            id: row['id'] as String?,
-            role: row['role'] as String?,
-            nama: row['nama'] as String?),
+            id: row['id'] as int,
+            role: row['role'] as String,
+            nama: row['nama'] as String,
+            token: row['token'] as String?),
         arguments: [token]);
   }
 
   @override
-  Future<void> insertLogin(LoginModel loginModel) async {
-    await _loginModelInsertionAdapter.insert(
-        loginModel, OnConflictStrategy.replace);
+  Future<void> insertLogin(LoginModel auth) async {
+    await _loginModelInsertionAdapter.insert(auth, OnConflictStrategy.replace);
   }
 }
