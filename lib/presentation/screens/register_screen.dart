@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:reservasi/core/util/snackbar_util.dart';
 import 'package:reservasi/presentation/controllers/register_controller.dart';
 import 'package:reservasi/presentation/screens/landing_screen.dart';
 import 'package:reservasi/presentation/screens/login_screen.dart';
+import 'package:reservasi/theme.dart';
 
 class RegisterScreen extends StatelessWidget {
   // Declare controllers for other fields
@@ -65,7 +67,7 @@ class RegisterScreen extends StatelessWidget {
                 const SizedBox(
                   height: 16,
                 ),
-                _signUpButton(),
+                _signUpButton(context),
               ],
             ),
           ],
@@ -74,31 +76,64 @@ class RegisterScreen extends StatelessWidget {
     );
   }
 
-  Widget _signUpButton() {
+  Widget _signUpButton(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: ElevatedButton(
-        onPressed: () {
-          RegisterController registerController =
-              Get.find<RegisterController>();
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: () async {
+                  RegisterController registerController =
+                      Get.find<RegisterController>();
 
-          // Get the values entered in the text fields
-          String name = _nameText.text;
-          String email = _emailText.text;
-          String noTelepon = _noTeleponText.text;
-          String password = _passwordText.text;
+                  // Get the values entered in the text fields
+                  String name = _nameText.text;
+                  String email = _emailText.text;
+                  String noTelepon = _noTeleponText.text;
+                  String password = _passwordText.text;
 
-          // Call postRegister method from the controller with the input values
-          registerController.postRegister(
-            nama: name,
-            email: email,
-            no_telepon: noTelepon,
-            password: password,
-          );
-        },
-        child: Text('Buat Akun'),
-      ),
-    );
+                  // Call postRegister method from the controller with the input values
+                  registerController.postRegister(
+                    nama: name,
+                    email: email,
+                    no_telepon: noTelepon,
+                    password: password,
+                  );
+
+                  // Show snackbar if response is successful
+                  SnackbarUtil.showSnackbar(
+                    'Success',
+                    'User registered successfully!',
+                    MyTheme.green,
+                    MyTheme.white,
+                  );
+
+                  // Delay navigation for 1 second
+                  await Future.delayed(Duration(seconds: 1));
+
+                  // Navigate to login after success
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                  );
+                },
+                child: Container(
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF6497F5).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Buat Akun',
+                      style: GoogleFonts.poppins(fontSize: 14, color: primary),
+                    ),
+                  ),
+                ),
+              ),
+            ]));
   }
 
   Widget _noTelepon() {

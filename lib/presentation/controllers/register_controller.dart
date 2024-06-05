@@ -1,6 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:reservasi/core/util/snackbar_util.dart';
 import 'package:reservasi/features/data/data_sources/remote/api_service.dart';
 import 'package:reservasi/features/data/models/register_model.dart';
+import 'package:reservasi/theme.dart';
 
 class RegisterController extends GetxController {
   final ApiService _apiService = Get.find<ApiService>();

@@ -28,7 +28,7 @@ class LandingScreen extends StatelessWidget {
               const SizedBox(
                 height: 32,
               ),
-              _signUp(context),
+              _signIn(context),
               const SizedBox(
                 height: 12,
               ),
@@ -36,19 +36,19 @@ class LandingScreen extends StatelessWidget {
               const SizedBox(
                 height: 24,
               ),
-              _signIn(context),
+              _signUp(context),
             ],
           ),
         ])));
   }
 
-  RichText _signIn(BuildContext context) {
+  RichText _signUp(BuildContext context) {
     return RichText(
       textAlign: TextAlign.center,
       text: TextSpan(
         children: [
           const TextSpan(
-            text: 'Sudah punya akun? ',
+            text: 'Belum punya akun? ',
             style: TextStyle(
               color: Colors.black,
               fontSize: 12,
@@ -65,14 +65,16 @@ class LandingScreen extends StatelessWidget {
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
                   // Navigate to the login screen using the provided context
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => RegisterScreen()));
                 },
                 child: Container(
                   padding:
                       const EdgeInsets.symmetric(vertical: 6, horizontal: 0),
                   child: const Text(
-                    'Masuk',
+                    'Buat Akun',
                     style: TextStyle(
                       color: Color(0xFF6497F5),
                       fontSize: 12,
@@ -129,7 +131,7 @@ class LandingScreen extends StatelessWidget {
     );
   }
 
-  Padding _signUp(BuildContext context) {
+  Padding _signIn(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -140,7 +142,7 @@ class LandingScreen extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => RegisterScreen()),
+                MaterialPageRoute(builder: (context) => LoginScreen()),
               );
             },
             child: Container(
@@ -151,7 +153,7 @@ class LandingScreen extends StatelessWidget {
               ),
               child: Center(
                 child: Text(
-                  'Buat Akun',
+                  'Masuk',
                   style: GoogleFonts.poppins(fontSize: 14, color: primary),
                 ),
               ),

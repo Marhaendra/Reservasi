@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:reservasi/features/data/data_sources/local/DAO/login_dao.dart';
 import 'package:reservasi/features/data/data_sources/local/app_database.dart';
-import 'package:reservasi/helper/token_manager.dart';
+import 'package:reservasi/helper/user_manager.dart';
 import 'package:reservasi/presentation/controllers/calendar_controller.dart';
 import 'package:reservasi/presentation/controllers/location_controller.dart';
 import 'package:reservasi/presentation/controllers/reservation_controller.dart';
@@ -193,6 +193,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 // } else {
                 //   print('Token not found');
                 // }
+
+                // await UserManager.clearToken();
+
                 // TODO: On search tap
                 print(reservationController.selectedSeats);
                 print(reservationController.reservedSeat);

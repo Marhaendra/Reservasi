@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:reservasi/features/data/data_sources/local/DAO/login_dao.dart';
 import 'package:reservasi/features/data/data_sources/remote/api_service.dart';
 import 'package:reservasi/features/data/models/login_model.dart';
-import 'package:reservasi/helper/token_manager.dart';
+import 'package:reservasi/helper/user_manager.dart';
 
 class LoginController extends GetxController {
   final ApiService _apiService = Get.find<ApiService>();
@@ -23,7 +23,7 @@ class LoginController extends GetxController {
       loginUser.add(response);
 
       // Save token to SharedPreferences
-      await TokenManager.saveToken(response.token ?? '');
+      await UserManager.saveToken(response.token ?? '');
 
       // Save login data to local database
       await _loginDao.insertLogin(response);

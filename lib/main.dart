@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:reservasi/features/data/data_sources/local/app_database.dart';
+import 'package:reservasi/presentation/screens/splash_screen.dart';
 import 'package:reservasi/presentation/widgets/binding.dart';
 import 'package:reservasi/presentation/screens/editProfile_screen.dart';
 import 'package:reservasi/presentation/screens/help_screen.dart';
@@ -47,7 +48,7 @@ class MyApp extends StatelessWidget {
           // Your theme configurations here
           // ...
           ),
-      home: LandingScreen(),
+      home: SplashScreen(),
       debugShowCheckedModeBanner:
           false, // Set this to false to remove the debug banner
       routes: {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class TokenManager {
+class UserManager {
   static const _keyToken = 'token';
 
   // Save token to SharedPreferences
@@ -14,6 +14,12 @@ class TokenManager {
   static Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_keyToken);
+  }
+
+  // Remove token from SharedPreferences (Logout)
+  static Future<void> clearToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_keyToken);
   }
 }
 

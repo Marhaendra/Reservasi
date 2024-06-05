@@ -83,13 +83,15 @@ class LoginScreen extends StatelessWidget {
 
               // Call postRegister method from the controller with the input values
               loginController.postLogin(email: email, password: password);
+
+              // Navigate to homescreen
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => const HomeScreen()),
               );
             },
             child: Container(
-              height: 40,
+              height: 48,
               decoration: BoxDecoration(
                 color: const Color(0xFF6497F5).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(6),
