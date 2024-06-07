@@ -7,13 +7,16 @@ import 'package:reservasi/presentation/controllers/calendar_controller.dart';
 import 'package:reservasi/presentation/controllers/location_controller.dart';
 import 'package:reservasi/presentation/controllers/register_controller.dart';
 import 'package:reservasi/presentation/controllers/reservation_controller.dart';
-import 'package:reservasi/presentation/controllers/space_controller.dart';
+import 'package:reservasi/presentation/controllers/rooms_seats_controller.dart';
 
 class InitialBinding extends Bindings {
   @override
   void dependencies() {
     // Initialize ApiService and put it into GetX
     Get.lazyPut<ApiService>(() => ApiService(Dio()));
+
+    // Register AppDatabase
+    Get.putAsync<AppDatabase>(() => AppDatabase.getDatabase());
 
     // Initialize LoginDao
     Get.lazyPut<LoginDao>(() {
@@ -26,6 +29,12 @@ class InitialBinding extends Bindings {
     Get.lazyPut<ReservationController>(() => ReservationController());
     Get.lazyPut<CalendarController>(() => CalendarController());
     Get.lazyPut<LocationController>(() => LocationController());
-    Get.lazyPut<SpaceController>(() => SpaceController());
+
+    // Initialize the AppDatabase asynchronously
+    Get.putAsync<AppDatabase>(() async => await AppDatabase.getDatabase());
+
+    // Initialize RoomsSeatsController with ApiService and AppDatabase
+    Get.lazyPut<RoomsSeatsController>(() =>
+        RoomsSeatsController(Get.find<ApiService>(), Get.find<AppDatabase>()));
   }
 }

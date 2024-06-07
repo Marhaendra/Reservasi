@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:reservasi/presentation/controllers/location_controller.dart';
-import 'package:reservasi/presentation/controllers/space_controller.dart';
+import 'package:reservasi/presentation/controllers/rooms_seats_controller.dart';
 import 'package:reservasi/features/data/models/location_model.dart';
-import 'package:reservasi/features/data/models/space_model.dart';
+import 'package:reservasi/features/data/models/rooms_model.dart';
 import 'package:reservasi/presentation/screens/home_screen.dart';
 import 'package:reservasi/theme.dart';
 import 'package:get/get.dart';
@@ -20,34 +20,32 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   late LocationController _locationController;
-  late SpaceController _spaceController;
+  late RoomsSeatsController _roomsController;
 
   @override
   void initState() {
     super.initState();
     _locationController = Get.find<LocationController>();
-    _spaceController = Get.find<SpaceController>();
+    _roomsController = Get.find<RoomsSeatsController>();
+    _roomsController.fetchCombinedRooms();
   }
 
   List<LocationModel> location = [];
-  List<SpacesModel> space = [];
-
-  void _getInitialInfo() {
+  void _getLocationlInfo() {
     location = LocationModel.getLocation();
-    space = SpacesModel.getSpaces();
   }
 
   Widget _getListShow() {
     if (widget.showLocations) {
       return locationList(); // Return the widget directly
     } else {
-      return spacesList(); // Return the widget directly
+      return roomList(); // Return the widget directly
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    _getInitialInfo();
+    _getLocationlInfo();
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -62,63 +60,59 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Container spacesList() {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      child: SizedBox(
-        width: double.infinity,
-        height: 600,
-        child: ListView.builder(
-          itemCount: space.length,
-          scrollDirection: Axis.vertical,
-          itemBuilder: (ctx, index) {
-            return GestureDetector(
-              onTap: () {
-                Navigator.pop(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomeScreen()),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20, top: 4),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        String selectedSpaceName = space[index].name;
-                        _spaceController.updateSpace(selectedSpaceName);
-                        Navigator.pop(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomeScreen()),
-                        );
-                      },
-                      child: Text(
-                        space[index].name,
-                        style: GoogleFonts.poppins(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: MyTheme.black,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    if (index < space.length - 1)
-                      const Divider(
-                        color: MyTheme.grey1,
-                        thickness: 1.0,
-                        indent: 0,
-                        endIndent: 0,
-                      ),
-                  ],
-                ),
-              ),
+  Widget roomList() {
+    return Obx(() {
+      if (_roomsController.rooms.isEmpty) {
+        return Center(child: CircularProgressIndicator());
+      } else {
+        return spacesList(_roomsController.rooms);
+      }
+    });
+  }
+
+  Widget spacesList(List<RoomsModel> space) {
+    return ListView.builder(
+      itemCount: space.length,
+      scrollDirection: Axis.vertical,
+      itemBuilder: (ctx, index) {
+        return GestureDetector(
+          onTap: () {
+            _roomsController.updateRoom(space[index].nama_ruangan);
+            Navigator.pop(
+              ctx,
+              MaterialPageRoute(
+                  builder: (ctx) =>
+                      HomeScreen()), // Ensure HomeScreen is imported
             );
           },
-        ),
-      ),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 20, right: 20, top: 4),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  space[index].nama_ruangan,
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: MyTheme.black,
+                  ),
+                ),
+                const SizedBox(
+                  height: 4,
+                ),
+                if (index < space.length - 1)
+                  const Divider(
+                    color: MyTheme.grey1,
+                    thickness: 1.0,
+                    indent: 0,
+                    endIndent: 0,
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

@@ -9,7 +9,7 @@ import 'package:reservasi/helper/user_manager.dart';
 import 'package:reservasi/presentation/controllers/calendar_controller.dart';
 import 'package:reservasi/presentation/controllers/location_controller.dart';
 import 'package:reservasi/presentation/controllers/reservation_controller.dart';
-import 'package:reservasi/presentation/controllers/space_controller.dart';
+import 'package:reservasi/presentation/controllers/rooms_seats_controller.dart';
 import 'package:reservasi/presentation/screens/order_screen.dart';
 import 'package:reservasi/presentation/screens/profile_screen.dart';
 import 'package:reservasi/presentation/screens/reservation_screen.dart';
@@ -25,7 +25,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  SpaceController spaceController = Get.find<SpaceController>();
+  RoomsSeatsController roomsController = Get.find<RoomsSeatsController>();
   LocationController locationController = Get.find<LocationController>();
   CalendarController calendarController = Get.find<CalendarController>();
   ReservationController reservationController =
@@ -66,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-                main(context, spaceController, locationController),
+                main(context, roomsController, locationController),
               ],
             ),
           ],
@@ -75,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget main(BuildContext context, SpaceController spaceController,
+  Widget main(BuildContext context, RoomsSeatsController roomsController,
       LocationController locationController) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
@@ -85,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(
             height: 38,
           ),
-          searchBox(context, locationController, spaceController),
+          searchBox(context, locationController, roomsController),
           const SizedBox(
             height: 20,
           ),
@@ -183,16 +183,16 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             GestureDetector(
               onTap: () async {
-                // final tokenM = await TokenManager.getToken();
-                // final LoginDao _loginDao = Get.find<LoginDao>();
-                // String token = 'token';
-                // final token2 = await _loginDao.findLoginByToken(token);
-                // if (tokenM != null) {
-                //   print('Token: $tokenM');
-                //   print('tokensss: $token2');
-                // } else {
-                //   print('Token not found');
-                // }
+                final tokenM = await UserManager.getToken();
+                final LoginDao _loginDao = Get.find<LoginDao>();
+                String token = 'token';
+                final token2 = await _loginDao.findLoginByToken(token);
+                if (tokenM != null) {
+                  print('Token: $tokenM');
+                  print('tokensss: $token2');
+                } else {
+                  print('Token not found');
+                }
 
                 // await UserManager.clearToken();
 
@@ -231,7 +231,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Obx searchBox(BuildContext context, LocationController locationController,
-      SpaceController spaceController) {
+      RoomsSeatsController roomsController) {
     return Obx(
       () => Container(
         padding: const EdgeInsets.all(16),
@@ -294,7 +294,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   selectedDay, focusedDay);
                               calendarController.animateToDay(selectedDay);
                               calendarController.refreshCalendar();
-                              calendarController.tabDateList();
+                              calendarController.dateList();
                               Navigator.of(context).pop({
                                 'selectedDay': selectedDay,
                                 'focusedDay': focusedDay
@@ -332,7 +332,7 @@ class _HomeScreenState extends State<HomeScreen> {
             inputSearchBox(
                 placeholder: "Ruang",
                 iconData: PhosphorIconsRegular.couch,
-                value: spaceController.selectedSpace.value,
+                value: roomsController.selectedSpace.value,
                 onTap: () {
                   Navigator.push(
                     context,
@@ -348,7 +348,7 @@ class _HomeScreenState extends State<HomeScreen> {
             GestureDetector(
               onTap: () async {
                 if (locationController.selectedLocation.value == "Lokasi" ||
-                    spaceController.selectedSpace.value == "Ruang") {
+                    roomsController.selectedSpace.value == "Ruang") {
                   // Show Snackbar if either Lokasi or Ruang is in the default state
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text(
@@ -377,7 +377,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         onReservationMade: () {
                           // locationController.reset();
                           // calendarController.reset();
-                          // spaceController.reset();
+                          // roomsController.reset();
                         },
                       ),
                     ),
@@ -394,7 +394,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 child: Center(
                   child: Text(
-                    "Cari",
+                    "Pesan",
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.w500,
                       fontSize: 12,

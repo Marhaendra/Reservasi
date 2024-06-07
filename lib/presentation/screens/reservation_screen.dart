@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:reservasi/presentation/controllers/calendar_controller.dart';
 import 'package:reservasi/presentation/controllers/location_controller.dart';
-import 'package:reservasi/presentation/controllers/space_controller.dart';
+import 'package:reservasi/presentation/controllers/rooms_seats_controller.dart';
 import 'package:reservasi/features/data/models/date_reservation_model.dart';
 import 'package:reservasi/presentation/screens/home_screen.dart';
 import 'package:reservasi/presentation/controllers/reservation_controller.dart';
@@ -28,7 +28,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
   late List<DateListModel> dateList;
   late ReservationController reservationController;
   late CalendarController calendarController;
-  late SpaceController spaceController;
+  late RoomsSeatsController roomsController;
   late LocationController locationController;
 
   bool isSeatSelected = false;
@@ -36,9 +36,16 @@ class _ReservationScreenState extends State<ReservationScreen> {
   @override
   void initState() {
     super.initState();
+    reservationController = Get.find<ReservationController>();
+    roomsController = Get.find<RoomsSeatsController>();
+    locationController = Get.find<LocationController>();
+    calendarController = Get.find<CalendarController>();
+
+    calendarController.tabDateList();
+
     dateList = DateListModel.getDateList(calendarController);
     current = 0; // Set initial position to the middle
-    itemCount = 7;
+    itemCount = 1;
     maxItemCount = 7;
     pageController = PageController(initialPage: current);
   }
@@ -161,7 +168,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                       reservationController.ordered();
                       locationController.reset();
                       calendarController.reset();
-                      spaceController.reset();
+                      roomsController.reset();
                       reservationController.reset();
                       reservationController.clearReservedSeatsAndDate();
                     } else {
@@ -397,7 +404,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
       height: 45,
       child: ListView.builder(
         physics: const BouncingScrollPhysics(),
-        itemCount: itemCount,
+        itemCount: calendarController.dateList.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (ctx, index) {
           return Column(
@@ -502,9 +509,9 @@ class _ReservationScreenState extends State<ReservationScreen> {
                   ),
                   // Padding for the User icon
                   Text(
-                    spaceController.selectedSpace.value.toString(),
+                    roomsController.selectedSpace.value.toString(),
                     style: GoogleFonts.poppins(
-                      fontSize: spaceController.selectedSpace.value.length < 18
+                      fontSize: roomsController.selectedSpace.value.length < 18
                           ? 24
                           : 18,
                       color: MyTheme.white,

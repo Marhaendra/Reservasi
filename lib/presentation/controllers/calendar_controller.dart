@@ -1,5 +1,3 @@
-// calendar_controller.dart
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -70,12 +68,8 @@ class CalendarController extends GetxController {
   }
 
   List<DateTime> generateWeekDates(DateTime selectedDay) {
-    DateTime startOfWeek =
-        selectedDay.subtract(Duration(days: selectedDay.weekday - 1));
-    DateTime endOfWeek = startOfWeek.add(Duration(days: 6));
-
     List<DateTime> weekDates = [];
-    DateTime currentDate = startOfWeek;
+    DateTime currentDate = selectedDay;
 
     for (int i = 0; i < 7; i++) {
       weekDates.add(currentDate);

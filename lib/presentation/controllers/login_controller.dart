@@ -1,12 +1,13 @@
 import 'package:get/get.dart';
 import 'package:reservasi/features/data/data_sources/local/DAO/login_dao.dart';
+import 'package:reservasi/features/data/data_sources/local/app_database.dart';
 import 'package:reservasi/features/data/data_sources/remote/api_service.dart';
 import 'package:reservasi/features/data/models/login_model.dart';
 import 'package:reservasi/helper/user_manager.dart';
 
 class LoginController extends GetxController {
   final ApiService _apiService = Get.find<ApiService>();
-  final LoginDao _loginDao = Get.find<LoginDao>();
+  final AppDatabase _database = Get.find<AppDatabase>();
   var loginUser = <LoginModel>[].obs;
 
   Future<void> postLogin({
@@ -26,10 +27,10 @@ class LoginController extends GetxController {
       await UserManager.saveToken(response.token ?? '');
 
       // Save login data to local database
-      await _loginDao.insertLogin(response);
+      await _database.loginDao.insertLogin(response);
       print('Raw response data: $response');
       // Fetch user data (optional)
-      final userData = await _loginDao.getUserData();
+      final userData = await _database.loginDao.getUserData();
       userData.forEach((user) {
         print('User Data: ${user.toJson()}');
       });
