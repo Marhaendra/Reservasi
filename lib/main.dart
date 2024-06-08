@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reservasi/features/data/data_sources/local/app_database.dart';
 import 'package:reservasi/presentation/screens/splash_screen.dart';
-import 'package:reservasi/presentation/widgets/binding.dart';
+import 'package:reservasi/presentation/widgets/bindings/binding.dart';
 import 'package:reservasi/presentation/screens/editProfile_screen.dart';
 import 'package:reservasi/presentation/screens/help_screen.dart';
 import 'package:reservasi/presentation/screens/home_screen.dart';

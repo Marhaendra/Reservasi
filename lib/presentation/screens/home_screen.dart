@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:reservasi/features/data/data_sources/local/DAO/login_dao.dart';
-import 'package:reservasi/features/data/data_sources/local/app_database.dart';
 import 'package:reservasi/helper/user_manager.dart';
 import 'package:reservasi/presentation/controllers/calendar_controller.dart';
 import 'package:reservasi/presentation/controllers/location_controller.dart';
@@ -332,7 +329,7 @@ class _HomeScreenState extends State<HomeScreen> {
             inputSearchBox(
                 placeholder: "Ruang",
                 iconData: PhosphorIconsRegular.couch,
-                value: roomsController.selectedSpace.value,
+                value: roomsController.selectedRoom.value,
                 onTap: () {
                   Navigator.push(
                     context,
@@ -348,7 +345,7 @@ class _HomeScreenState extends State<HomeScreen> {
             GestureDetector(
               onTap: () async {
                 if (locationController.selectedLocation.value == "Lokasi" ||
-                    roomsController.selectedSpace.value == "Ruang") {
+                    roomsController.selectedRoom.value == "Ruang") {
                   // Show Snackbar if either Lokasi or Ruang is in the default state
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text(

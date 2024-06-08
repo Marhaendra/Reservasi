@@ -4,10 +4,12 @@ import 'package:reservasi/features/data/data_sources/remote/api_service.dart';
 import 'package:reservasi/features/data/models/combined_room_model.dart';
 import 'package:reservasi/features/data/models/rooms_model.dart';
 import 'package:reservasi/features/data/models/seats_model.dart';
+import 'package:reservasi/helper/reservation_manager.dart';
 import 'package:reservasi/helper/user_manager.dart';
 
 class RoomsSeatsController extends GetxController {
-  RxString selectedSpace = "Ruang".obs;
+  RxString selectedRoom = "Ruang".obs;
+  RxInt selectedRoomId = 0.obs;
   RxList<RoomsModel> rooms = <RoomsModel>[].obs;
   RxList<SeatsModel> seats = <SeatsModel>[].obs;
   RxList<CombinedRoomModel> combinedRooms = <CombinedRoomModel>[].obs;
@@ -42,34 +44,71 @@ class RoomsSeatsController extends GetxController {
         return CombinedRoomModel(room: room, seats: roomSeats);
       }).toList();
 
-      // Print combined rooms and seats
-      combinedRooms.forEach((combinedRoom) {
-        print(
-            'Room: ${combinedRoom.room.nama_ruangan} (ID: ${combinedRoom.room.ruangan_id})');
-        print('Seats:');
-        combinedRoom.seats.forEach((seat) {
-          print('ID: ${seat.kursi_id}');
-        });
-        print(''); // Add an empty line for better readability
-      });
+      // // Print combined rooms and seats
+      // combinedRooms.forEach((combinedRoom) {
+      //   print(
+      //       'Room: ${combinedRoom.room.nama_ruangan} (ID: ${combinedRoom.room.ruangan_id})');
+      //   print('Seats:');
+      //   combinedRoom.seats.forEach((seat) {
+      //     print('ID: ${seat.kursi_id}');
+      //   });
+      //   print(''); // Add an empty line for better readability
+      // });
 
       // Save rooms to local database
-      await _database.roomsDao.insertRooms(rooms);
+      // await _database.roomsDao.insertRooms(rooms);
 
       // Save seats to local database
-      await _database.seatsDao.insertSeats(seats);
+      // await _database.seatsDao.insertSeats(seats);
     } catch (error) {
       Get.snackbar('Error', 'Failed to fetch rooms or seats: $error');
     }
   }
 
-  void updateRoom(String roomName) {
-    selectedSpace.value = roomName;
+  void updateRoomSeat(String roomName, int roomId) async {
+    selectedRoom.value = roomName;
+    selectedRoomId.value = roomId;
+
+    // Find and print the selected room and its seats
+    final selectedCombinedRoom = combinedRooms.firstWhere(
+        (combinedRoom) => combinedRoom.room.ruangan_id == roomId,
+        orElse: () => CombinedRoomModel(
+            room: RoomsModel(ruangan_id: 0, nama_ruangan: ''), seats: []));
+
+    if (selectedCombinedRoom.room.ruangan_id != 0) {
+      print(
+          'Room: ${selectedCombinedRoom.room.nama_ruangan} (ID: ${selectedCombinedRoom.room.ruangan_id})');
+      print('Seats:');
+      selectedCombinedRoom.seats.forEach((seat) {
+        print('ID: ${seat.kursi_id}');
+      });
+      print(
+          'Total Seats: ${selectedCombinedRoom.seats.length}'); // Add an empty line for better readability
+
+      // Delete existing values from the database
+      await _database.seatsDao.deleteAllSeats();
+      await _database.roomsDao.deleteAllRooms();
+
+      // Save the selected room and its seats to the local database using REPLACE strategy
+      await _database.roomsDao.insertRoom(selectedCombinedRoom.room);
+      await _database.seatsDao.insertSeats(selectedCombinedRoom.seats);
+    } else {
+      print('No room found with ID: $roomId');
+    }
+
+    await ReservationManager.clear();
+    await ReservationManager.saveRuanganId(roomId);
+    await ReservationManager.saveKursiQ(selectedCombinedRoom.seats.length);
+
+    final ruanganId = await ReservationManager.getRuanganId();
+    final kursiQ = await ReservationManager.getKursiQ();
+    print('ruanganId: $ruanganId, kursi $kursiQ');
     update();
   }
 
   void reset() {
-    selectedSpace.value = "Ruang";
+    selectedRoom.value = "Ruang";
+    selectedRoomId.value = 0;
     update();
   }
 }

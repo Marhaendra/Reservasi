@@ -1,11 +1,72 @@
 import 'package:get/get.dart';
+import 'package:reservasi/features/data/data_sources/local/app_database.dart';
+import 'package:reservasi/features/data/models/seats_model.dart';
 
 class ReservationController extends GetxController {
+  late RxList<List<Map<String, dynamic>>> session;
+  RxList<SeatsModel> seats = <SeatsModel>[].obs;
+
   var indexSession = 0.obs;
   var selectedSeats = <String>[].obs;
   var reservedSeat = <String>[].obs;
   var reservedDate = "".obs;
   var reservedSeatDate = <String>[].obs;
+
+  final AppDatabase _database;
+
+  ReservationController(this._database);
+
+  @override
+  void onInit() {
+    super.onInit();
+    // Initialize the session
+    initializeSession();
+  }
+
+  void initializeSession() async {
+    // Retrieve the session length from the database asynchronously
+    var seat = await _database.seatsDao.findAllSeats();
+    var kursiQ = seat.length;
+    int sessionLength = kursiQ;
+    print('kursiList: $seat, kursiQ: $kursiQ');
+    // Generate the session list
+    generateSessionList(sessionLength);
+
+    // Listen for changes in the database and update session list accordingly
+    _database.seatsDao.watchAllSeats().listen((updatedSeats) {
+      var newKursiQ = updatedSeats.length;
+      if (newKursiQ != kursiQ) {
+        // If the number of seats has changed, update the session list
+        kursiQ = newKursiQ;
+        session.clear(); // Clear the existing session list
+        generateSessionList(kursiQ); // Generate new session list
+      }
+    });
+  }
+
+  void generateSessionList(int sessionLength) {
+    // Generate the session list based on the session length
+    session = List.generate(
+      4,
+      (indexSession) => List<Map<String, dynamic>>.generate(
+        sessionLength,
+        (indexSeat) {
+          final isFilled = indexSession == 0
+              ? (indexSeat >= 24 && indexSeat <= 26) ||
+                  (indexSeat >= 40 && indexSeat <= 44)
+              : indexSession == 1
+                  ? (indexSeat >= 5 && indexSeat <= 35)
+                  : false;
+
+          return {
+            "id": "ID-${indexSession + 1}-${indexSeat + 1}",
+            "status": isFilled ? "filled" : "available",
+            "isSelected": false,
+          };
+        },
+      ),
+    ).obs;
+  }
 
   void ordered() {
     List<String> combinedList = [...reservedSeat, reservedDate.value];
@@ -85,25 +146,4 @@ class ReservationController extends GetxController {
   bool isSeatSelected() {
     return selectedSeats.isNotEmpty;
   }
-
-  var session = List.generate(
-    4,
-    (indexSession) => List<Map<String, dynamic>>.generate(
-      75,
-      (indexSeat) {
-        final isFilled = indexSession == 0
-            ? (indexSeat >= 24 && indexSeat <= 26) ||
-                (indexSeat >= 40 && indexSeat <= 44)
-            : indexSession == 1
-                ? (indexSeat >= 5 && indexSeat <= 35)
-                : false;
-
-        return {
-          "id": "ID-${indexSession + 1}-${indexSeat + 1}",
-          "status": isFilled ? "filled" : "available",
-          "isSelected": false,
-        };
-      },
-    ),
-  ).obs;
 }

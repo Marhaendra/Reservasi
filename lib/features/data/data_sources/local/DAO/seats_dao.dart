@@ -1,8 +1,18 @@
+import 'dart:async';
+
 import 'package:floor/floor.dart';
 import 'package:reservasi/features/data/models/seats_model.dart';
 
 @dao
 abstract class SeatsDao {
+  final StreamController<void> _changeNotifier =
+      StreamController<void>.broadcast();
+
+  Stream<void> get databaseChanges => _changeNotifier.stream;
+
+  @Query('SELECT * FROM seats')
+  Stream<List<SeatsModel>> watchAllSeats();
+
   @Query('SELECT * FROM seats')
   Future<List<SeatsModel>> findAllSeats();
 
@@ -11,6 +21,9 @@ abstract class SeatsDao {
 
   @Query('SELECT * FROM seats WHERE ruangan_id = :id')
   Future<List<SeatsModel>> findSeatsByRuanganId(int id);
+
+  @Query('DELETE FROM seats')
+  Future<void> deleteAllSeats();
 
   @insert
   Future<void> insertSeat(SeatsModel seat);
@@ -23,4 +36,12 @@ abstract class SeatsDao {
 
   @delete
   Future<void> deleteSeat(SeatsModel seat);
+
+  void notifyChanges() {
+    _changeNotifier.add(null);
+  }
+
+  void dispose() {
+    _changeNotifier.close();
+  }
 }

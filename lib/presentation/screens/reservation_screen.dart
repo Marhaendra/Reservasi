@@ -509,9 +509,9 @@ class _ReservationScreenState extends State<ReservationScreen> {
                   ),
                   // Padding for the User icon
                   Text(
-                    roomsController.selectedSpace.value.toString(),
+                    roomsController.selectedRoom.value.toString(),
                     style: GoogleFonts.poppins(
-                      fontSize: roomsController.selectedSpace.value.length < 18
+                      fontSize: roomsController.selectedRoom.value.length < 18
                           ? 24
                           : 18,
                       color: MyTheme.white,

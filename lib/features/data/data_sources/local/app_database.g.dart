@@ -242,8 +242,13 @@ class _$RoomsDao extends RoomsDao {
   }
 
   @override
+  Future<void> deleteAllRooms() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM rooms');
+  }
+
+  @override
   Future<void> insertRoom(RoomsModel room) async {
-    await _roomsModelInsertionAdapter.insert(room, OnConflictStrategy.abort);
+    await _roomsModelInsertionAdapter.insert(room, OnConflictStrategy.replace);
   }
 
   @override
@@ -267,7 +272,7 @@ class _$SeatsDao extends SeatsDao {
   _$SeatsDao(
     this.database,
     this.changeListener,
-  )   : _queryAdapter = QueryAdapter(database),
+  )   : _queryAdapter = QueryAdapter(database, changeListener),
         _seatsModelInsertionAdapter = InsertionAdapter(
             database,
             'seats',
@@ -276,7 +281,8 @@ class _$SeatsDao extends SeatsDao {
                   'ruangan_id': item.ruangan_id,
                   'ruangan_id': item.ruangan_id,
                   'kursi_id': item.kursi_id
-                }),
+                },
+            changeListener),
         _seatsModelUpdateAdapter = UpdateAdapter(
             database,
             'seats',
@@ -286,7 +292,8 @@ class _$SeatsDao extends SeatsDao {
                   'ruangan_id': item.ruangan_id,
                   'ruangan_id': item.ruangan_id,
                   'kursi_id': item.kursi_id
-                }),
+                },
+            changeListener),
         _seatsModelDeletionAdapter = DeletionAdapter(
             database,
             'seats',
@@ -296,7 +303,8 @@ class _$SeatsDao extends SeatsDao {
                   'ruangan_id': item.ruangan_id,
                   'ruangan_id': item.ruangan_id,
                   'kursi_id': item.kursi_id
-                });
+                },
+            changeListener);
 
   final sqflite.DatabaseExecutor database;
 
@@ -309,6 +317,16 @@ class _$SeatsDao extends SeatsDao {
   final UpdateAdapter<SeatsModel> _seatsModelUpdateAdapter;
 
   final DeletionAdapter<SeatsModel> _seatsModelDeletionAdapter;
+
+  @override
+  Stream<List<SeatsModel>> watchAllSeats() {
+    return _queryAdapter.queryListStream('SELECT * FROM seats',
+        mapper: (Map<String, Object?> row) => SeatsModel(
+            kursi_id: row['kursi_id'] as int,
+            ruangan_id: row['ruangan_id'] as int),
+        queryableName: 'seats',
+        isView: false);
+  }
 
   @override
   Future<List<SeatsModel>> findAllSeats() async {
@@ -334,6 +352,11 @@ class _$SeatsDao extends SeatsDao {
             kursi_id: row['kursi_id'] as int,
             ruangan_id: row['ruangan_id'] as int),
         arguments: [id]);
+  }
+
+  @override
+  Future<void> deleteAllSeats() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM seats');
   }
 
   @override

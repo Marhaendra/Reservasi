@@ -70,14 +70,15 @@ class _SearchScreenState extends State<SearchScreen> {
     });
   }
 
-  Widget spacesList(List<RoomsModel> space) {
+  Widget spacesList(List<RoomsModel> room) {
     return ListView.builder(
-      itemCount: space.length,
+      itemCount: room.length,
       scrollDirection: Axis.vertical,
       itemBuilder: (ctx, index) {
         return GestureDetector(
           onTap: () {
-            _roomsController.updateRoom(space[index].nama_ruangan);
+            _roomsController.updateRoomSeat(
+                room[index].nama_ruangan, room[index].ruangan_id);
             Navigator.pop(
               ctx,
               MaterialPageRoute(
@@ -91,7 +92,7 @@ class _SearchScreenState extends State<SearchScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  space[index].nama_ruangan,
+                  room[index].nama_ruangan,
                   style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
@@ -101,7 +102,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 const SizedBox(
                   height: 4,
                 ),
-                if (index < space.length - 1)
+                if (index < room.length - 1)
                   const Divider(
                     color: MyTheme.grey1,
                     thickness: 1.0,

@@ -9,7 +9,10 @@ abstract class RoomsDao {
   @Query('SELECT * FROM rooms WHERE ruangan_id = :id')
   Future<RoomsModel?> findRoomById(int id);
 
-  @insert
+  @Query('DELETE FROM rooms')
+  Future<void> deleteAllRooms();
+
+  @Insert(onConflict: OnConflictStrategy.replace)
   Future<void> insertRoom(RoomsModel room);
 
   @Insert(onConflict: OnConflictStrategy.replace)

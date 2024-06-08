@@ -26,7 +26,8 @@ class InitialBinding extends Bindings {
 
     // Initialize controllers and put them into GetX
     Get.lazyPut<RegisterController>(() => RegisterController());
-    Get.lazyPut<ReservationController>(() => ReservationController());
+    Get.lazyPut<ReservationController>(
+        () => ReservationController(Get.find<AppDatabase>()));
     Get.lazyPut<CalendarController>(() => CalendarController());
     Get.lazyPut<LocationController>(() => LocationController());
 
