@@ -7,17 +7,17 @@ part 'seats_entity.g.dart';
 class SeatsEntity extends Equatable {
   final int ruangan_id;
   final int kursi_id;
+  final int isBroken;
+  final int nomor_kursi;
 
-  const SeatsEntity({
-    required this.ruangan_id,
-    required this.kursi_id,
-  });
+  const SeatsEntity(
+      {required this.ruangan_id,
+      required this.kursi_id,
+      required this.isBroken,
+      required this.nomor_kursi});
 
   @override
-  List<Object?> get props => [
-        ruangan_id,
-        kursi_id,
-      ];
+  List<Object?> get props => [ruangan_id, kursi_id, isBroken, nomor_kursi];
 
   factory SeatsEntity.fromJson(Map<String, dynamic> json) =>
       _$SeatsEntityFromJson(json);

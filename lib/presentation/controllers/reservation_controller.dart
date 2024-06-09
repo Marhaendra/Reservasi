@@ -73,7 +73,7 @@ class ReservationController extends GetxController {
       seats.value = seatsResponse.data;
     } catch (error) {
       // Handle the error
-      print(error);
+      print('error reservationcontroller');
     }
   }
 

@@ -46,16 +46,17 @@ class RoomsSeatsController extends GetxController {
         return CombinedRoomModel(room: room, seats: roomSeats);
       }).toList();
 
-      // // Print combined rooms and seats
-      // combinedRooms.forEach((combinedRoom) {
-      //   print(
-      //       'Room: ${combinedRoom.room.nama_ruangan} (ID: ${combinedRoom.room.ruangan_id})');
-      //   print('Seats:');
-      //   combinedRoom.seats.forEach((seat) {
-      //     print('ID: ${seat.kursi_id}');
-      //   });
-      //   print(''); // Add an empty line for better readability
-      // });
+      // Debugging prints
+      combinedRooms.forEach((combinedRoom) {
+        print(
+            'Room: ${combinedRoom.room.nama_ruangan} (ID: ${combinedRoom.room.ruangan_id})');
+        print('Seats:');
+        combinedRoom.seats.forEach((seat) {
+          print(
+              'ID: ${seat.kursi_id}, isBroken: ${seat.isBroken}, nomor_kursi: ${seat.nomor_kursi}');
+        });
+        print(''); // Add an empty line for better readability
+      });
 
       // Save rooms to local database
       // await _database.roomsDao.insertRooms(rooms);
@@ -64,6 +65,7 @@ class RoomsSeatsController extends GetxController {
       // await _database.seatsDao.insertSeats(seats);
     } catch (error) {
       Get.snackbar('Error', 'Failed to fetch rooms or seats: $error');
+      print('Error: $error');
     }
   }
 
@@ -107,10 +109,6 @@ class RoomsSeatsController extends GetxController {
     final ruanganId = await ReservationManager.getRuanganId();
     final kursiQ = await ReservationManager.getKursiQ();
     print('ruanganId: $ruanganId, kursi $kursiQ');
-
-    List<RoomsPeriodModel> allPeriods =
-        await _database.roomsPeriodDao.findAllRoomsPeriod();
-    print('All periods from DB: $allPeriods');
     fetchRoomPeriod();
     update();
   }
@@ -143,10 +141,10 @@ class RoomsSeatsController extends GetxController {
       // Save the filtered periods to the DAO and notify listeners
       await _database.roomsPeriodDao.insertAndNotify(periodRooms.value);
 
-      // Verify that data has been inserted
-      List<RoomsPeriodModel> allPeriods =
-          await _database.roomsPeriodDao.findAllRoomsPeriod();
-      print('All periods from DB: $allPeriods');
+      // // Verify that data has been inserted
+      // List<RoomsPeriodModel> allPeriods =
+      //     await _database.roomsPeriodDao.findAllRoomsPeriod();
+      // print('All periods from DB: $allPeriods');
     } catch (error) {
       Get.snackbar('Error', 'Failed to fetch room period: $error');
       print('Error: $error');

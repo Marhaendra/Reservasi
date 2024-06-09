@@ -86,7 +86,7 @@ class _$AppDatabase extends AppDatabase {
     Callback? callback,
   ]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 7,
+      version: 9,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -106,7 +106,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `rooms` (`deleted_at` TEXT, `ruangan_id` INTEGER NOT NULL, `nama_ruangan` TEXT NOT NULL, PRIMARY KEY (`ruangan_id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `seats` (`kursi_id` INTEGER NOT NULL, `ruangan_id` INTEGER NOT NULL, `ruangan_id` INTEGER NOT NULL, `kursi_id` INTEGER NOT NULL, FOREIGN KEY (`ruangan_id`) REFERENCES `rooms` (`ruangan_id`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`kursi_id`, `kursi_id`))');
+            'CREATE TABLE IF NOT EXISTS `seats` (`kursi_id` INTEGER NOT NULL, `ruangan_id` INTEGER NOT NULL, `isBroken` INTEGER NOT NULL, `nomor_kursi` INTEGER NOT NULL, `ruangan_id` INTEGER NOT NULL, `kursi_id` INTEGER NOT NULL, `isBroken` INTEGER NOT NULL, `nomor_kursi` INTEGER NOT NULL, FOREIGN KEY (`ruangan_id`) REFERENCES `rooms` (`ruangan_id`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`kursi_id`, `kursi_id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `rooms_period` (`ruangan_periode_id` INTEGER NOT NULL, `ruangan_id` INTEGER NOT NULL, `periode_id` INTEGER NOT NULL, `is_active` INTEGER NOT NULL, `nama_periode` TEXT NOT NULL, `jam_mulai` TEXT NOT NULL, `jam_selesai` TEXT NOT NULL, FOREIGN KEY (`ruangan_id`) REFERENCES `rooms` (`ruangan_id`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`ruangan_periode_id`))');
 
@@ -289,8 +289,12 @@ class _$SeatsDao extends SeatsDao {
             (SeatsModel item) => <String, Object?>{
                   'kursi_id': item.kursi_id,
                   'ruangan_id': item.ruangan_id,
+                  'isBroken': item.isBroken,
+                  'nomor_kursi': item.nomor_kursi,
                   'ruangan_id': item.ruangan_id,
-                  'kursi_id': item.kursi_id
+                  'kursi_id': item.kursi_id,
+                  'isBroken': item.isBroken,
+                  'nomor_kursi': item.nomor_kursi
                 },
             changeListener),
         _seatsModelUpdateAdapter = UpdateAdapter(
@@ -300,8 +304,12 @@ class _$SeatsDao extends SeatsDao {
             (SeatsModel item) => <String, Object?>{
                   'kursi_id': item.kursi_id,
                   'ruangan_id': item.ruangan_id,
+                  'isBroken': item.isBroken,
+                  'nomor_kursi': item.nomor_kursi,
                   'ruangan_id': item.ruangan_id,
-                  'kursi_id': item.kursi_id
+                  'kursi_id': item.kursi_id,
+                  'isBroken': item.isBroken,
+                  'nomor_kursi': item.nomor_kursi
                 },
             changeListener),
         _seatsModelDeletionAdapter = DeletionAdapter(
@@ -311,8 +319,12 @@ class _$SeatsDao extends SeatsDao {
             (SeatsModel item) => <String, Object?>{
                   'kursi_id': item.kursi_id,
                   'ruangan_id': item.ruangan_id,
+                  'isBroken': item.isBroken,
+                  'nomor_kursi': item.nomor_kursi,
                   'ruangan_id': item.ruangan_id,
-                  'kursi_id': item.kursi_id
+                  'kursi_id': item.kursi_id,
+                  'isBroken': item.isBroken,
+                  'nomor_kursi': item.nomor_kursi
                 },
             changeListener);
 
@@ -333,7 +345,9 @@ class _$SeatsDao extends SeatsDao {
     return _queryAdapter.queryListStream('SELECT * FROM seats',
         mapper: (Map<String, Object?> row) => SeatsModel(
             kursi_id: row['kursi_id'] as int,
-            ruangan_id: row['ruangan_id'] as int),
+            ruangan_id: row['ruangan_id'] as int,
+            isBroken: row['isBroken'] as int,
+            nomor_kursi: row['nomor_kursi'] as int),
         queryableName: 'seats',
         isView: false);
   }
@@ -343,7 +357,9 @@ class _$SeatsDao extends SeatsDao {
     return _queryAdapter.queryList('SELECT * FROM seats',
         mapper: (Map<String, Object?> row) => SeatsModel(
             kursi_id: row['kursi_id'] as int,
-            ruangan_id: row['ruangan_id'] as int));
+            ruangan_id: row['ruangan_id'] as int,
+            isBroken: row['isBroken'] as int,
+            nomor_kursi: row['nomor_kursi'] as int));
   }
 
   @override
@@ -351,7 +367,9 @@ class _$SeatsDao extends SeatsDao {
     return _queryAdapter.query('SELECT * FROM seats WHERE kursi_id = ?1',
         mapper: (Map<String, Object?> row) => SeatsModel(
             kursi_id: row['kursi_id'] as int,
-            ruangan_id: row['ruangan_id'] as int),
+            ruangan_id: row['ruangan_id'] as int,
+            isBroken: row['isBroken'] as int,
+            nomor_kursi: row['nomor_kursi'] as int),
         arguments: [id]);
   }
 
@@ -360,7 +378,9 @@ class _$SeatsDao extends SeatsDao {
     return _queryAdapter.queryList('SELECT * FROM seats WHERE ruangan_id = ?1',
         mapper: (Map<String, Object?> row) => SeatsModel(
             kursi_id: row['kursi_id'] as int,
-            ruangan_id: row['ruangan_id'] as int),
+            ruangan_id: row['ruangan_id'] as int,
+            isBroken: row['isBroken'] as int,
+            nomor_kursi: row['nomor_kursi'] as int),
         arguments: [id]);
   }
 

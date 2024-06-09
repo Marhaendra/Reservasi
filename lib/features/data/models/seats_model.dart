@@ -18,11 +18,19 @@ part 'seats_model.g.dart';
 class SeatsModel extends SeatsEntity {
   final int kursi_id;
   final int ruangan_id; // Foreign key to match with RoomsModel
+  final int isBroken;
+  final int nomor_kursi;
 
-  SeatsModel({
-    required this.kursi_id,
-    required this.ruangan_id,
-  }) : super(ruangan_id: ruangan_id, kursi_id: kursi_id);
+  SeatsModel(
+      {required this.kursi_id,
+      required this.ruangan_id,
+      required this.isBroken,
+      required this.nomor_kursi})
+      : super(
+            ruangan_id: ruangan_id,
+            kursi_id: kursi_id,
+            isBroken: isBroken,
+            nomor_kursi: nomor_kursi);
 
   factory SeatsModel.fromJson(Map<String, dynamic> json) =>
       _$SeatsModelFromJson(json);

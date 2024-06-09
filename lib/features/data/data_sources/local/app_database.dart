@@ -13,7 +13,7 @@ import 'dart:async';
 part 'app_database.g.dart'; // the generated code will be there
 
 @Database(
-    version: 7,
+    version: 9,
     entities: [LoginModel, RoomsModel, SeatsModel, RoomsPeriodModel])
 abstract class AppDatabase extends FloorDatabase {
   LoginDao get loginDao;
@@ -36,6 +36,39 @@ abstract class AppDatabase extends FloorDatabase {
   static set databaseInstance(AppDatabase? instance) {
     _databaseInstance = instance;
   }
+
+  static final migration7to8 = Migration(7, 8, (database) async {
+    await database.execute(
+        'ALTER TABLE seats ADD COLUMN isBroken INTEGER NOT NULL DEFAULT 0');
+    await database.execute(
+        'ALTER TABLE seats ADD COLUMN nomor_kursi INTEGER NOT NULL DEFAULT 0');
+    print("Migration from version 7 to 8 applied successfully.");
+  });
+
+  static final migration8to9 = Migration(8, 9, (database) async {
+    await database.execute('ALTER TABLE seats RENAME TO seats_old');
+    await database.execute('''
+      CREATE TABLE seats (
+        kursi_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ruangan_id INTEGER NOT NULL,
+        isBroken INTEGER NOT NULL DEFAULT 0,
+        nomor_kursi INTEGER NOT NULL DEFAULT 0,
+        FOREIGN KEY (ruangan_id) REFERENCES rooms(ruangan_id)
+      )
+    ''');
+    await database.execute('''
+      INSERT INTO seats (kursi_id, ruangan_id, isBroken, nomor_kursi)
+      SELECT kursi_id, ruangan_id, isBroken,
+             CASE 
+               WHEN nomor_kursi IS NULL OR TRIM(nomor_kursi) = '' THEN 0
+               ELSE CAST(nomor_kursi AS INTEGER)
+             END
+      FROM seats_old
+    ''');
+    await database.execute('DROP TABLE seats_old');
+
+    print("Migration from version 8 to 9 applied successfully.");
+  });
 
   static final migration6to7 = Migration(6, 7, (database) async {
     await database.execute('DROP TABLE IF EXISTS rooms_period');

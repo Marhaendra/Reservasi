@@ -9,12 +9,16 @@ part of 'seats_model.dart';
 SeatsModel _$SeatsModelFromJson(Map<String, dynamic> json) => SeatsModel(
       kursi_id: (json['kursi_id'] as num).toInt(),
       ruangan_id: (json['ruangan_id'] as num).toInt(),
+      isBroken: (json['isBroken'] as num).toInt(),
+      nomor_kursi: (json['nomor_kursi'] as num).toInt(),
     );
 
 Map<String, dynamic> _$SeatsModelToJson(SeatsModel instance) =>
     <String, dynamic>{
       'kursi_id': instance.kursi_id,
       'ruangan_id': instance.ruangan_id,
+      'isBroken': instance.isBroken,
+      'nomor_kursi': instance.nomor_kursi,
     };
 
 SeatsResponse _$SeatsResponseFromJson(Map<String, dynamic> json) =>

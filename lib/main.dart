@@ -27,8 +27,10 @@ Future<void> main() async {
       .databaseBuilder('app_database.db')
       .addMigrations([AppDatabase.migration3to4]).addMigrations([
     AppDatabase.migration4to5
-  ]).addMigrations([AppDatabase.migration5to6]).addMigrations(
-          [AppDatabase.migration6to7]).build();
+  ]).addMigrations([AppDatabase.migration5to6]).addMigrations([
+    AppDatabase.migration6to7
+  ]).addMigrations([AppDatabase.migration7to8]).addMigrations(
+          [AppDatabase.migration8to9]).build();
 
   Get.put(database);
   // Make the database instance available to GetX
