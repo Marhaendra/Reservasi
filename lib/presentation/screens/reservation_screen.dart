@@ -321,9 +321,13 @@ class _ReservationScreenState extends State<ReservationScreen> {
                           crossAxisSpacing: 10,
                           crossAxisCount: 7,
                         ),
-                        itemCount: reservationController
-                            .session[reservationController.indexSession.value]
-                            .length,
+                        itemCount: reservationController.session.length >
+                                reservationController.indexSession.value
+                            ? reservationController
+                                .session[
+                                    reservationController.indexSession.value]
+                                .length
+                            : 0,
                         itemBuilder: (context, index) => GestureDetector(
                           onTap: () {
                             reservationController.selectSeat(index);

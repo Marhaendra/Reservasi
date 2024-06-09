@@ -78,13 +78,15 @@ class _$AppDatabase extends AppDatabase {
 
   SeatsDao? _seatsDaoInstance;
 
+  RoomsPeriodDao? _roomsPeriodDaoInstance;
+
   Future<sqflite.Database> open(
     String path,
     List<Migration> migrations, [
     Callback? callback,
   ]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 6,
+      version: 7,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -105,6 +107,8 @@ class _$AppDatabase extends AppDatabase {
             'CREATE TABLE IF NOT EXISTS `rooms` (`deleted_at` TEXT, `ruangan_id` INTEGER NOT NULL, `nama_ruangan` TEXT NOT NULL, PRIMARY KEY (`ruangan_id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `seats` (`kursi_id` INTEGER NOT NULL, `ruangan_id` INTEGER NOT NULL, `ruangan_id` INTEGER NOT NULL, `kursi_id` INTEGER NOT NULL, FOREIGN KEY (`ruangan_id`) REFERENCES `rooms` (`ruangan_id`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`kursi_id`, `kursi_id`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `rooms_period` (`ruangan_periode_id` INTEGER NOT NULL, `ruangan_id` INTEGER NOT NULL, `periode_id` INTEGER NOT NULL, `is_active` INTEGER NOT NULL, `nama_periode` TEXT NOT NULL, `jam_mulai` TEXT NOT NULL, `jam_selesai` TEXT NOT NULL, FOREIGN KEY (`ruangan_id`) REFERENCES `rooms` (`ruangan_id`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`ruangan_periode_id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -125,6 +129,12 @@ class _$AppDatabase extends AppDatabase {
   @override
   SeatsDao get seatsDao {
     return _seatsDaoInstance ??= _$SeatsDao(database, changeListener);
+  }
+
+  @override
+  RoomsPeriodDao get roomsPeriodDao {
+    return _roomsPeriodDaoInstance ??=
+        _$RoomsPeriodDao(database, changeListener);
   }
 }
 
@@ -378,5 +388,165 @@ class _$SeatsDao extends SeatsDao {
   @override
   Future<void> deleteSeat(SeatsModel seat) async {
     await _seatsModelDeletionAdapter.delete(seat);
+  }
+}
+
+class _$RoomsPeriodDao extends RoomsPeriodDao {
+  _$RoomsPeriodDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database, changeListener),
+        _roomsPeriodModelInsertionAdapter = InsertionAdapter(
+            database,
+            'rooms_period',
+            (RoomsPeriodModel item) => <String, Object?>{
+                  'ruangan_periode_id': item.ruangan_periode_id,
+                  'ruangan_id': item.ruangan_id,
+                  'periode_id': item.periode_id,
+                  'is_active': item.is_active,
+                  'nama_periode': item.nama_periode,
+                  'jam_mulai': item.jam_mulai,
+                  'jam_selesai': item.jam_selesai
+                },
+            changeListener),
+        _roomsPeriodModelUpdateAdapter = UpdateAdapter(
+            database,
+            'rooms_period',
+            ['ruangan_periode_id'],
+            (RoomsPeriodModel item) => <String, Object?>{
+                  'ruangan_periode_id': item.ruangan_periode_id,
+                  'ruangan_id': item.ruangan_id,
+                  'periode_id': item.periode_id,
+                  'is_active': item.is_active,
+                  'nama_periode': item.nama_periode,
+                  'jam_mulai': item.jam_mulai,
+                  'jam_selesai': item.jam_selesai
+                },
+            changeListener),
+        _roomsPeriodModelDeletionAdapter = DeletionAdapter(
+            database,
+            'rooms_period',
+            ['ruangan_periode_id'],
+            (RoomsPeriodModel item) => <String, Object?>{
+                  'ruangan_periode_id': item.ruangan_periode_id,
+                  'ruangan_id': item.ruangan_id,
+                  'periode_id': item.periode_id,
+                  'is_active': item.is_active,
+                  'nama_periode': item.nama_periode,
+                  'jam_mulai': item.jam_mulai,
+                  'jam_selesai': item.jam_selesai
+                },
+            changeListener);
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<RoomsPeriodModel> _roomsPeriodModelInsertionAdapter;
+
+  final UpdateAdapter<RoomsPeriodModel> _roomsPeriodModelUpdateAdapter;
+
+  final DeletionAdapter<RoomsPeriodModel> _roomsPeriodModelDeletionAdapter;
+
+  @override
+  Stream<List<RoomsPeriodModel>> watchAllRoomsPeriod() {
+    return _queryAdapter.queryListStream('SELECT * FROM rooms_period',
+        mapper: (Map<String, Object?> row) => RoomsPeriodModel(
+            ruangan_periode_id: row['ruangan_periode_id'] as int,
+            ruangan_id: row['ruangan_id'] as int,
+            periode_id: row['periode_id'] as int,
+            is_active: row['is_active'] as int,
+            nama_periode: row['nama_periode'] as String,
+            jam_mulai: row['jam_mulai'] as String,
+            jam_selesai: row['jam_selesai'] as String),
+        queryableName: 'rooms_period',
+        isView: false);
+  }
+
+  @override
+  Future<List<RoomsPeriodModel>> findAllRoomsPeriod() async {
+    return _queryAdapter.queryList('SELECT * FROM rooms_period',
+        mapper: (Map<String, Object?> row) => RoomsPeriodModel(
+            ruangan_periode_id: row['ruangan_periode_id'] as int,
+            ruangan_id: row['ruangan_id'] as int,
+            periode_id: row['periode_id'] as int,
+            is_active: row['is_active'] as int,
+            nama_periode: row['nama_periode'] as String,
+            jam_mulai: row['jam_mulai'] as String,
+            jam_selesai: row['jam_selesai'] as String));
+  }
+
+  @override
+  Future<RoomsPeriodModel?> findRoomsPeriodById(int id) async {
+    return _queryAdapter.query(
+        'SELECT * FROM rooms_period WHERE ruangan_periode_id = ?1',
+        mapper: (Map<String, Object?> row) => RoomsPeriodModel(
+            ruangan_periode_id: row['ruangan_periode_id'] as int,
+            ruangan_id: row['ruangan_id'] as int,
+            periode_id: row['periode_id'] as int,
+            is_active: row['is_active'] as int,
+            nama_periode: row['nama_periode'] as String,
+            jam_mulai: row['jam_mulai'] as String,
+            jam_selesai: row['jam_selesai'] as String),
+        arguments: [id]);
+  }
+
+  @override
+  Future<List<RoomsPeriodModel>> findRoomsPeriodByRuanganId(int id) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM rooms_period WHERE ruangan_id = ?1',
+        mapper: (Map<String, Object?> row) => RoomsPeriodModel(
+            ruangan_periode_id: row['ruangan_periode_id'] as int,
+            ruangan_id: row['ruangan_id'] as int,
+            periode_id: row['periode_id'] as int,
+            is_active: row['is_active'] as int,
+            nama_periode: row['nama_periode'] as String,
+            jam_mulai: row['jam_mulai'] as String,
+            jam_selesai: row['jam_selesai'] as String),
+        arguments: [id]);
+  }
+
+  @override
+  Future<void> deleteAllRoomsPeriod() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM rooms_period');
+  }
+
+  @override
+  Future<void> insertRoomsPeriod(RoomsPeriodModel roomsPeriod) async {
+    await _roomsPeriodModelInsertionAdapter.insert(
+        roomsPeriod, OnConflictStrategy.replace);
+  }
+
+  @override
+  Future<void> insertRoomsPeriods(List<RoomsPeriodModel> roomsPeriods) async {
+    await _roomsPeriodModelInsertionAdapter.insertList(
+        roomsPeriods, OnConflictStrategy.replace);
+  }
+
+  @override
+  Future<void> updateRoomsPeriod(RoomsPeriodModel roomsPeriod) async {
+    await _roomsPeriodModelUpdateAdapter.update(
+        roomsPeriod, OnConflictStrategy.replace);
+  }
+
+  @override
+  Future<void> deleteRoomsPeriod(RoomsPeriodModel roomsPeriod) async {
+    await _roomsPeriodModelDeletionAdapter.delete(roomsPeriod);
+  }
+
+  @override
+  Future<void> insertAndNotify(List<RoomsPeriodModel> roomsPeriods) async {
+    if (database is sqflite.Transaction) {
+      await super.insertAndNotify(roomsPeriods);
+    } else {
+      await (database as sqflite.Database)
+          .transaction<void>((transaction) async {
+        final transactionDatabase = _$AppDatabase(changeListener)
+          ..database = transaction;
+        await transactionDatabase.roomsPeriodDao.insertAndNotify(roomsPeriods);
+      });
+    }
   }
 }

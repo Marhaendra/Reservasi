@@ -2,6 +2,7 @@ import 'package:reservasi/core/constants/constants.dart';
 import 'package:reservasi/features/data/models/login_model.dart';
 import 'package:reservasi/features/data/models/register_model.dart';
 import 'package:reservasi/features/data/models/rooms_model.dart';
+import 'package:reservasi/features/data/models/rooms_period_model.dart';
 import 'package:reservasi/features/data/models/seats_model.dart';
 import 'package:retrofit/http.dart';
 import 'package:retrofit/retrofit.dart';
@@ -23,4 +24,17 @@ abstract class ApiService {
 
   @GET('/kursi')
   Future<SeatsResponse> getKursi(@Header("Authorization") String token);
+
+  @GET('/kursi/available')
+  Future<SeatsResponse> getAvailableKursi(
+    @Header("Authorization") String token,
+    @Query('tanggal_reservasi') String tanggalReservasi,
+    @Query('ruangan_id') int ruanganId,
+    @Query('periode_id') int periodeId,
+  );
+
+  @GET('/ruangan-periode')
+  Future<RoomsPeriodResponse> getRuanganPeriode(
+    @Header("Authorization") String token,
+  );
 }

@@ -1,20 +1,25 @@
 import 'package:floor/floor.dart';
 import 'package:reservasi/features/data/data_sources/local/DAO/login_dao.dart';
 import 'package:reservasi/features/data/data_sources/local/DAO/rooms_dao.dart';
+import 'package:reservasi/features/data/data_sources/local/DAO/rooms_period_dao.dart';
 import 'package:reservasi/features/data/data_sources/local/DAO/seats_dao.dart';
 import 'package:reservasi/features/data/models/login_model.dart';
 import 'package:reservasi/features/data/models/rooms_model.dart';
+import 'package:reservasi/features/data/models/rooms_period_model.dart';
 import 'package:reservasi/features/data/models/seats_model.dart';
 import 'package:sqflite/sqflite.dart' as sqflite;
 import 'dart:async';
 
 part 'app_database.g.dart'; // the generated code will be there
 
-@Database(version: 6, entities: [LoginModel, RoomsModel, SeatsModel])
+@Database(
+    version: 7,
+    entities: [LoginModel, RoomsModel, SeatsModel, RoomsPeriodModel])
 abstract class AppDatabase extends FloorDatabase {
   LoginDao get loginDao;
   RoomsDao get roomsDao;
   SeatsDao get seatsDao;
+  RoomsPeriodDao get roomsPeriodDao;
 
   static AppDatabase? _databaseInstance;
 
@@ -31,6 +36,24 @@ abstract class AppDatabase extends FloorDatabase {
   static set databaseInstance(AppDatabase? instance) {
     _databaseInstance = instance;
   }
+
+  static final migration6to7 = Migration(6, 7, (database) async {
+    await database.execute('DROP TABLE IF EXISTS rooms_period');
+
+    await database.execute('''
+    CREATE TABLE IF NOT EXISTS rooms_period (
+      ruangan_periode_id INTEGER PRIMARY KEY,
+      ruangan_id INTEGER,
+      periode_id INTEGER,
+      is_active INTEGER,
+      nama_periode STRING,
+      jam_mulai STRING,
+      jam_selesai STRING,
+      FOREIGN KEY (ruangan_id) REFERENCES rooms(ruangan_id)
+    )
+  ''');
+    print("Migration from version 6 to 7 applied successfully.");
+  });
 
   static final migration5to6 = Migration(5, 6, (database) async {
     await database.execute('DROP TABLE IF EXISTS seats');

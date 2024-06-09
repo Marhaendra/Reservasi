@@ -3,6 +3,7 @@ import 'package:reservasi/features/data/data_sources/local/app_database.dart';
 import 'package:reservasi/features/data/data_sources/remote/api_service.dart';
 import 'package:reservasi/features/data/models/combined_room_model.dart';
 import 'package:reservasi/features/data/models/rooms_model.dart';
+import 'package:reservasi/features/data/models/rooms_period_model.dart';
 import 'package:reservasi/features/data/models/seats_model.dart';
 import 'package:reservasi/helper/reservation_manager.dart';
 import 'package:reservasi/helper/user_manager.dart';
@@ -12,6 +13,7 @@ class RoomsSeatsController extends GetxController {
   RxInt selectedRoomId = 0.obs;
   RxList<RoomsModel> rooms = <RoomsModel>[].obs;
   RxList<SeatsModel> seats = <SeatsModel>[].obs;
+  RxList<RoomsPeriodModel> periodRooms = <RoomsPeriodModel>[].obs;
   RxList<CombinedRoomModel> combinedRooms = <CombinedRoomModel>[].obs;
 
   final ApiService _apiService;
@@ -86,6 +88,8 @@ class RoomsSeatsController extends GetxController {
           'Total Seats: ${selectedCombinedRoom.seats.length}'); // Add an empty line for better readability
 
       // Delete existing values from the database
+
+      await _database.roomsPeriodDao.deleteAllRoomsPeriod();
       await _database.seatsDao.deleteAllSeats();
       await _database.roomsDao.deleteAllRooms();
 
@@ -103,6 +107,11 @@ class RoomsSeatsController extends GetxController {
     final ruanganId = await ReservationManager.getRuanganId();
     final kursiQ = await ReservationManager.getKursiQ();
     print('ruanganId: $ruanganId, kursi $kursiQ');
+
+    List<RoomsPeriodModel> allPeriods =
+        await _database.roomsPeriodDao.findAllRoomsPeriod();
+    print('All periods from DB: $allPeriods');
+    fetchRoomPeriod();
     update();
   }
 
@@ -110,5 +119,37 @@ class RoomsSeatsController extends GetxController {
     selectedRoom.value = "Ruang";
     selectedRoomId.value = 0;
     update();
+  }
+
+  void fetchRoomPeriod() async {
+    try {
+      final token = await UserManager.getToken();
+      RoomsPeriodResponse roomsPeriodResponse =
+          await _apiService.getRuanganPeriode(token!);
+
+      final RoomsSeatsController roomsSeatsController =
+          Get.find<RoomsSeatsController>();
+      int ruanganId = roomsSeatsController.selectedRoomId.value;
+
+      // Filter the periods based on ruangan_id and is_active
+      periodRooms.value = roomsPeriodResponse.data
+          .where((period) =>
+              period.ruangan_id == ruanganId && period.is_active == 1)
+          .toList();
+
+      print(
+          'Filtered periods: ${periodRooms.value}'); // Log the filtered periods
+
+      // Save the filtered periods to the DAO and notify listeners
+      await _database.roomsPeriodDao.insertAndNotify(periodRooms.value);
+
+      // Verify that data has been inserted
+      List<RoomsPeriodModel> allPeriods =
+          await _database.roomsPeriodDao.findAllRoomsPeriod();
+      print('All periods from DB: $allPeriods');
+    } catch (error) {
+      Get.snackbar('Error', 'Failed to fetch room period: $error');
+      print('Error: $error');
+    }
   }
 }
