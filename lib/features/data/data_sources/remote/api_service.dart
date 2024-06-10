@@ -33,6 +33,14 @@ abstract class ApiService {
     @Query('periode_id') int periodeId,
   );
 
+  @GET('/kursi/reserved')
+  Future<SeatsResponse> getReservedKursi(
+    @Header("Authorization") String token,
+    @Query('tanggal_reservasi') String tanggalReservasi,
+    @Query('ruangan_id') int ruanganId,
+    @Query('periode_id') int periodeId,
+  );
+
   @GET('/ruangan-periode')
   Future<RoomsPeriodResponse> getRuanganPeriode(
     @Header("Authorization") String token,

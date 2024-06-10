@@ -35,6 +35,8 @@ class ReservationController extends GetxController {
     initializeSession();
   }
 
+  void reservation() async {}
+
   void fetchPeriodSeats() async {
     try {
       // Retrieve the token

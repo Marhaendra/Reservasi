@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:reservasi/presentation/controllers/calendar_controller.dart';
 import 'package:reservasi/presentation/controllers/location_controller.dart';
+import 'package:reservasi/presentation/controllers/rooms_period_contoller.dart';
 import 'package:reservasi/presentation/controllers/rooms_seats_controller.dart';
 import 'package:reservasi/features/data/models/date_reservation_model.dart';
 import 'package:reservasi/presentation/screens/home_screen.dart';
@@ -30,8 +31,11 @@ class _ReservationScreenState extends State<ReservationScreen> {
   late CalendarController calendarController;
   late RoomsSeatsController roomsController;
   late LocationController locationController;
+  late RoomsPeriodController roomsPeriodController;
 
   bool isSeatSelected = false;
+
+  late List<String> sessionTimes;
 
   @override
   void initState() {
@@ -40,6 +44,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
     roomsController = Get.find<RoomsSeatsController>();
     locationController = Get.find<LocationController>();
     calendarController = Get.find<CalendarController>();
+    roomsPeriodController = Get.find<RoomsPeriodController>();
 
     calendarController.tabDateList();
 
@@ -48,6 +53,19 @@ class _ReservationScreenState extends State<ReservationScreen> {
     itemCount = 1;
     maxItemCount = 7;
     pageController = PageController(initialPage: current);
+    sessionTimes = [];
+    updateSessionTimes();
+  }
+
+  Future<void> updateSessionTimes() async {
+    try {
+      List<String> times = await roomsPeriodController.getSessionTimes();
+      setState(() {
+        sessionTimes = times; // Update sessionTimes with fetched data
+      });
+    } catch (error) {
+      print('Error fetching session times: $error');
+    }
   }
 
   @override
@@ -239,74 +257,78 @@ class _ReservationScreenState extends State<ReservationScreen> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
                   height: 60,
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
-                    child: Obx(
-                      () => Row(
-                        children: List.generate(
-                          reservationController.session.length,
-                          (index) => GestureDetector(
-                            onTap: () =>
-                                reservationController.changeSession(index),
-                            child: Container(
-                              margin: EdgeInsets.all(8),
-                              width: 150,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: reservationController
-                                              .indexSession.value ==
-                                          index
-                                      ? MyTheme.primary
-                                      : MyTheme.grey1,
-                                ),
-                                color:
-                                    reservationController.indexSession.value ==
-                                            index
-                                        ? MyTheme.primary.withOpacity(.1)
-                                        : Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Center(
-                                    child: Text(
-                                      "Sesi ${index + 1}",
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
+                    child: sessionTimes.isEmpty
+                        ? const CircularProgressIndicator()
+                        : Row(
+                            children: List.generate(
+                              reservationController.session.length,
+                              (index) => GestureDetector(
+                                onTap: () =>
+                                    reservationController.changeSession(index),
+                                child: Obx(() => Container(
+                                      margin: EdgeInsets.all(8),
+                                      width: 150,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: reservationController
+                                                      .indexSession.value ==
+                                                  index
+                                              ? MyTheme.primary
+                                              : MyTheme.grey1,
+                                        ),
                                         color: reservationController
                                                     .indexSession.value ==
                                                 index
-                                            ? MyTheme.primary
-                                            : MyTheme.black,
+                                            ? MyTheme.primary.withOpacity(.1)
+                                            : Colors.white,
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
-                                    ),
-                                  ),
-                                  Center(
-                                    child: Text(
-                                      "00.00 - 00.00",
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 8,
-                                        fontWeight: FontWeight.w400,
-                                        color: reservationController
-                                                    .indexSession.value ==
-                                                index
-                                            ? MyTheme.primary
-                                            : MyTheme.black,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Center(
+                                            child: Text(
+                                              "Sesi ${index + 1}",
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500,
+                                                color: reservationController
+                                                            .indexSession
+                                                            .value ==
+                                                        index
+                                                    ? MyTheme.primary
+                                                    : MyTheme.black,
+                                              ),
+                                            ),
+                                          ),
+                                          Center(
+                                            child: Text(
+                                              "${_formatTime(sessionTimes[index].split(' - ')[0])} - ${_formatTime(sessionTimes[index].split(' - ')[1])}",
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 8,
+                                                fontWeight: FontWeight.w400,
+                                                color: reservationController
+                                                            .indexSession
+                                                            .value ==
+                                                        index
+                                                    ? MyTheme.primary
+                                                    : MyTheme.black,
+                                              ),
+                                            ),
+                                          )
+                                        ],
                                       ),
-                                    ),
-                                  )
-                                ],
+                                    )),
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -572,4 +594,11 @@ class ItemStatus extends StatelessWidget {
       ],
     );
   }
+}
+
+String _formatTime(String time) {
+  if (time.length >= 5) {
+    return time.substring(0, 5);
+  }
+  return time; // Return original time if format is unexpected
 }

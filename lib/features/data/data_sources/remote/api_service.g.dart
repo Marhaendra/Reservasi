@@ -170,6 +170,43 @@ class _ApiService implements ApiService {
   }
 
   @override
+  Future<SeatsResponse> getReservedKursi(
+    String token,
+    String tanggalReservasi,
+    int ruanganId,
+    int periodeId,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'tanggal_reservasi': tanggalReservasi,
+      r'ruangan_id': ruanganId,
+      r'periode_id': periodeId,
+    };
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<SeatsResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/kursi/reserved',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = SeatsResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
   Future<RoomsPeriodResponse> getRuanganPeriode(String token) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};

@@ -32,8 +32,8 @@ class InitialBinding extends Bindings {
         ReservationController(Get.find<ApiService>(), Get.find<AppDatabase>()));
     Get.lazyPut<CalendarController>(() => CalendarController());
     Get.lazyPut<LocationController>(() => LocationController());
-    Get.lazyPut<RoomsPeriodController>(() =>
-        RoomsPeriodController(Get.find<ApiService>(), Get.find<AppDatabase>()));
+    Get.lazyPut<RoomsPeriodController>(
+        () => RoomsPeriodController(Get.find<AppDatabase>()));
 
     // Initialize the AppDatabase asynchronously
     Get.putAsync<AppDatabase>(() async => await AppDatabase.getDatabase());

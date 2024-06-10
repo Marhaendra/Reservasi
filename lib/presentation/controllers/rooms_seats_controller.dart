@@ -133,13 +133,11 @@ class RoomsSeatsController extends GetxController {
       periodRooms.value = roomsPeriodResponse.data
           .where((period) =>
               period.ruangan_id == ruanganId && period.is_active == 1)
-          .toList();
-
-      print(
-          'Filtered periods: ${periodRooms.value}'); // Log the filtered periods
+          .toList(); // Log the filtered periods
 
       // Save the filtered periods to the DAO and notify listeners
       await _database.roomsPeriodDao.insertAndNotify(periodRooms.value);
+      print('periodROOM: $periodRooms');
 
       // // Verify that data has been inserted
       // List<RoomsPeriodModel> allPeriods =
