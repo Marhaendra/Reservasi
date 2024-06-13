@@ -15,7 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _checkLoginStatus() async {
     // Simulate a delay
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(Duration(seconds: 3));
 
     // Check if the user is logged in by retrieving the token
     String? token = await UserManager.getToken();
@@ -31,8 +31,17 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
+      body: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Add your image here
+          Center(
+            child: Image.asset(
+              'assets/images/reservasi-icon-text.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+        ],
       ),
     );
   }
