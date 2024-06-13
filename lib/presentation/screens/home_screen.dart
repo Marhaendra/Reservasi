@@ -380,6 +380,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   // Load reservation data
                   roomsController.fetchCombinedRooms();
                   roomsPeriodController.fetchRoomsPeriod();
+                  reservationController.missedSession();
                   reservationController.fetchAvailableKursi();
                   await reservationController.initializeSession();
 

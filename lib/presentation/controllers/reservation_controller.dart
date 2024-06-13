@@ -27,16 +27,10 @@ class ReservationController extends GetxController {
   var reservedSeatDate = <String>[].obs;
   var periodList = <int>[].obs;
   var reservation = <ReservationPostModel>[].obs;
+  RxList<int> missedSessionPeriod = <int>[].obs;
 
   final ApiService _apiService;
   final AppDatabase _database;
-
-  // Define the missing variables
-  late int userId;
-  late String nama;
-  late String tanggalReservasi;
-  late int ruanganId;
-  late int periodeId;
 
   ReservationController(this._apiService, this._database);
 
@@ -45,8 +39,18 @@ class ReservationController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-
     initializeSession();
+  }
+
+  Future<void> missedSession() async {
+    try {
+      List<int> periodMissed =
+          await roomsPeriodController.getMissedSessionPeriod();
+      missedSessionPeriod.assignAll(periodMissed);
+      print('missedSessionPeriod: $missedSessionPeriod');
+    } catch (error) {
+      print('Error in missedSession: $error');
+    }
   }
 
   Future<void> postReservation() async {
@@ -94,47 +98,39 @@ class ReservationController extends GetxController {
           periodList.isNotEmpty ? periodList[indexSession.value] : 0;
       print('Periode ID: $periodeId - $periodList');
 
-      // Add a delay before the second loop
-      await Future.delayed(Duration(seconds: 1));
-
-// Make individual API calls for each kursi_id
+      // Make individual API calls for each kursi_id
       for (int i = 0; i < kursiIds.length; i++) {
-        // Create a copy of userId and nama for this iteration
-        final int currentUserId = userId;
-        final String currentNama = nama;
-        final String currenttanggalReservasi = tanggalReservasi;
-        final int currentruanganId = ruanganId;
-        final int currentperiodeId = periodeId;
-
         // Create a copy of body for this iteration
         Map<String, dynamic> body = {
-          'user_id': currentUserId,
-          'nama': currentNama,
-          'tanggal_reservasi': currenttanggalReservasi,
+          'user_id': userId,
+          'nama': nama,
+          'tanggal_reservasi': tanggalReservasi,
           'kursi_id': kursiIds[i],
-          'ruangan_id': currentruanganId,
+          'ruangan_id': ruanganId,
           'nomor_kursi': nomorKursis[i],
-          'periode_id': currentperiodeId,
+          'periode_id': periodeId,
         };
 
         // Add debug prints to check the structure of the body object
         print('Sending reservation request with body: $body');
 
         // Make the API call
-        final response = await _apiService.reservasi(
-          token!,
-          body,
-          options: Options(
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          ),
-        );
-        reservation.add(response);
+        try {
+          final response = await _apiService.reservasi(
+            token!,
+            body,
+            options: Options(
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            ),
+          );
+          reservation.add(response);
+        } catch (error) {
+          print(
+              'Error in reservation request for kursi_id ${kursiIds[i]}: $error');
+        }
       }
-
-      // Add a delay before starting the second loop
-      await Future.delayed(Duration(seconds: 2));
 
       print('postReservation completed successfully!');
     } catch (error) {
@@ -181,14 +177,13 @@ class ReservationController extends GetxController {
         existingNomorKursi.add(seat.nomor_kursi);
       });
       print('exKursi: $existingNomorKursi');
-      // var authData = await _database.loginDao.getUserData();
-      // print('authData: $authData');
     } catch (error) {
       print('error reservationcontroller: $error');
     }
   }
 
   Future<void> initializeSession() async {
+    await missedSession();
     await fetchAvailableKursi();
     var seat = await _database.seatsDao.findAllSeats();
     int seatLength = seat.length;
@@ -199,6 +194,15 @@ class ReservationController extends GetxController {
 
   void generateSessionList(
       int periodLength, int seatLength, List<int> existingNomorKursi) {
+    final CalendarController calendarController =
+        Get.find<CalendarController>();
+    DateTime selectedDay = calendarController.selectedDay.value;
+    final isToday = DateTime.now();
+
+    final selectedDayFormatted = DateFormat('yyyy-MM-dd').format(selectedDay);
+    final isTodayFormatted = DateFormat('yyyy-MM-dd').format(isToday);
+    print('selected: $selectedDayFormatted - isToday: $isTodayFormatted');
+
     session.value = List.generate(
       periodLength,
       (indexSession) => List<Map<String, dynamic>>.generate(
@@ -206,9 +210,16 @@ class ReservationController extends GetxController {
         (indexSeat) {
           final isAvailable = existingNomorKursi.contains(indexSeat + 1);
 
+          // Check if the session is missed for today
+          final isMissedForToday =
+              missedSessionPeriod.contains(periodList[indexSession]) &&
+                  selectedDayFormatted == isTodayFormatted;
+
           return {
             "id": "ID-${indexSession + 1}-${indexSeat + 1}",
-            "status": isAvailable ? "available" : "filled",
+            "status": isMissedForToday
+                ? "filled"
+                : (isAvailable ? "available" : "filled"),
             "isSelected": false,
           };
         },

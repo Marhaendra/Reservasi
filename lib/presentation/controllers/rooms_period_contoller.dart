@@ -54,8 +54,48 @@ class RoomsPeriodController extends GetxController {
         .toList();
 
     // Print the session times
+
     print('Session Times: $sessionTimes');
 
     return sessionTimes;
+  }
+
+  Future<List<int>> getMissedSessionPeriod() async {
+    await fetchRoomsPeriod(); // Ensure data is fetched before generating session periods
+
+    DateTime now = DateTime.now();
+    DateTime today = DateTime(now.year, now.month, now.day);
+
+    List<int> missedSessionPeriods = periodRooms
+        .where((room) {
+          DateTime jamMulai = DateTime(
+            today.year,
+            today.month,
+            today.day,
+            int.parse(room.jam_mulai.split(':')[0]),
+            int.parse(room.jam_mulai.split(':')[1]),
+            int.parse(room.jam_mulai.split(':')[2]),
+          );
+          DateTime jamSelesai = DateTime(
+            today.year,
+            today.month,
+            today.day,
+            int.parse(room.jam_selesai.split(':')[0]),
+            int.parse(room.jam_selesai.split(':')[1]),
+            int.parse(room.jam_selesai.split(':')[2]),
+          );
+          // print('jamMulai: $jamMulai');
+          print('jamSelesai: $jamSelesai');
+          return jamSelesai.isBefore(now);
+        })
+        .map((room) => room.periode_id)
+        .toList();
+
+    // Print the filtered session periods
+    print('now: $now');
+    print('periodRooms: $periodRooms');
+    print('Missed Session Periods: $missedSessionPeriods');
+
+    return missedSessionPeriods;
   }
 }
