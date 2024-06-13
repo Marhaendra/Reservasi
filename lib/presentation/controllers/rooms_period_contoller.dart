@@ -4,6 +4,7 @@ import 'package:reservasi/features/data/models/rooms_period_model.dart';
 
 class RoomsPeriodController extends GetxController {
   RxInt periodLength = 0.obs;
+  RxList<int> periodList = <int>[].obs;
   RxList<RoomsPeriodModel> periodRooms = <RoomsPeriodModel>[].obs;
 
   final AppDatabase _appDatabase;
@@ -22,11 +23,21 @@ class RoomsPeriodController extends GetxController {
       final roomsPeriod =
           await _appDatabase.roomsPeriodDao.findAllRoomsPeriod();
       periodRooms.assignAll(roomsPeriod);
+
+      // Extract periode_id values and assign to periodList
+      periodList.assignAll(roomsPeriod.map((room) => room.periode_id));
+
       periodLength.value = roomsPeriod.length;
+      print('periodList: $periodList, periodLength: $periodLength');
     } catch (error) {
       // Handle error if any
       print('Error fetching rooms period: $error');
     }
+  }
+
+  Future<List<int>> fetchRoomPeriodList() async {
+    await fetchRoomsPeriod();
+    return periodList;
   }
 
   void filterRoomsByPeriodeId(int periodeId) {

@@ -7,6 +7,7 @@ import 'package:table_calendar/table_calendar.dart';
 class CalendarController extends GetxController {
   final ValueNotifier<DateTime> selectedDateNotifier =
       ValueNotifier(DateTime.now());
+  final Rx<DateTime> selectedDay = DateTime.now().obs;
   DateTime _focusedDay = DateTime.now();
   DateTime _nowDay = DateTime.now();
   DateTime _firstDay = DateTime(2023, 1, 1);
@@ -19,7 +20,6 @@ class CalendarController extends GetxController {
   DateTime get lastDay => _lastDay;
   CalendarFormat get calendarFormat => _calendarFormat;
   DateFormat get dateFormat => _dateFormat;
-  DateTime get selectedDay => _focusedDay;
   DateTime get nowDay => _nowDay;
 
   var dateList = <String>[].obs;
@@ -30,41 +30,13 @@ class CalendarController extends GetxController {
 
   void tabDateList() {
     dateList.clear(); // Clear the list before adding new dates
+    dateListLong.clear();
 
-    dateList.addAll(generateWeekDates(focusedDay).map(_formatShortDate));
-    dateListLong.addAll(generateWeekDates(focusedDay).map(_formatLongDate));
+    dateList.addAll(generateWeekDates(selectedDay.value).map(_formatShortDate));
+    dateListLong
+        .addAll(generateWeekDates(selectedDay.value).map(_formatLongDate));
 
-    // String nowDate = dateFormat.format(DateTime.now());
-
-    // if (dateFormat.format(focusedDay) == nowDate) {
-    //   for (int i = 0; i < 7; i++) {
-    //     DateTime currentDate = focusedDay.add(Duration(days: i));
-    //     String shortDate = _formatShortDate(currentDate);
-    //     dateList.add(shortDate);
-    //   }
-    // } else if (dateFormat.format(focusedDay) != nowDate) {
-    //   final differenceDate = focusedDay.difference(nowDay);
-    //   final maxDifference = Duration(days: 3);
-
-    //   Duration limitedDifference = differenceDate;
-
-    //   if (differenceDate > maxDifference) {
-    //     limitedDifference = maxDifference;
-    //   }
-
-    //   for (int i = 0; i <= differenceDate.inDays; i++) {
-    //     DateTime currentDate = focusedDay.subtract(Duration(days: i));
-    //     String shortDate = _formatShortDate(currentDate);
-    //     dateList.add(shortDate);
-    //   }
-    //   for (int i = 1; i < 7 - differenceDate.inDays; i++) {
-    //     DateTime currentDate = focusedDay.add(Duration(days: i));
-    //     String shortDate = _formatShortDate(currentDate);
-    //     dateList.add(shortDate);
-    //   }
-    // }
-
-    print("DateList: $dateList");
+    print("DateList: $dateList, Long: $dateListLong");
   }
 
   List<DateTime> generateWeekDates(DateTime selectedDay) {
@@ -91,6 +63,10 @@ class CalendarController extends GetxController {
 
     print("After update - Focused Day: $_focusedDay");
     print("$selectedDay");
+  }
+
+  void updateSelectedDay(DateTime newDay) {
+    selectedDay.value = newDay;
   }
 
   void animateToDay(DateTime day) {

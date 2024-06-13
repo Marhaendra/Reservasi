@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:reservasi/presentation/controllers/calendar_controller.dart';
 import 'package:reservasi/presentation/controllers/location_controller.dart';
@@ -55,6 +56,13 @@ class _ReservationScreenState extends State<ReservationScreen> {
     pageController = PageController(initialPage: current);
     sessionTimes = [];
     updateSessionTimes();
+  }
+
+  @override
+  void dispose() {
+    calendarController.updateSelectedDay(calendarController.focusedDay);
+
+    super.dispose();
   }
 
   Future<void> updateSessionTimes() async {
@@ -173,22 +181,27 @@ class _ReservationScreenState extends State<ReservationScreen> {
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 height: 60,
                 child: GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     if (isSeatSelected) {
-                      // TODO: On search tap
-                      Navigator.pop(
-                        context,
-                        MaterialPageRoute(builder: (context) => HomeScreen()),
-                      );
-                      reservationController
-                          .orderDate(calendarController.dateList[current]);
-                      reservationController.orderSeat();
-                      reservationController.ordered();
-                      locationController.reset();
-                      calendarController.reset();
-                      roomsController.reset();
-                      reservationController.reset();
-                      reservationController.clearReservedSeatsAndDate();
+                      try {
+                        reservationController.orderSeat();
+                        reservationController
+                            .orderDate(calendarController.dateList[current]);
+                        reservationController.ordered();
+                        await reservationController.postReservation();
+                        widget.onReservationMade();
+                        Navigator.pop(context);
+                        locationController.reset();
+                        calendarController.reset();
+                        roomsController.reset();
+                        reservationController.reset();
+                        reservationController.clearReservedSeatsAndDate();
+                      } catch (error) {
+                        print('Error making reservation: $error');
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Error making reservation: $error'),
+                        ));
+                      }
                     } else {
                       // Show a Snackbar indicating that no seat is selected
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -198,11 +211,8 @@ class _ReservationScreenState extends State<ReservationScreen> {
                               fontSize: 10, color: MyTheme.white),
                         ),
                         duration: const Duration(milliseconds: 1500),
-                        // Width of the SnackBar.
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 16 // Inner padding for SnackBar content.
-                            ),
+                            horizontal: 16, vertical: 16),
                         behavior: SnackBarBehavior.floating,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -246,182 +256,207 @@ class _ReservationScreenState extends State<ReservationScreen> {
   Expanded seat() {
     isSeatSelected = reservationController.isSeatSelected();
     return Expanded(
-        child: Container(
-      decoration: const BoxDecoration(
-        color: MyTheme.white,
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-      ),
-      child: Column(children: [
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 60,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: sessionTimes.isEmpty
-                        ? const CircularProgressIndicator()
-                        : Row(
-                            children: List.generate(
-                              reservationController.session.length,
-                              (index) => GestureDetector(
-                                onTap: () =>
-                                    reservationController.changeSession(index),
-                                child: Obx(() => Container(
-                                      margin: EdgeInsets.all(8),
-                                      width: 150,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color: reservationController
-                                                      .indexSession.value ==
-                                                  index
-                                              ? MyTheme.primary
-                                              : MyTheme.grey1,
-                                        ),
-                                        color: reservationController
-                                                    .indexSession.value ==
-                                                index
-                                            ? MyTheme.primary.withOpacity(.1)
-                                            : Colors.white,
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Center(
-                                            child: Text(
-                                              "Sesi ${index + 1}",
-                                              style: GoogleFonts.poppins(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
-                                                color: reservationController
-                                                            .indexSession
-                                                            .value ==
-                                                        index
-                                                    ? MyTheme.primary
-                                                    : MyTheme.black,
-                                              ),
+      child: Container(
+        decoration: const BoxDecoration(
+          color: MyTheme.white,
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+        ),
+        child: Column(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 60,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: sessionTimes.isEmpty
+                            ? const CircularProgressIndicator()
+                            : Row(
+                                children: List.generate(
+                                  reservationController.session.length,
+                                  (index) => GestureDetector(
+                                    onTap: () => reservationController
+                                        .changeSession(index),
+                                    child: Obx(() => Container(
+                                          margin: EdgeInsets.all(8),
+                                          width: 150,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: reservationController
+                                                          .indexSession.value ==
+                                                      index
+                                                  ? MyTheme.primary
+                                                  : MyTheme.grey1,
                                             ),
+                                            color: reservationController
+                                                        .indexSession.value ==
+                                                    index
+                                                ? MyTheme.primary
+                                                    .withOpacity(.1)
+                                                : Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(8),
                                           ),
-                                          Center(
-                                            child: Text(
-                                              "${_formatTime(sessionTimes[index].split(' - ')[0])} - ${_formatTime(sessionTimes[index].split(' - ')[1])}",
-                                              style: GoogleFonts.poppins(
-                                                fontSize: 8,
-                                                fontWeight: FontWeight.w400,
-                                                color: reservationController
-                                                            .indexSession
-                                                            .value ==
-                                                        index
-                                                    ? MyTheme.primary
-                                                    : MyTheme.black,
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Center(
+                                                child: Text(
+                                                  "Sesi ${index + 1}",
+                                                  style: GoogleFonts.poppins(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: reservationController
+                                                                .indexSession
+                                                                .value ==
+                                                            index
+                                                        ? MyTheme.primary
+                                                        : MyTheme.black,
+                                                  ),
+                                                ),
                                               ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    )),
-                              ),
-                            ),
-                          ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Container(
-                    child: Obx(
-                      () => GridView.builder(
-                        padding: const EdgeInsets.all(8),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisSpacing: 10,
-                          crossAxisSpacing: 10,
-                          crossAxisCount: 7,
-                        ),
-                        itemCount: reservationController.session.length >
-                                reservationController.indexSession.value
-                            ? reservationController
-                                .session[
-                                    reservationController.indexSession.value]
-                                .length
-                            : 0,
-                        itemBuilder: (context, index) => GestureDetector(
-                          onTap: () {
-                            reservationController.selectSeat(index);
-                            _updateSeat();
-                          },
-                          onDoubleTap: () =>
-                              reservationController.selectSeat(index),
-                          child: Container(
-                              width: 30,
-                              height: 30,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: reservationController.session[
-                                                reservationController
-                                                    .indexSession
-                                                    .value][index]["status"] ==
-                                            "available"
-                                        ? MyTheme.primary
-                                        : reservationController.session[
-                                                        reservationController
-                                                            .indexSession.value]
-                                                    [index]["status"] ==
-                                                "filled"
-                                            ? MyTheme.grey
-                                            : MyTheme.primary),
-                                color: reservationController.session[
-                                            reservationController.indexSession
-                                                .value][index]["status"] ==
-                                        "available"
-                                    ? MyTheme.white
-                                    : reservationController.session[
-                                                reservationController
-                                                    .indexSession
-                                                    .value][index]["status"] ==
-                                            "filled"
-                                        ? MyTheme.grey
-                                        : MyTheme.primary,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "${index + 1}",
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w400,
-                                    color: reservationController.session[
-                                                reservationController
-                                                    .indexSession
-                                                    .value][index]["status"] ==
-                                            "available"
-                                        ? MyTheme.black
-                                        : reservationController.session[
-                                                        reservationController
-                                                            .indexSession.value]
-                                                    [index]["status"] ==
-                                                "filled"
-                                            ? MyTheme.black1
-                                            : MyTheme.white,
+                                              Center(
+                                                child: Text(
+                                                  "${_formatTime(sessionTimes[index].split(' - ')[0])} - ${_formatTime(sessionTimes[index].split(' - ')[1])}",
+                                                  style: GoogleFonts.poppins(
+                                                    fontSize: 8,
+                                                    fontWeight: FontWeight.w400,
+                                                    color: reservationController
+                                                                .indexSession
+                                                                .value ==
+                                                            index
+                                                        ? MyTheme.primary
+                                                        : MyTheme.black,
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        )),
                                   ),
                                 ),
-                              )),
+                              ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Container(
+                        child: Obx(
+                          () => reservationController.session.isNotEmpty &&
+                                  reservationController.session.length >
+                                      reservationController.indexSession.value
+                              ? GridView.builder(
+                                  padding: const EdgeInsets.all(8),
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                    mainAxisSpacing: 10,
+                                    crossAxisSpacing: 10,
+                                    crossAxisCount: 7,
+                                  ),
+                                  itemCount: reservationController
+                                      .session[reservationController
+                                          .indexSession.value]
+                                      .length,
+                                  itemBuilder: (context, index) =>
+                                      GestureDetector(
+                                    onTap: () {
+                                      reservationController.selectSeat(index);
+                                      _updateSeat();
+                                    },
+                                    onDoubleTap: () =>
+                                        reservationController.selectSeat(index),
+                                    child: Container(
+                                      width: 30,
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: reservationController
+                                                                .session[
+                                                            reservationController
+                                                                .indexSession
+                                                                .value][index]
+                                                        ["status"] ==
+                                                    "available"
+                                                ? MyTheme.primary
+                                                : reservationController.session[
+                                                                reservationController
+                                                                    .indexSession
+                                                                    .value]
+                                                            [index]["status"] ==
+                                                        "filled"
+                                                    ? MyTheme.grey
+                                                    : MyTheme.primary),
+                                        color: reservationController.session[
+                                                        reservationController
+                                                            .indexSession.value]
+                                                    [index]["status"] ==
+                                                "available"
+                                            ? MyTheme.white
+                                            : reservationController.session[
+                                                            reservationController
+                                                                .indexSession
+                                                                .value][index]
+                                                        ["status"] ==
+                                                    "filled"
+                                                ? MyTheme.grey
+                                                : MyTheme.primary,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          "${index + 1}",
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w400,
+                                            color: reservationController
+                                                                .session[
+                                                            reservationController
+                                                                .indexSession
+                                                                .value][index]
+                                                        ["status"] ==
+                                                    "available"
+                                                ? MyTheme.black
+                                                : reservationController.session[
+                                                                reservationController
+                                                                    .indexSession
+                                                                    .value]
+                                                            [index]["status"] ==
+                                                        "filled"
+                                                    ? MyTheme.black1
+                                                    : MyTheme.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Center(
+                                  child: Text(
+                                    'No sessions available',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: MyTheme.black,
+                                    ),
+                                  ),
+                                ),
                         ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
-      ]),
-    ));
+      ),
+    );
   }
 
   SizedBox tabBarReservation() {
@@ -498,6 +533,15 @@ class _ReservationScreenState extends State<ReservationScreen> {
   void _updateDateList(int index) {
     setState(() {
       current = index;
+      String dateString = calendarController.dateListLong[current];
+      DateTime parsedDate = DateFormat('EEEE, dd MMMM yyyy').parse(dateString);
+      String formattedDateString = DateFormat('yyyy-MM-dd').format(parsedDate);
+      DateTime formattedSelectedDate =
+          DateFormat('yyyy-MM-dd').parse(formattedDateString);
+      calendarController.updateSelectedDay(formattedSelectedDate);
+      reservationController.orderDate(calendarController.dateList[current]);
+      reservationController
+          .initializeSession(); // Call fetchAvailableKursi to update seats
       // if (itemCount < maxItemCount) {
       //   itemCount += 1;
       // }

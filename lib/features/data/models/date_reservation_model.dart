@@ -10,7 +10,8 @@ class DateListModel {
   static List<DateListModel> getDateList(
       CalendarController calendarController) {
     List<DateListModel> dateList = [];
-    DateTime currentDate = calendarController.selectedDay;
+    DateTime currentDate = calendarController.selectedDay.value;
+    ;
 
     // Set the selected date as the first date in the list
     dateList.add(DateListModel(

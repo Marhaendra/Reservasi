@@ -1,7 +1,10 @@
+import 'package:dio/dio.dart';
+import 'package:floor/floor.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:reservasi/features/data/data_sources/local/app_database.dart';
 import 'package:reservasi/features/data/data_sources/remote/api_service.dart';
+import 'package:reservasi/features/data/models/reservation_post_model.dart';
 import 'package:reservasi/features/data/models/rooms_period_model.dart';
 import 'package:reservasi/features/data/models/seats_model.dart';
 import 'package:reservasi/helper/user_manager.dart';
@@ -22,116 +25,190 @@ class ReservationController extends GetxController {
   var reservedSeat = <String>[].obs;
   var reservedDate = "".obs;
   var reservedSeatDate = <String>[].obs;
+  var periodList = <int>[].obs;
+  var reservation = <ReservationPostModel>[].obs;
 
   final ApiService _apiService;
   final AppDatabase _database;
 
+  // Define the missing variables
+  late int userId;
+  late String nama;
+  late String tanggalReservasi;
+  late int ruanganId;
+  late int periodeId;
+
   ReservationController(this._apiService, this._database);
+
+  List<int> existingNomorKursi = [];
 
   @override
   void onInit() {
     super.onInit();
-    fetchPeriodSeats();
+
     initializeSession();
   }
 
-  void reservation() async {}
-
-  void fetchPeriodSeats() async {
+  Future<void> postReservation() async {
     try {
-      // Retrieve the token
+      await fetchPeriodList();
+      print('Starting postReservation...');
+
       final token = await UserManager.getToken();
+      print('Token retrieved: $token');
 
-      // Fetch room periods
-      RoomsPeriodResponse roomsPeriodResponse =
-          await _apiService.getRuanganPeriode(token!);
-      periodRooms.value = roomsPeriodResponse.data;
+      int userId = (await UserManager.getUserId())!;
+      String nama = (await UserManager.getNama())!;
 
-      // Retrieve CalendarController instance
+      print('User ID: $userId, Nama: $nama');
+
       final CalendarController calendarController =
           Get.find<CalendarController>();
-
-      // Get the selected day and format it
-      DateTime selectedDay = calendarController.selectedDay;
+      DateTime selectedDay = calendarController.selectedDay.value;
       String tanggalReservasi = DateFormat('yyyy-MM-dd').format(selectedDay);
+      print('Tanggal Reservasi: $tanggalReservasi');
 
-      // Retrieve RoomsSeatsController instance
+      // Match reserved seats with kursi_ids and nomor_kursis
+      List<int> kursiIds = [];
+      List<int> nomorKursis = [];
+      for (String reservedSeats in reservedSeat) {
+        int seatNumber = int.parse(reservedSeats.split('-').last);
+        print(
+            'Processing reserved seat: $reservedSeats, Seat number: $seatNumber');
+
+        var matchedSeat =
+            seats.firstWhere((seat) => seat.nomor_kursi == seatNumber);
+        kursiIds.add(matchedSeat.kursi_id);
+        nomorKursis.add(matchedSeat.nomor_kursi);
+        print('Matched seat found: $matchedSeat');
+      }
+      print('Kursi IDs: $kursiIds');
+      print('Nomor Kursis: $nomorKursis');
+
       final RoomsSeatsController roomsSeatsController =
           Get.find<RoomsSeatsController>();
-
-      // Get the selected room ID
       int ruanganId = roomsSeatsController.selectedRoomId.value;
+      print('Ruangan ID: $ruanganId');
 
-      // Example value for periodeId
-      int periodeId = 1; // Replace with actual value as needed
+      int periodeId =
+          periodList.isNotEmpty ? periodList[indexSession.value] : 0;
+      print('Periode ID: $periodeId - $periodList');
 
-      // Fetch available seats
+      // Add a delay before the second loop
+      await Future.delayed(Duration(seconds: 1));
+
+// Make individual API calls for each kursi_id
+      for (int i = 0; i < kursiIds.length; i++) {
+        // Create a copy of userId and nama for this iteration
+        final int currentUserId = userId;
+        final String currentNama = nama;
+        final String currenttanggalReservasi = tanggalReservasi;
+        final int currentruanganId = ruanganId;
+        final int currentperiodeId = periodeId;
+
+        // Create a copy of body for this iteration
+        Map<String, dynamic> body = {
+          'user_id': currentUserId,
+          'nama': currentNama,
+          'tanggal_reservasi': currenttanggalReservasi,
+          'kursi_id': kursiIds[i],
+          'ruangan_id': currentruanganId,
+          'nomor_kursi': nomorKursis[i],
+          'periode_id': currentperiodeId,
+        };
+
+        // Add debug prints to check the structure of the body object
+        print('Sending reservation request with body: $body');
+
+        // Make the API call
+        final response = await _apiService.reservasi(
+          token!,
+          body,
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          ),
+        );
+        reservation.add(response);
+      }
+
+      // Add a delay before starting the second loop
+      await Future.delayed(Duration(seconds: 2));
+
+      print('postReservation completed successfully!');
+    } catch (error) {
+      print('Error in postReservation: $error');
+    }
+  }
+
+  Future<void> fetchPeriodList() async {
+    try {
+      periodList.value = await roomsPeriodController.fetchRoomPeriodList();
+    } catch (error) {
+      print('Error fetching period list: $error');
+    }
+  }
+
+  Future<void> fetchAvailableKursi() async {
+    try {
+      await fetchPeriodList(); // Ensure period list is fetched first
+
+      final token = await UserManager.getToken();
+      final CalendarController calendarController =
+          Get.find<CalendarController>();
+      DateTime selectedDay = calendarController.selectedDay.value;
+      String tanggalReservasi = DateFormat('yyyy-MM-dd').format(selectedDay);
+      print('tanggalReservasi: $tanggalReservasi');
+
+      final RoomsSeatsController roomsSeatsController =
+          Get.find<RoomsSeatsController>();
+      int ruanganId = roomsSeatsController.selectedRoomId.value;
+      int periodeId =
+          periodList.isNotEmpty ? periodList[indexSession.value] : 0;
+
       SeatsResponse seatsResponse = await _apiService.getAvailableKursi(
-        token,
+        token!,
         tanggalReservasi,
         ruanganId,
         periodeId,
       );
       seats.value = seatsResponse.data;
+      print('periodeID: $periodeId - $indexSession ,periodList: $periodList');
+
+      existingNomorKursi.clear();
+      seats.forEach((seat) {
+        existingNomorKursi.add(seat.nomor_kursi);
+      });
+      print('exKursi: $existingNomorKursi');
+      // var authData = await _database.loginDao.getUserData();
+      // print('authData: $authData');
     } catch (error) {
-      // Handle the error
-      print('error reservationcontroller');
+      print('error reservationcontroller: $error');
     }
   }
 
-  void initializeSession() async {
-    // Retrieve the session length from the database asynchronously
+  Future<void> initializeSession() async {
+    await fetchAvailableKursi();
     var seat = await _database.seatsDao.findAllSeats();
-    var kursiQ = seat.length;
-    int seatLength = kursiQ;
+    int seatLength = seat.length;
+    int periodLength = periodList.length;
 
-    var period = await _database.roomsPeriodDao.findAllRoomsPeriod();
-    Set<int> periodIds = period.map((period) => period.periode_id).toSet();
-    var periode = periodIds.length;
-    int periodLength = periode;
-
-    print('kursiList: $seat, kursiQ: $kursiQ, period: $period');
-    // Generate the session list
-    generateSessionList(periodLength, seatLength);
-
-    // Listen for changes in the database and update session list accordingly
-    _database.seatsDao.watchAllSeats().listen((updatedSeats) {
-      var newKursiQ = updatedSeats.length;
-      if (newKursiQ != kursiQ) {
-        // If the number of seats has changed, update the session list
-        kursiQ = newKursiQ;
-        session.clear(); // Clear the existing session list
-        generateSessionList(periodLength, kursiQ); // Generate new session list
-      }
-    });
-    _database.roomsPeriodDao.watchAllRoomsPeriod().listen((updateRoomsPeriod) {
-      var newPeriode = updateRoomsPeriod.length;
-      if (newPeriode != periode) {
-        // If the number of periods has changed, update the session list
-        periode = newPeriode;
-        session.clear(); // Clear the existing session list
-        generateSessionList(periode, kursiQ); // Generate new session list
-      }
-    });
+    generateSessionList(periodLength, seatLength, existingNomorKursi);
   }
 
-  void generateSessionList(int periodLength, int seatLength) {
-    // Generate the session list based on the session length
+  void generateSessionList(
+      int periodLength, int seatLength, List<int> existingNomorKursi) {
     session.value = List.generate(
       periodLength,
       (indexSession) => List<Map<String, dynamic>>.generate(
         seatLength,
         (indexSeat) {
-          final isFilled = indexSession == 0
-              ? (indexSeat >= 24 && indexSeat <= 26) ||
-                  (indexSeat >= 40 && indexSeat <= 44)
-              : indexSession == 1
-                  ? (indexSeat >= 5 && indexSeat <= 35)
-                  : false;
+          final isAvailable = existingNomorKursi.contains(indexSeat + 1);
 
           return {
             "id": "ID-${indexSession + 1}-${indexSeat + 1}",
-            "status": isFilled ? "filled" : "available",
+            "status": isAvailable ? "available" : "filled",
             "isSelected": false,
           };
         },
@@ -159,11 +236,13 @@ class ReservationController extends GetxController {
         }
       }
     }
-    selectedSeats.clear(); // Clear the list of selected seats
+    selectedSeats.clear();
   }
 
-  void changeSession(int indexSessionSelected) {
+  void changeSession(int indexSessionSelected) async {
     indexSession.value = indexSessionSelected;
+    await fetchAvailableKursi();
+    await initializeSession();
     session.refresh();
   }
 
@@ -171,12 +250,10 @@ class ReservationController extends GetxController {
     final seat = session[indexSession.value][indexSeatSelected];
 
     if (seat["status"] == "selected") {
-      // Deselect the seat on double tap
       seat["status"] = "available";
       seat["isSelected"] = false;
       selectedSeats.remove(seat["id"] as String);
     } else if (seat["status"] == "available" && selectedSeats.length < 4) {
-      // Select the seat if it's available and not already selected
       seat["status"] = "selected";
       seat["isSelected"] = true;
       selectedSeats.add(seat["id"] as String);
@@ -187,26 +264,15 @@ class ReservationController extends GetxController {
   }
 
   void orderSeat() {
-    // Store the selected seats for the current session
     reservedSeat.assignAll(selectedSeats);
-
-    // Mark selected seats as "reserved" in the session
     session[indexSession.value].forEach((seat) {
       if (selectedSeats.contains(seat["id"] as String)) {
         seat["status"] = "reserved";
       }
     });
 
-    // Print the selected seats for confirmation (you can remove this line if not needed)
     print("Reserved Seats: $reservedSeat");
-
     print("Reserved Date: $reservedDate");
-
-    // Clear the selected seats list
-    // selectedSeats.clear();
-
-    // Refresh the session
-    // session.refresh();
   }
 
   void clearReservedSeatsAndDate() {

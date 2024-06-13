@@ -10,6 +10,9 @@ abstract class LoginDao {
   @Query('SELECT * FROM auth')
   Future<List<LoginModel>> getUserData();
 
+  @Query('SELECT * FROM login LIMIT 1')
+  Future<LoginModel?> getSingleUser();
+
   @Query('SELECT * FROM auth WHERE token = :token')
   Future<LoginModel?> findLoginByToken(String token);
 }

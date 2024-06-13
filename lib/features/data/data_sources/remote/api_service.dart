@@ -1,6 +1,8 @@
 import 'package:reservasi/core/constants/constants.dart';
 import 'package:reservasi/features/data/models/login_model.dart';
 import 'package:reservasi/features/data/models/register_model.dart';
+import 'package:reservasi/features/data/models/reservation_get_model.dart';
+import 'package:reservasi/features/data/models/reservation_post_model.dart';
 import 'package:reservasi/features/data/models/rooms_model.dart';
 import 'package:reservasi/features/data/models/rooms_period_model.dart';
 import 'package:reservasi/features/data/models/seats_model.dart';
@@ -45,4 +47,14 @@ abstract class ApiService {
   Future<RoomsPeriodResponse> getRuanganPeriode(
     @Header("Authorization") String token,
   );
+
+  @GET('/reservasi')
+  Future<List<ReservationGetResponse>> getReservasi(
+    @Header("Authorization") String token,
+  );
+
+  @POST('/reservasi')
+  Future<ReservationPostModel> reservasi(
+      @Header("Authorization") String token, @Body() Map<String, dynamic> body,
+      {required options});
 }

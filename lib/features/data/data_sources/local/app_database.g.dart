@@ -172,6 +172,16 @@ class _$LoginDao extends LoginDao {
   }
 
   @override
+  Future<LoginModel?> getSingleUser() async {
+    return _queryAdapter.query('SELECT * FROM login LIMIT 1',
+        mapper: (Map<String, Object?> row) => LoginModel(
+            id: row['id'] as int,
+            role: row['role'] as String,
+            nama: row['nama'] as String,
+            token: row['token'] as String?));
+  }
+
+  @override
   Future<LoginModel?> findLoginByToken(String token) async {
     return _queryAdapter.query('SELECT * FROM auth WHERE token = ?1',
         mapper: (Map<String, Object?> row) => LoginModel(

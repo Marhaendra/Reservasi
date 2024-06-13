@@ -48,14 +48,13 @@ class RoomsSeatsController extends GetxController {
 
       // Debugging prints
       combinedRooms.forEach((combinedRoom) {
-        print(
-            'Room: ${combinedRoom.room.nama_ruangan} (ID: ${combinedRoom.room.ruangan_id})');
-        print('Seats:');
+        // print(
+        //     'Room: ${combinedRoom.room.nama_ruangan} (ID: ${combinedRoom.room.ruangan_id})');
+        // print('Seats:');
         combinedRoom.seats.forEach((seat) {
-          print(
-              'ID: ${seat.kursi_id}, isBroken: ${seat.isBroken}, nomor_kursi: ${seat.nomor_kursi}');
-        });
-        print(''); // Add an empty line for better readability
+          // print(
+          //     'ID: ${seat.kursi_id}, isBroken: ${seat.isBroken}, nomor_kursi: ${seat.nomor_kursi}');
+        }); // Add an empty line for better readability
       });
 
       // Save rooms to local database

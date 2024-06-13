@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:reservasi/presentation/controllers/location_controller.dart';
+import 'package:reservasi/presentation/controllers/reservation_controller.dart';
+import 'package:reservasi/presentation/controllers/rooms_period_contoller.dart';
 import 'package:reservasi/presentation/controllers/rooms_seats_controller.dart';
 import 'package:reservasi/features/data/models/location_model.dart';
 import 'package:reservasi/features/data/models/rooms_model.dart';
@@ -19,14 +21,16 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  late LocationController _locationController;
-  late RoomsSeatsController _roomsController;
+  final LocationController _locationController = Get.find<LocationController>();
+  RoomsSeatsController _roomsController = Get.find<RoomsSeatsController>();
+  ReservationController _reservationController =
+      Get.find<ReservationController>();
+  RoomsPeriodController _roomsPeriodController =
+      Get.find<RoomsPeriodController>();
 
   @override
   void initState() {
     super.initState();
-    _locationController = Get.find<LocationController>();
-    _roomsController = Get.find<RoomsSeatsController>();
     _roomsController.fetchCombinedRooms();
   }
 
@@ -79,6 +83,9 @@ class _SearchScreenState extends State<SearchScreen> {
           onTap: () {
             _roomsController.updateRoomSeat(
                 room[index].nama_ruangan, room[index].ruangan_id);
+            _roomsController.fetchCombinedRooms();
+            _roomsPeriodController.fetchRoomsPeriod();
+            _reservationController.fetchAvailableKursi();
             Navigator.pop(
               ctx,
               MaterialPageRoute(

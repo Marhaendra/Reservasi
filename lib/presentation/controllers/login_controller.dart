@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:reservasi/features/data/data_sources/local/DAO/login_dao.dart';
 import 'package:reservasi/features/data/data_sources/local/app_database.dart';
 import 'package:reservasi/features/data/data_sources/remote/api_service.dart';
 import 'package:reservasi/features/data/models/login_model.dart';
@@ -25,7 +24,8 @@ class LoginController extends GetxController {
 
       // Save token to SharedPreferences
       await UserManager.saveToken(response.token ?? '');
-
+      await UserManager.saveId(response.id);
+      await UserManager.saveNama(response.nama);
       // Save login data to local database
       await _database.loginDao.insertLogin(response);
       print('Raw response data: $response');

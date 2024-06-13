@@ -6,6 +6,7 @@ import 'package:reservasi/helper/user_manager.dart';
 import 'package:reservasi/presentation/controllers/calendar_controller.dart';
 import 'package:reservasi/presentation/controllers/location_controller.dart';
 import 'package:reservasi/presentation/controllers/reservation_controller.dart';
+import 'package:reservasi/presentation/controllers/rooms_period_contoller.dart';
 import 'package:reservasi/presentation/controllers/rooms_seats_controller.dart';
 import 'package:reservasi/presentation/screens/order_screen.dart';
 import 'package:reservasi/presentation/screens/profile_screen.dart';
@@ -27,6 +28,8 @@ class _HomeScreenState extends State<HomeScreen> {
   CalendarController calendarController = Get.find<CalendarController>();
   ReservationController reservationController =
       Get.find<ReservationController>();
+  RoomsPeriodController roomsPeriodController =
+      Get.find<RoomsPeriodController>();
 
   final GlobalKey _tableCalendarKey = GlobalKey();
 
@@ -291,6 +294,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   selectedDay, focusedDay);
                               calendarController.animateToDay(selectedDay);
                               calendarController.refreshCalendar();
+                              calendarController.updateSelectedDay(selectedDay);
                               calendarController.dateList();
                               Navigator.of(context).pop({
                                 'selectedDay': selectedDay,
@@ -366,6 +370,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     backgroundColor: MyTheme.red,
                   ));
                 } else {
+                  // Show loading dialog
+
+                  Get.dialog(
+                    Center(child: CircularProgressIndicator()),
+                    barrierDismissible: false,
+                  );
+
+                  // Load reservation data
+                  roomsController.fetchCombinedRooms();
+                  roomsPeriodController.fetchRoomsPeriod();
+                  reservationController.fetchAvailableKursi();
+                  await reservationController.initializeSession();
+
+                  // Close loading dialog
+
+                  Get.back();
                   // Navigate to ReservationScreen if Lokasi and Ruang are not in default state
                   Navigator.push(
                     context,
