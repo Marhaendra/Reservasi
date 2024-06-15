@@ -87,10 +87,7 @@ class _SearchScreenState extends State<SearchScreen> {
             _roomsPeriodController.fetchRoomsPeriod();
             _reservationController.fetchAvailableKursi();
             Navigator.pop(
-              ctx,
-              MaterialPageRoute(
-                  builder: (ctx) =>
-                      HomeScreen()), // Ensure HomeScreen is imported
+              ctx, // Ensure HomeScreen is imported
             );
           },
           child: Padding(
@@ -138,7 +135,6 @@ class _SearchScreenState extends State<SearchScreen> {
               onTap: () {
                 Navigator.pop(
                   context,
-                  MaterialPageRoute(builder: (context) => HomeScreen()),
                 );
               },
               child: Padding(
@@ -153,7 +149,6 @@ class _SearchScreenState extends State<SearchScreen> {
                             .updateLocation(selectedLocationName);
                         Navigator.pop(
                           context,
-                          MaterialPageRoute(builder: (context) => HomeScreen()),
                         );
                       },
                       child: Text(
@@ -240,7 +235,6 @@ class _SearchScreenState extends State<SearchScreen> {
               // TODO: On search tap
               Navigator.pop(
                 context,
-                MaterialPageRoute(builder: (context) => HomeScreen()),
               );
             },
             child: Container(
