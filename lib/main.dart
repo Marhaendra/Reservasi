@@ -72,7 +72,16 @@ class MyApp extends StatelessWidget {
               '/landing': (context) => LandingScreen(),
               '/login': (context) => LoginScreen(),
               '/register': (context) => RegisterScreen(),
-              '/home': (context) => HomeScreen(),
+              '/home': (context) => HomeScreen(refreshCallback: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomeScreen(
+                          refreshCallback: () {}, // Pass a dummy callback here
+                        ),
+                      ),
+                    );
+                  }),
               '/order': (context) => const OrderScreen(),
               '/profile': (context) => const ProfileScreen(),
               '/eprofile': (context) => const EditProfileScreen(),

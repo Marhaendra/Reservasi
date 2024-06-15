@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:floor/floor.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:reservasi/features/data/data_sources/local/app_database.dart';
@@ -104,7 +105,9 @@ class ReservationController extends GetxController {
           await _apiService.getReservasiById(token, id);
 
       reservationById.value = reservationGetResponse.data
-          .where((reservation) => reservation.status == 'Aktif')
+          .where((reservation) =>
+              reservation.status == 'Aktif' &&
+              reservation.waktu_checkout == null)
           .toList();
 
       DateTime todays = DateTime.now();
@@ -177,6 +180,29 @@ class ReservationController extends GetxController {
       int periodeId =
           periodList.isNotEmpty ? periodList[indexSession.value] : 0;
       print('Periode ID: $periodeId - $periodList');
+
+      await getReservasiById();
+
+      bool reservationExists = reservationById.any((reservation) {
+        String formattedReservationDate = DateFormat('yyyy-MM-dd').format(
+            DateFormat('d/M/yyyy').parse(reservation.tanggal_reservasi));
+
+        return formattedReservationDate == tanggalReservasi &&
+            reservation.periode_id == periodeId &&
+            reservation.ruangan_id != ruanganId;
+      });
+
+      if (reservationExists) {
+        Get.snackbar(
+          "Reservation Exists",
+          "You already have a reservation for this date and period.",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+
+        return;
+      }
 
       // Make individual API calls for each kursi_id
       for (int i = 0; i < kursiIds.length; i++) {

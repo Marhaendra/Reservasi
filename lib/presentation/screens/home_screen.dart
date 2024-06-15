@@ -1,13 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import 'package:reservasi/core/util/custom_loading_indicator.dart';
-import 'package:reservasi/features/data/data_sources/local/DAO/login_dao.dart';
 import 'package:reservasi/features/data/models/reservation_get_model.dart';
-import 'package:reservasi/helper/user_manager.dart';
 import 'package:reservasi/presentation/controllers/calendar_controller.dart';
 import 'package:reservasi/presentation/controllers/location_controller.dart';
 import 'package:reservasi/presentation/controllers/reservation_controller.dart';
@@ -22,7 +17,9 @@ import 'package:get/get.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key});
+  const HomeScreen({Key? key, required this.refreshCallback}) : super(key: key);
+  final VoidCallback refreshCallback;
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -226,6 +223,11 @@ class _HomeScreenState extends State<HomeScreen> {
     bool isCheckedIn = reservation.waktu_checkin != null;
     bool isCheckedOut = reservation.waktu_checkout != null;
 
+    DateTime startTime = DateFormat('HH:mm').parse(reservation.jam_mulai);
+    DateTime oneHourBeforeStartTime = startTime.subtract(Duration(hours: 1));
+    DateTime currentTime = DateTime.now();
+    bool isDisabled = currentTime.isBefore(oneHourBeforeStartTime);
+
     return Container(
       height: 160,
       padding: const EdgeInsets.all(16),
@@ -341,7 +343,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(width: 8),
               Expanded(
                 child: GestureDetector(
-                  onTap: isCheckedOut
+                  onTap: isCheckedOut || isDisabled
                       ? null
                       : () async {
                           if (isCheckedIn) {
@@ -358,7 +360,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10, vertical: 10.5),
                     decoration: BoxDecoration(
-                      color: isCheckedOut
+                      color: isCheckedOut || isDisabled
                           ? Colors.grey.withOpacity(.1)
                           : isCheckedIn
                               ? Colors.red.withOpacity(.1)
@@ -555,11 +557,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => ReservationScreen(
-                        onReservationMade: () {
-                          // locationController.reset();
-                          // calendarController.reset();
-                          // roomsController.reset();
-                        },
+                        onReservationMade: refreshReserved,
                       ),
                     ),
                   );

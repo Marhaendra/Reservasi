@@ -37,6 +37,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
   bool isSeatSelected = false;
 
   late List<String> sessionTimes;
+  late List<String> sessionNames;
 
   @override
   void initState() {
@@ -55,6 +56,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
     maxItemCount = 7;
     pageController = PageController(initialPage: current);
     sessionTimes = [];
+    sessionNames = [];
     updateSessionTimes();
   }
 
@@ -68,8 +70,10 @@ class _ReservationScreenState extends State<ReservationScreen> {
   Future<void> updateSessionTimes() async {
     try {
       List<String> times = await roomsPeriodController.getSessionTimes();
+      List<String> names = await roomsPeriodController.getSessionNames();
       setState(() {
         sessionTimes = times; // Update sessionTimes with fetched data
+        sessionNames = names;
       });
     } catch (error) {
       print('Error fetching session times: $error');
@@ -308,7 +312,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                             children: [
                                               Center(
                                                 child: Text(
-                                                  "Sesi ${index + 1}",
+                                                  sessionNames[index],
                                                   style: GoogleFonts.poppins(
                                                     fontSize: 12,
                                                     fontWeight: FontWeight.w500,
@@ -567,8 +571,6 @@ class _ReservationScreenState extends State<ReservationScreen> {
                     onTap: () {
                       Navigator.pop(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => const HomeScreen()),
                       );
                     },
                     child: const PhosphorIcon(

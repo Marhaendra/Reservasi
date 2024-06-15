@@ -51,13 +51,27 @@ class RoomsPeriodController extends GetxController {
     await fetchRoomsPeriod(); // Ensure data is fetched before generating session times
     List<String> sessionTimes = periodRooms
         .map((room) => "${room.jam_mulai} - ${room.jam_selesai}")
-        .toList();
+        .toList(); // Ensure data is fetched before generating session times
+    List<String> sessionNames =
+        periodRooms.map((room) => "${room.nama_periode}").toList();
 
     // Print the session times
 
-    print('Session Times: $sessionTimes');
+    print('Session Times: $sessionTimes = $sessionNames');
 
     return sessionTimes;
+  }
+
+  Future<List<String>> getSessionNames() async {
+    await fetchRoomsPeriod(); // Ensure data is fetched before generating session times
+    List<String> sessionNames =
+        periodRooms.map((room) => "${room.nama_periode}").toList();
+
+    // Print the session times
+
+    print('Session Names: $sessionNames');
+
+    return sessionNames;
   }
 
   Future<List<int>> getMissedSessionPeriod() async {
