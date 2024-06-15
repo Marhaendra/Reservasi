@@ -7,16 +7,15 @@ import 'package:reservasi/presentation/controllers/location_controller.dart';
 import 'package:reservasi/presentation/controllers/rooms_period_contoller.dart';
 import 'package:reservasi/presentation/controllers/rooms_seats_controller.dart';
 import 'package:reservasi/features/data/models/date_reservation_model.dart';
-import 'package:reservasi/presentation/screens/home_screen.dart';
 import 'package:reservasi/presentation/controllers/reservation_controller.dart';
+import 'package:reservasi/presentation/screens/home_screen.dart';
 import 'package:reservasi/theme.dart';
 import 'package:get/get.dart';
 
 class ReservationScreen extends StatefulWidget {
-  final VoidCallback onReservationMade;
-
-  ReservationScreen({Key? key, required this.onReservationMade})
-      : super(key: key);
+  ReservationScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ReservationScreen> createState() => _ReservationScreenState();
@@ -193,8 +192,11 @@ class _ReservationScreenState extends State<ReservationScreen> {
                             .orderDate(calendarController.dateList[current]);
                         reservationController.ordered();
                         await reservationController.postReservation();
-                        widget.onReservationMade();
-                        Navigator.pop(context);
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomeScreen()),
+                          (route) => false,
+                        );
                         locationController.reset();
                         calendarController.reset();
                         roomsController.reset();

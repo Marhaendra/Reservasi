@@ -1,10 +1,10 @@
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 import 'package:reservasi/features/data/data_sources/local/DAO/login_dao.dart';
-import 'package:reservasi/features/data/data_sources/local/DAO/rooms_period_dao.dart';
 import 'package:reservasi/features/data/data_sources/local/app_database.dart';
 import 'package:reservasi/features/data/data_sources/remote/api_service.dart';
 import 'package:reservasi/presentation/controllers/calendar_controller.dart';
+import 'package:reservasi/presentation/controllers/history_controller.dart';
 import 'package:reservasi/presentation/controllers/location_controller.dart';
 import 'package:reservasi/presentation/controllers/register_controller.dart';
 import 'package:reservasi/presentation/controllers/reservation_controller.dart';
@@ -34,6 +34,8 @@ class InitialBinding extends Bindings {
     Get.lazyPut<LocationController>(() => LocationController());
     Get.lazyPut<RoomsPeriodController>(
         () => RoomsPeriodController(Get.find<AppDatabase>()));
+    Get.lazyPut<HistoryController>(
+        () => HistoryController(Get.find<ApiService>()));
 
     // Initialize the AppDatabase asynchronously
     Get.putAsync<AppDatabase>(() async => await AppDatabase.getDatabase());

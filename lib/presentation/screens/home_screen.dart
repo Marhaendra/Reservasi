@@ -8,7 +8,7 @@ import 'package:reservasi/presentation/controllers/location_controller.dart';
 import 'package:reservasi/presentation/controllers/reservation_controller.dart';
 import 'package:reservasi/presentation/controllers/rooms_period_contoller.dart';
 import 'package:reservasi/presentation/controllers/rooms_seats_controller.dart';
-import 'package:reservasi/presentation/screens/order_screen.dart';
+import 'package:reservasi/presentation/screens/history_screen.dart';
 import 'package:reservasi/presentation/screens/profile_screen.dart';
 import 'package:reservasi/presentation/screens/reservation_screen.dart';
 import 'package:reservasi/presentation/screens/search_screen.dart';
@@ -17,8 +17,7 @@ import 'package:get/get.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key, required this.refreshCallback}) : super(key: key);
-  final VoidCallback refreshCallback;
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -46,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (reservationController.reservationById.isEmpty) {
         return orderCardBlank();
       } else {
-        return orderedToday();
+        return orderedList();
       }
     });
   }
@@ -112,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget orderedToday() {
+  Widget orderedList() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8),
       constraints: const BoxConstraints(maxHeight: 345),
@@ -163,56 +162,58 @@ class _HomeScreenState extends State<HomeScreen> {
         height: 160,
         width: double.maxFinite,
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            color: white,
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x19000000),
-                blurRadius: 10,
-                offset: Offset(0, 0),
-                spreadRadius: 0,
-              )
-            ]),
+        // decoration: BoxDecoration(
+        //     borderRadius: BorderRadius.circular(12),
+        //     color: white,
+        //     boxShadow: const [
+        //       BoxShadow(
+        //         color: Color(0x19000000),
+        //         blurRadius: 10,
+        //         offset: Offset(0, 0),
+        //         spreadRadius: 0,
+        //       )
+        //     ]),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
               padding: EdgeInsets.symmetric(vertical: 28),
-              child: Text("Kamu belum melakukan reservasi",
+              child: Text("Kamu belum melakukan reservasi hari ini",
                   style: GoogleFonts.poppins(
-                      fontSize: 12, fontWeight: FontWeight.w700)),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: MyTheme.black1)),
             ),
-            Padding(
-              padding: EdgeInsets.zero,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 10.5),
-                        decoration: BoxDecoration(
-                          color: primary.withOpacity(.1),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Center(
-                          child: Text(
-                            "Pesan Sekarang",
-                            style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 12,
-                              color: primary,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            // Padding(
+            //   padding: EdgeInsets.zero,
+            //   child: Row(
+            //     children: [
+            //       Expanded(
+            //         child: GestureDetector(
+            //           onTap: () {},
+            //           child: Container(
+            //             padding: const EdgeInsets.symmetric(
+            //                 horizontal: 10, vertical: 10.5),
+            //             decoration: BoxDecoration(
+            //               color: primary.withOpacity(.1),
+            //               borderRadius: BorderRadius.circular(6),
+            //             ),
+            //             child: Center(
+            //               child: Text(
+            //                 "Pesan Sekarang",
+            //                 style: GoogleFonts.poppins(
+            //                   fontWeight: FontWeight.w500,
+            //                   fontSize: 12,
+            //                   color: primary,
+            //                 ),
+            //               ),
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -556,9 +557,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ReservationScreen(
-                        onReservationMade: refreshReserved,
-                      ),
+                      builder: (context) => ReservationScreen(),
                     ),
                   );
                 }
@@ -669,7 +668,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => OrderScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => HistoryScreen()),
                       );
                     },
                     child: const PhosphorIcon(

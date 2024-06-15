@@ -2,24 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:reservasi/features/data/models/reservation_get_model.dart';
 import 'package:reservasi/presentation/controllers/calendar_controller.dart';
-import 'package:reservasi/presentation/controllers/reservation_controller.dart';
+import 'package:reservasi/presentation/controllers/history_controller.dart';
 import 'package:reservasi/theme.dart';
 
-class OrderScreen extends StatefulWidget {
-  const OrderScreen({Key? key});
+class HistoryScreen extends StatefulWidget {
+  const HistoryScreen({Key? key});
   @override
-  _OrderScreenState createState() => _OrderScreenState();
+  _HistoryScreen createState() => _HistoryScreen();
 }
 
-class _OrderScreenState extends State<OrderScreen> {
-  ReservationController reservationController =
-      Get.find<ReservationController>();
+class _HistoryScreen extends State<HistoryScreen> {
+  HistoryController historyController = Get.find<HistoryController>();
   CalendarController calendarController = Get.find<CalendarController>();
 
   @override
   void initState() {
     super.initState();
+    historyController.getAllReservasiById();
   }
 
   @override
@@ -63,222 +64,176 @@ class _OrderScreenState extends State<OrderScreen> {
       padding: const EdgeInsets.only(right: 16, left: 16, top: 47),
       child: Column(
         children: [
-          lastBooked(),
-          const SizedBox(
-            height: 24,
+          FutureBuilder(
+            future: historyController.getAllReservasiById(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator(
+                  backgroundColor: MyTheme.primary.withOpacity(.1),
+                  color: MyTheme.primary,
+                ); // Show a loading indicator while waiting for data
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                return bookedHistoryList();
+              }
+            },
           ),
-          history()
+          // history()
         ],
       ),
     );
   }
 
-  Column lastBooked() {
+  Widget bookedHistoryList() {
+    return Container(
+      constraints: const BoxConstraints(maxHeight: 650),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: RefreshIndicator(
+              color: MyTheme.primary,
+              backgroundColor: MyTheme.white1,
+              onRefresh: () async {
+                historyController.allReservationById();
+              },
+              child: Stack(
+                children: [
+                  ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    scrollDirection: Axis.vertical,
+                    itemCount: historyController.allReservationById.length,
+                    itemBuilder: (context, index) {
+                      ReservationGetModel reservation =
+                          historyController.allReservationById[index];
+                      return bookedHistoryCard(reservation);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Column bookedHistoryCard(ReservationGetModel reservation) {
+    Color statusColor;
+
+    // Set the color based on the reservation status
+    switch (reservation.status) {
+      case 'Aktif':
+        statusColor = MyTheme.primary;
+        break;
+      case 'Dibatalkan':
+        statusColor = MyTheme.red;
+        break;
+      case 'Absen':
+        statusColor = Colors.orange;
+        break;
+      default:
+        statusColor = MyTheme.primary; // Default color
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Text(
-        //   'Terakhir dipesan',
-        //   style: GoogleFonts.poppins(
-        //       fontSize: 16, fontWeight: FontWeight.w700, color: MyTheme.black),
-        //   textAlign: TextAlign.left,
-        // ),
-        // const SizedBox(
-        //   height: 8,
-        // ),
         Container(
+          margin: EdgeInsets.symmetric(vertical: 8),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: MyTheme.white,
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x19000000),
-                  blurRadius: 10,
-                  offset: Offset(0, 0),
-                  spreadRadius: 0,
-                )
-              ]),
-          child: Column(children: [
-            Row(
-              children: [
-                inputLastBooked(
-                    value: 'Lab. Techno',
-                    tStyle: const TextStyle(
+            borderRadius: BorderRadius.circular(12),
+            color: MyTheme.white,
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x19000000),
+                blurRadius: 10,
+                offset: Offset(0, 0),
+                spreadRadius: 0,
+              )
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    reservation.nama_ruangan,
+                    style: const TextStyle(
                       color: MyTheme.black,
                       fontSize: 16,
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w400,
-                    )),
-                const Spacer(),
-                inputLastBooked(
-                    value: '10 Desember 2023',
-                    tStyle: const TextStyle(
-                      color: Color(0xFF8A8A8A),
+                    ),
+                  ),
+                  const Spacer(),
+                  Text(
+                    reservation.tanggal_reservasi,
+                    style: const TextStyle(
+                      color: MyTheme.black1,
                       fontSize: 12,
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w400,
-                    ))
-              ],
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Column(
-              children: [
-                Column(
-                  children: [
-                    const Row(
-                      children: [
-                        Text('Sesi 1',
-                            style: TextStyle(
-                              color: MyTheme.black,
-                              fontSize: 12,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w400,
-                            )),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Text('08.00 - 11.00',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Color(0xFF8A8A8A),
-                              fontSize: 10,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w400,
-                            ))
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Row(
-                      children:
-                          generateContainersWithPadding(['4', '6', '7'], 8),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 24,
-            ),
-            GestureDetector(
-              onTap: () async {
-                // await UserManager.clearToken();
-
-                // TODO: On search tap
-              },
-              child: Container(
-                width: double.maxFinite,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10.5),
-                decoration: BoxDecoration(
-                  color: MyTheme.primary.withOpacity(.1),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Center(
-                  child: Text(
-                    "Pesan lagi untuk hari ini",
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: MyTheme.primary,
                     ),
                   ),
-                ),
+                ],
               ),
-            )
-          ]),
-        ),
-      ],
-    );
-  }
-
-  Column history() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Riwayat',
-          style: GoogleFonts.poppins(
-              fontSize: 16, fontWeight: FontWeight.w700, color: MyTheme.black),
-          textAlign: TextAlign.left,
-        ),
-        const SizedBox(
-          height: 8,
-        ),
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: MyTheme.white,
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x19000000),
-                  blurRadius: 10,
-                  offset: Offset(0, 0),
-                  spreadRadius: 0,
-                )
-              ]),
-          child: Column(children: [
-            const Row(
-              children: [
-                Text('Lab. Techno',
-                    style: TextStyle(
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Text(
+                    reservation.nama_periode,
+                    style: const TextStyle(
                       color: MyTheme.black,
                       fontSize: 12,
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w400,
-                    )),
-                Spacer(),
-                Text('10 Desember 2023',
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '${reservation.jam_mulai.substring(0, 5)} - ${reservation.jam_selesai.substring(0, 5)}',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Color(0xFF8A8A8A),
                       fontSize: 12,
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w400,
-                    ))
-              ],
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Column(
-              children: [
-                const Row(
-                  children: [
-                    Text('Sesi 1',
-                        style: TextStyle(
-                          color: MyTheme.black,
-                          fontSize: 12,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w400,
-                        )),
-                    SizedBox(
-                      width: 8,
                     ),
-                    Text('08.00 - 11.00',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Color(0xFF8A8A8A),
-                          fontSize: 10,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w400,
-                        ))
-                  ],
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                Row(
-                  children: generateContainersWithPadding(['4', '6', '7'], 8),
-                )
-              ],
-            ),
-          ]),
+                  ),
+                  const Spacer(),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: statusColor.withOpacity(.1),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Center(
+                      child: Text(
+                        reservation.status,
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12,
+                          color: statusColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                width: 8,
+              ),
+              Row(
+                children: generateContainersWithPadding(
+                    [reservation.nomor_kursi.toString()], 8),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -342,7 +297,7 @@ class _OrderScreenState extends State<OrderScreen> {
                   color: MyTheme.white,
                 ),
                 Text(
-                  'Pesanan',
+                  'Riwayat',
                   style: GoogleFonts.poppins(
                     fontSize: 24,
                     color: MyTheme.white,
@@ -395,10 +350,6 @@ class _OrderScreenState extends State<OrderScreen> {
         ],
       ),
     );
-  }
-
-  Widget inputLastBooked({required String value, required TextStyle tStyle}) {
-    return Text(value, style: tStyle);
   }
 }
 

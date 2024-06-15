@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reservasi/features/data/data_sources/local/app_database.dart';
+import 'package:reservasi/presentation/screens/history_screen.dart';
 import 'package:reservasi/presentation/screens/splash_screen.dart';
 import 'package:reservasi/presentation/widgets/bindings/binding.dart';
 import 'package:reservasi/presentation/screens/editProfile_screen.dart';
@@ -7,7 +8,6 @@ import 'package:reservasi/presentation/screens/help_screen.dart';
 import 'package:reservasi/presentation/screens/home_screen.dart';
 import 'package:reservasi/presentation/screens/landing_screen.dart';
 import 'package:reservasi/presentation/screens/login_screen.dart';
-import 'package:reservasi/presentation/screens/order_screen.dart';
 import 'package:reservasi/presentation/screens/profile_screen.dart';
 import 'package:reservasi/presentation/screens/register_screen.dart';
 import 'package:reservasi/presentation/screens/reservation_screen.dart';
@@ -72,26 +72,15 @@ class MyApp extends StatelessWidget {
               '/landing': (context) => LandingScreen(),
               '/login': (context) => LoginScreen(),
               '/register': (context) => RegisterScreen(),
-              '/home': (context) => HomeScreen(refreshCallback: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => HomeScreen(
-                          refreshCallback: () {}, // Pass a dummy callback here
-                        ),
-                      ),
-                    );
-                  }),
-              '/order': (context) => const OrderScreen(),
+              '/home': (context) => HomeScreen(),
+              '/history': (context) => const HistoryScreen(),
               '/profile': (context) => const ProfileScreen(),
               '/eprofile': (context) => const EditProfileScreen(),
               '/help': (context) => const HelpScreen(),
               '/search': (context) => SearchScreen(
                     showLocations: true,
                   ),
-              '/reservation': (context) => ReservationScreen(
-                    onReservationMade: () {},
-                  ),
+              '/reservation': (context) => ReservationScreen(),
             },
           );
         });

@@ -98,14 +98,15 @@ class RoomsPeriodController extends GetxController {
             int.parse(room.jam_selesai.split(':')[1]),
             int.parse(room.jam_selesai.split(':')[2]),
           );
-          // print('jamMulai: $jamMulai');
+
+          print('jamMulai: $jamMulai');
           print('jamSelesai: $jamSelesai');
-          return jamSelesai.isBefore(now);
+
+          // Check if jamMulai is before now
+          return jamMulai.isBefore(now);
         })
         .map((room) => room.periode_id)
         .toList();
-
-    // Print the filtered session periods
     print('now: $now');
     print('periodRooms: $periodRooms');
     print('Missed Session Periods: $missedSessionPeriods');

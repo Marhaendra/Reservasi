@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:reservasi/features/data/data_sources/local/DAO/login_dao.dart';
+import 'package:reservasi/features/data/data_sources/local/app_database.dart';
+import 'package:reservasi/features/data/data_sources/remote/api_service.dart';
 import 'package:reservasi/presentation/controllers/login_controller.dart';
 import 'package:reservasi/presentation/screens/home_screen.dart';
 import 'package:reservasi/theme.dart';
@@ -10,15 +13,9 @@ class LoginScreen extends StatelessWidget {
   final TextEditingController _emailText = TextEditingController();
   final TextEditingController _passwordText = TextEditingController();
 
-  LoginScreen({super.key});
-
   void updatePassword(String password) {
     // Update the password value directly
     _passwordText.text = password;
-  }
-
-  void refreshHomeScreen() {
-    print("Home screen refreshed");
   }
 
   @override
@@ -88,13 +85,9 @@ class LoginScreen extends StatelessWidget {
               loginController.postLogin(email: email, password: password);
 
               // Navigate to homescreen
-
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      HomeScreen(refreshCallback: refreshHomeScreen),
-                ),
+                MaterialPageRoute(builder: (context) => const HomeScreen()),
               );
             },
             child: Container(
