@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:reservasi/helper/user_manager.dart';
+import 'package:reservasi/presentation/controllers/reservation_controller.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -7,6 +10,9 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  ReservationController reservationController =
+      Get.find<ReservationController>();
+
   @override
   void initState() {
     super.initState();

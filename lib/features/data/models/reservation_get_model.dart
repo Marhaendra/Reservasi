@@ -1,49 +1,34 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:reservasi/domain/entities/period_entity.dart';
 import 'package:reservasi/domain/entities/reservation_entity.dart';
-import 'package:reservasi/domain/entities/rooms_entity.dart';
 
 part 'reservation_get_model.g.dart';
 
 @JsonSerializable()
 class ReservationGetModel extends ReservationEntity {
-  ReservationGetModel({
-    required int reservasiId,
-    required int userId,
-    required String nama,
-    required String tanggalReservasi,
-    required int ruanganId,
-    required int kursiId,
-    required int nomorKursi,
-    required int periodeId,
-    String? waktuCheckin,
-    String? waktuCheckout,
-    required String status,
-    required int kehadiran,
-    required String tanggalPemesanan,
-    required List<RoomsEntity> ruangan,
-    required List<PeriodeEntity> periode,
-  }) : super(
-          reservasiId: reservasiId,
-          userId: userId,
-          nama: nama,
-          tanggalReservasi: tanggalReservasi,
-          ruanganId: ruanganId,
-          kursiId: kursiId,
-          nomorKursi: nomorKursi,
-          periodeId: periodeId,
-          waktuCheckin: waktuCheckin,
-          waktuCheckout: waktuCheckout,
-          status: status,
-          kehadiran: kehadiran,
-          tanggalPemesanan: tanggalPemesanan,
-          ruangan: ruangan,
-          periode: periode,
-        );
+  const ReservationGetModel({
+    required super.reservasi_id,
+    required super.user_id,
+    required super.nama,
+    required super.tanggal_reservasi,
+    required super.ruangan_id,
+    required super.kursi_id,
+    required super.nomor_kursi,
+    required super.periode_id,
+    super.waktu_checkin,
+    super.waktu_checkout,
+    required super.status,
+    required super.kehadiran,
+    required super.tanggal_pemesanan,
+    required super.jam_mulai,
+    required super.jam_selesai,
+    required super.nama_ruangan,
+    required super.nama_periode,
+  });
 
   factory ReservationGetModel.fromJson(Map<String, dynamic> json) =>
       _$ReservationGetModelFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$ReservationGetModelToJson(this);
 }
 
@@ -58,7 +43,6 @@ class ReservationGetResponse {
   });
 
   factory ReservationGetResponse.fromJson(Map<String, dynamic> json) {
-    // Parse JSON and filter out rooms where deleted_at is not null
     var data = (json['data'] as List)
         .map((item) =>
             ReservationGetModel.fromJson(item as Map<String, dynamic>))

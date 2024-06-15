@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:reservasi/features/data/data_sources/local/app_database.dart';
 import 'package:reservasi/features/data/data_sources/remote/api_service.dart';
+import 'package:reservasi/features/data/models/reservation_check_model.dart';
+import 'package:reservasi/features/data/models/reservation_get_model.dart';
 import 'package:reservasi/features/data/models/reservation_post_model.dart';
 import 'package:reservasi/features/data/models/rooms_period_model.dart';
 import 'package:reservasi/features/data/models/seats_model.dart';
@@ -16,6 +18,9 @@ class ReservationController extends GetxController {
   RxList<List<Map<String, dynamic>>> session =
       <List<Map<String, dynamic>>>[].obs;
   RxList<SeatsModel> seats = <SeatsModel>[].obs;
+  RxList<ReservationGetModel> reservationById = <ReservationGetModel>[].obs;
+  RxList<ReservationGetModel> todayReservationById =
+      <ReservationGetModel>[].obs;
   RxList<RoomsPeriodModel> periodRooms = <RoomsPeriodModel>[].obs;
   final RoomsPeriodController roomsPeriodController =
       Get.find<RoomsPeriodController>();
@@ -27,6 +32,10 @@ class ReservationController extends GetxController {
   var reservedSeatDate = <String>[].obs;
   var periodList = <int>[].obs;
   var reservation = <ReservationPostModel>[].obs;
+  var todaySeatReservationById = <int>[].obs;
+  var checkInToday = <String>[].obs;
+  var checkOutToday = <String>[].obs;
+  var cancelToday = <String>[].obs;
   RxList<int> missedSessionPeriod = <int>[].obs;
 
   final ApiService _apiService;
@@ -40,6 +49,77 @@ class ReservationController extends GetxController {
   void onInit() {
     super.onInit();
     initializeSession();
+  }
+
+  Future<void> cancelReservation(int reservasi_id) async {
+    try {
+      final token = await UserManager.getToken();
+
+      final response = await _apiService.cancel(token!, reservasi_id);
+      cancelToday.add(response as String);
+      print('checkOutToday: $cancelToday - $reservasi_id');
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future<void> checkOut(int reservasi_id) async {
+    try {
+      final token = await UserManager.getToken();
+
+      final response = await _apiService.checkOut(token!, reservasi_id);
+      checkOutToday.add(response as String);
+      print('checkOutToday: $checkOutToday - $reservasi_id');
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future<void> checkIn(int reservasi_id) async {
+    try {
+      final token = await UserManager.getToken();
+
+      final response = await _apiService.checkIn(token!, reservasi_id);
+      checkInToday.add(response as String);
+      print('checkInToday: $checkInToday - $reservasi_id');
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future<void> getReservasiById() async {
+    try {
+      final token = await UserManager.getToken();
+      final id = await UserManager.getUserId();
+
+      if (token == null || id == null) {
+        print('Token or ID is null');
+        return;
+      }
+
+      print('Token in getReservasiById: $token');
+      print('ID in getReservasiById: $id');
+
+      ReservationGetResponse reservationGetResponse =
+          await _apiService.getReservasiById(token, id);
+
+      reservationById.value = reservationGetResponse.data
+          .where((reservation) => reservation.status == 'Aktif')
+          .toList();
+
+      DateTime todays = DateTime.now();
+      String today = DateFormat('d/M/yyyy').format(todays);
+      todayReservationById.value = reservationById
+          .where(
+              (todayReservation) => todayReservation.tanggal_reservasi == today)
+          .toList();
+
+      // Print the response to inspect it
+      print('Response from API: $reservationById');
+      print('todayReservation: $todayReservationById');
+    } catch (error) {
+      print('Error fetching reservations: $error');
+    }
   }
 
   Future<void> missedSession() async {

@@ -1,62 +1,66 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:reservasi/domain/entities/period_entity.dart';
-import 'package:reservasi/domain/entities/rooms_entity.dart';
 part 'reservation_entity.g.dart';
 
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable()
 class ReservationEntity extends Equatable {
-  final int reservasiId;
-  final int userId;
+  final int reservasi_id;
+  final int user_id;
   final String nama;
-  final String tanggalReservasi;
-  final int ruanganId;
-  final int kursiId;
-  final int nomorKursi;
-  final int periodeId;
-  final String? waktuCheckin;
-  final String? waktuCheckout;
+  final String tanggal_reservasi;
+  final int ruangan_id;
+  final int kursi_id;
+  final int nomor_kursi;
+  final int periode_id;
+  final String? waktu_checkin;
+  final String? waktu_checkout;
   final String status;
   final int kehadiran;
-  final String tanggalPemesanan;
-  final List<RoomsEntity> ruangan;
-  final List<PeriodeEntity> periode;
+  final String tanggal_pemesanan;
+  final String jam_mulai;
+  final String jam_selesai;
+  final String nama_periode;
+  final String nama_ruangan;
 
   const ReservationEntity({
-    required this.reservasiId,
-    required this.userId,
+    required this.reservasi_id,
+    required this.user_id,
     required this.nama,
-    required this.tanggalReservasi,
-    required this.ruanganId,
-    required this.kursiId,
-    required this.nomorKursi,
-    required this.periodeId,
-    this.waktuCheckin,
-    this.waktuCheckout,
+    required this.tanggal_reservasi,
+    required this.ruangan_id,
+    required this.kursi_id,
+    required this.nomor_kursi,
+    required this.periode_id,
+    this.waktu_checkin,
+    this.waktu_checkout,
     required this.status,
     required this.kehadiran,
-    required this.tanggalPemesanan,
-    required this.ruangan,
-    required this.periode,
+    required this.tanggal_pemesanan,
+    required this.jam_mulai,
+    required this.jam_selesai,
+    required this.nama_ruangan,
+    required this.nama_periode,
   });
 
   @override
   List<Object?> get props => [
-        reservasiId,
-        userId,
+        reservasi_id,
+        user_id,
         nama,
-        tanggalReservasi,
-        ruanganId,
-        kursiId,
-        nomorKursi,
-        periodeId,
-        waktuCheckin,
-        waktuCheckout,
+        tanggal_reservasi,
+        ruangan_id,
+        kursi_id,
+        nomor_kursi,
+        periode_id,
+        waktu_checkin,
+        waktu_checkout,
         status,
         kehadiran,
-        tanggalPemesanan,
-        ruangan,
-        periode,
+        tanggal_pemesanan,
+        jam_mulai,
+        jam_selesai,
+        nama_ruangan,
+        nama_periode,
       ];
 
   factory ReservationEntity.fromJson(Map<String, dynamic> json) =>

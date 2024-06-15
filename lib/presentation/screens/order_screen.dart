@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:reservasi/presentation/controllers/calendar_controller.dart';
 import 'package:reservasi/presentation/controllers/reservation_controller.dart';
 import 'package:reservasi/theme.dart';
 
@@ -12,18 +13,13 @@ class OrderScreen extends StatefulWidget {
 }
 
 class _OrderScreenState extends State<OrderScreen> {
-  late ReservationController reservationController;
+  ReservationController reservationController =
+      Get.find<ReservationController>();
+  CalendarController calendarController = Get.find<CalendarController>();
 
   @override
   void initState() {
     super.initState();
-    reservationController = Get.find<ReservationController>();
-  }
-
-  Widget _getReserved() {
-    return reservationController.reservedSeatDate.isEmpty
-        ? orderCardBlank()
-        : orderCard();
   }
 
   @override
@@ -64,18 +60,139 @@ class _OrderScreenState extends State<OrderScreen> {
 
   Widget main() {
     return Padding(
-      padding: const EdgeInsets.only(right: 16, left: 16, top: 70),
-      child: Obx(
-        () => Column(
-          children: [
-            _getReserved(),
+      padding: const EdgeInsets.only(right: 16, left: 16, top: 47),
+      child: Column(
+        children: [
+          lastBooked(),
+          const SizedBox(
+            height: 24,
+          ),
+          history()
+        ],
+      ),
+    );
+  }
+
+  Column lastBooked() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Text(
+        //   'Terakhir dipesan',
+        //   style: GoogleFonts.poppins(
+        //       fontSize: 16, fontWeight: FontWeight.w700, color: MyTheme.black),
+        //   textAlign: TextAlign.left,
+        // ),
+        // const SizedBox(
+        //   height: 8,
+        // ),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: MyTheme.white,
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x19000000),
+                  blurRadius: 10,
+                  offset: Offset(0, 0),
+                  spreadRadius: 0,
+                )
+              ]),
+          child: Column(children: [
+            Row(
+              children: [
+                inputLastBooked(
+                    value: 'Lab. Techno',
+                    tStyle: const TextStyle(
+                      color: MyTheme.black,
+                      fontSize: 16,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w400,
+                    )),
+                const Spacer(),
+                inputLastBooked(
+                    value: '10 Desember 2023',
+                    tStyle: const TextStyle(
+                      color: Color(0xFF8A8A8A),
+                      fontSize: 12,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w400,
+                    ))
+              ],
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Column(
+              children: [
+                Column(
+                  children: [
+                    const Row(
+                      children: [
+                        Text('Sesi 1',
+                            style: TextStyle(
+                              color: MyTheme.black,
+                              fontSize: 12,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w400,
+                            )),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Text('08.00 - 11.00',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Color(0xFF8A8A8A),
+                              fontSize: 10,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w400,
+                            ))
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Row(
+                      children:
+                          generateContainersWithPadding(['4', '6', '7'], 8),
+                    ),
+                  ],
+                ),
+              ],
+            ),
             const SizedBox(
               height: 24,
             ),
-            history()
-          ],
+            GestureDetector(
+              onTap: () async {
+                // await UserManager.clearToken();
+
+                // TODO: On search tap
+              },
+              child: Container(
+                width: double.maxFinite,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10.5),
+                decoration: BoxDecoration(
+                  color: MyTheme.primary.withOpacity(.1),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Center(
+                  child: Text(
+                    "Pesan lagi untuk hari ini",
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                      color: MyTheme.primary,
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ]),
         ),
-      ),
+      ],
     );
   }
 
@@ -164,201 +281,6 @@ class _OrderScreenState extends State<OrderScreen> {
           ]),
         ),
       ],
-    );
-  }
-
-  Container orderCardBlank() {
-    return Container(
-      child: Container(
-        height: 160,
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            color: white,
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x19000000),
-                blurRadius: 10,
-                offset: Offset(0, 0),
-                spreadRadius: 0,
-              )
-            ]),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 28),
-              child: Text("Tidak ada pesanan hari ini",
-                  style: GoogleFonts.poppins(
-                      fontSize: 12, fontWeight: FontWeight.w700)),
-            ),
-            Padding(
-              padding: EdgeInsets.zero,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        print(reservationController.reservedSeatDate);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 10.5),
-                        decoration: BoxDecoration(
-                          color: primary.withOpacity(.1),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Center(
-                          child: Text(
-                            "Pesan Sekarang",
-                            style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 12,
-                              color: primary,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Container orderCard() {
-    return Container(
-      child: Container(
-        height: 160,
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            color: white,
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x19000000),
-                blurRadius: 10,
-                offset: Offset(0, 0),
-                spreadRadius: 0,
-              )
-            ]),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Container(
-                    child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Lab. Techno",
-                      style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12,
-                          color: black),
-                    ),
-                    Text(
-                      "24 Desember",
-                      style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 12,
-                        color: gray,
-                      ),
-                    ),
-                  ],
-                )),
-                const Spacer(),
-                Container(
-                  child: Column(children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Sesi 1",
-                          style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                            color: black,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 4,
-                        ),
-                        Text(
-                          "08.00-11.00",
-                          style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 12,
-                            color: gray,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ]),
-                )
-              ],
-            ),
-            Row(
-              children: generateContainersWithPadding(['4', '6', '7'], 8),
-            ),
-            Container(
-              padding: EdgeInsets.zero,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 10.5),
-                      decoration: BoxDecoration(
-                        color: red.withOpacity(.1),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Center(
-                        child: Text(
-                          "Cancel",
-                          style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                            color: red,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                      width:
-                          8), // Adds a flexible space between the two containers
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 10.5),
-                      decoration: BoxDecoration(
-                        color: primary.withOpacity(.1),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Center(
-                        child: Text(
-                          "Check In",
-                          style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                            color: primary,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -473,6 +395,10 @@ class _OrderScreenState extends State<OrderScreen> {
         ],
       ),
     );
+  }
+
+  Widget inputLastBooked({required String value, required TextStyle tStyle}) {
+    return Text(value, style: tStyle);
   }
 }
 

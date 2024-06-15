@@ -1,6 +1,7 @@
 import 'package:reservasi/core/constants/constants.dart';
 import 'package:reservasi/features/data/models/login_model.dart';
 import 'package:reservasi/features/data/models/register_model.dart';
+import 'package:reservasi/features/data/models/reservation_check_model.dart';
 import 'package:reservasi/features/data/models/reservation_get_model.dart';
 import 'package:reservasi/features/data/models/reservation_post_model.dart';
 import 'package:reservasi/features/data/models/rooms_model.dart';
@@ -49,12 +50,36 @@ abstract class ApiService {
   );
 
   @GET('/reservasi')
-  Future<List<ReservationGetResponse>> getReservasi(
+  Future<ReservationGetResponse> getReservasi(
     @Header("Authorization") String token,
+  );
+
+  @GET('/reservasi/{id}')
+  Future<ReservationGetResponse> getReservasiById(
+    @Header("Authorization") String token,
+    @Path('id') int id,
   );
 
   @POST('/reservasi')
   Future<ReservationPostModel> reservasi(
       @Header("Authorization") String token, @Body() Map<String, dynamic> body,
       {required options});
+
+  @PATCH('/reservasi/{id}')
+  Future<ReservationCheckResponse> cancel(
+    @Header("Authorization") String token,
+    @Path('id') int id,
+  );
+
+  @PATCH('/reservasi/checkin/{id}')
+  Future<ReservationCheckResponse> checkIn(
+    @Header("Authorization") String token,
+    @Path('id') int id,
+  );
+
+  @PATCH('/reservasi/checkout/{id}')
+  Future<ReservationCheckResponse> checkOut(
+    @Header("Authorization") String token,
+    @Path('id') int id,
+  );
 }

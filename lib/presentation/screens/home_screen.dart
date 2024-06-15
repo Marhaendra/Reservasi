@@ -1,7 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:reservasi/core/util/custom_loading_indicator.dart';
 import 'package:reservasi/features/data/data_sources/local/DAO/login_dao.dart';
+import 'package:reservasi/features/data/models/reservation_get_model.dart';
 import 'package:reservasi/helper/user_manager.dart';
 import 'package:reservasi/presentation/controllers/calendar_controller.dart';
 import 'package:reservasi/presentation/controllers/location_controller.dart';
@@ -36,6 +41,21 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    reservationController.getReservasiById();
+  }
+
+  Widget _getReserved() {
+    return Obx(() {
+      if (reservationController.reservationById.isEmpty) {
+        return orderCardBlank();
+      } else {
+        return orderedToday();
+      }
+    });
+  }
+
+  void refreshReserved() {
+    setState(() {});
   }
 
   @override
@@ -87,146 +107,289 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           searchBox(context, locationController, roomsController),
           const SizedBox(
-            height: 20,
+            height: 24,
           ),
-          lastBooked(),
+          _getReserved(),
         ],
       ),
     );
   }
 
-  Column lastBooked() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Terakhir dipesan',
-          style: GoogleFonts.poppins(
-              fontSize: 16, fontWeight: FontWeight.w700, color: MyTheme.black),
-          textAlign: TextAlign.left,
-        ),
-        const SizedBox(
-          height: 8,
-        ),
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: MyTheme.white,
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x19000000),
-                  blurRadius: 10,
-                  offset: Offset(0, 0),
-                  spreadRadius: 0,
-                )
-              ]),
-          child: Column(children: [
-            Row(
-              children: [
-                inputLastBooked(
-                    value: 'Lab. Techno',
-                    tStyle: const TextStyle(
-                      color: MyTheme.black,
-                      fontSize: 12,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w400,
-                    )),
-                const Spacer(),
-                inputLastBooked(
-                    value: '10 Desember 2023',
-                    tStyle: const TextStyle(
-                      color: Color(0xFF8A8A8A),
-                      fontSize: 12,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w400,
-                    ))
-              ],
+  Widget orderedToday() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8),
+      constraints: const BoxConstraints(maxHeight: 345),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Pesananmu hari ini",
+            textAlign: TextAlign.start,
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.w500,
+              fontSize: 16,
+              color: Colors.black,
             ),
-            const SizedBox(
-              height: 8,
-            ),
-            Column(
-              children: [
-                const Row(
-                  children: [
-                    Text('Sesi 1',
-                        style: TextStyle(
-                          color: MyTheme.black,
-                          fontSize: 12,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w400,
-                        )),
-                    SizedBox(
-                      width: 8,
-                    ),
-                    Text('08.00 - 11.00',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Color(0xFF8A8A8A),
-                          fontSize: 10,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w400,
-                        ))
-                  ],
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                Row(
-                  children: generateContainersWithPadding(['4', '6', '7'], 8),
-                )
-              ],
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            GestureDetector(
-              onTap: () async {
-                final tokenM = await UserManager.getToken();
-                final LoginDao _loginDao = Get.find<LoginDao>();
-                String token = 'token';
-                final token2 = await _loginDao.findLoginByToken(token);
-                if (tokenM != null) {
-                  print('Token: $tokenM');
-                  print('tokensss: $token2');
-                } else {
-                  print('Token not found');
-                }
-
-                // await UserManager.clearToken();
-
-                // TODO: On search tap
-                print(reservationController.selectedSeats);
-                print(reservationController.reservedSeat);
-                print(reservationController.reservedDate);
-                print(reservationController.reservedSeatDate);
-                print(calendarController.dateList);
-                print(calendarController.nowDay);
+          ),
+          Expanded(
+            child: RefreshIndicator(
+              color: MyTheme.primary,
+              backgroundColor: MyTheme.white1,
+              onRefresh: () async {
+                await reservationController.getReservasiById();
               },
-              child: Container(
-                width: double.maxFinite,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10.5),
-                decoration: BoxDecoration(
-                  color: MyTheme.primary.withOpacity(.1),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Center(
-                  child: Text(
-                    "Pesan lagi untuk hari ini",
+              child: Stack(
+                children: [
+                  ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    scrollDirection: Axis.vertical,
+                    itemCount:
+                        reservationController.todayReservationById.length,
+                    itemBuilder: (context, index) {
+                      ReservationGetModel reservation =
+                          reservationController.todayReservationById[index];
+                      return orderCard(reservation);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Container orderCardBlank() {
+    return Container(
+      child: Container(
+        height: 160,
+        width: double.maxFinite,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: white,
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x19000000),
+                blurRadius: 10,
+                offset: Offset(0, 0),
+                spreadRadius: 0,
+              )
+            ]),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 28),
+              child: Text("Kamu belum melakukan reservasi",
+                  style: GoogleFonts.poppins(
+                      fontSize: 12, fontWeight: FontWeight.w700)),
+            ),
+            Padding(
+              padding: EdgeInsets.zero,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 10.5),
+                        decoration: BoxDecoration(
+                          color: primary.withOpacity(.1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Pesan Sekarang",
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 12,
+                              color: primary,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget orderCard(ReservationGetModel reservation) {
+    bool isCheckedIn = reservation.waktu_checkin != null;
+    bool isCheckedOut = reservation.waktu_checkout != null;
+
+    return Container(
+      height: 160,
+      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(top: 12, bottom: 12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x19000000),
+            offset: Offset(0, 0),
+            spreadRadius: 0,
+          )
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    reservation.nama_ruangan,
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.w500,
                       fontSize: 12,
-                      color: MyTheme.primary,
+                      color: Colors.black,
+                    ),
+                  ),
+                  Text(
+                    DateFormat('dd MMMM').format(
+                      DateFormat('dd/MM/yyyy')
+                          .parse(reservation.tanggal_reservasi),
+                    ),
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 12,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              Column(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        reservation.nama_periode,
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12,
+                          color: Colors.black,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      Text(
+                        '${reservation.jam_mulai.substring(0, 5)} - ${reservation.jam_selesai.substring(0, 5)}',
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              )
+            ],
+          ),
+          Row(
+            children: generateContainersWithPadding(
+                [reservation.nomor_kursi.toString()], 8),
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: isCheckedIn
+                      ? null
+                      : () async {
+                          await reservationController
+                              .cancelReservation(reservation.reservasi_id);
+                          await reservationController.getReservasiById();
+                        },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 10.5),
+                    decoration: BoxDecoration(
+                      color: isCheckedIn
+                          ? Colors.grey.withOpacity(.1)
+                          : Colors.red.withOpacity(.1),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Cancel",
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12,
+                          color: isCheckedIn ? Colors.grey : Colors.red,
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
-            )
-          ]),
-        ),
-      ],
+              const SizedBox(width: 8),
+              Expanded(
+                child: GestureDetector(
+                  onTap: isCheckedOut
+                      ? null
+                      : () async {
+                          if (isCheckedIn) {
+                            await reservationController
+                                .checkOut(reservation.reservasi_id);
+                            await reservationController.getReservasiById();
+                          } else {
+                            await reservationController
+                                .checkIn(reservation.reservasi_id);
+                            await reservationController.getReservasiById();
+                          }
+                        },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 10.5),
+                    decoration: BoxDecoration(
+                      color: isCheckedOut
+                          ? Colors.grey.withOpacity(.1)
+                          : isCheckedIn
+                              ? Colors.red.withOpacity(.1)
+                              : Colors.blue.withOpacity(.1),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Center(
+                      child: Text(
+                        isCheckedOut
+                            ? "Checked Out"
+                            : isCheckedIn
+                                ? "Check Out"
+                                : "Check In",
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12,
+                          color: isCheckedOut
+                              ? Colors.grey
+                              : isCheckedIn
+                                  ? Colors.red
+                                  : Colors.blue,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -426,10 +589,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
-  }
-
-  Widget inputLastBooked({required String value, required TextStyle tStyle}) {
-    return Text(value, style: tStyle);
   }
 
   Widget inputSearchBox({

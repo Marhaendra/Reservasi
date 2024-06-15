@@ -9,23 +9,23 @@ part of 'reservation_post_entity.dart';
 ReservationPostEntity _$ReservationPostEntityFromJson(
         Map<String, dynamic> json) =>
     ReservationPostEntity(
-      userId: (json['userId'] as num).toInt(),
+      user_id: (json['user_id'] as num).toInt(),
       nama: json['nama'] as String,
-      tanggalReservasi: json['tanggalReservasi'] as String,
-      kursiId: (json['kursiId'] as num).toInt(),
-      ruanganId: (json['ruanganId'] as num).toInt(),
-      nomorKursi: (json['nomorKursi'] as num).toInt(),
-      periodeId: (json['periodeId'] as num).toInt(),
+      tanggal_reservasi: json['tanggal_reservasi'] as String,
+      kursi_id: (json['kursi_id'] as num).toInt(),
+      ruangan_id: (json['ruangan_id'] as num).toInt(),
+      nomor_kursi: (json['nomor_kursi'] as num).toInt(),
+      periode_id: (json['periode_id'] as num).toInt(),
     );
 
 Map<String, dynamic> _$ReservationPostEntityToJson(
         ReservationPostEntity instance) =>
     <String, dynamic>{
-      'userId': instance.userId,
+      'user_id': instance.user_id,
       'nama': instance.nama,
-      'tanggalReservasi': instance.tanggalReservasi,
-      'kursiId': instance.kursiId,
-      'ruanganId': instance.ruanganId,
-      'nomorKursi': instance.nomorKursi,
-      'periodeId': instance.periodeId,
+      'tanggal_reservasi': instance.tanggal_reservasi,
+      'kursi_id': instance.kursi_id,
+      'ruangan_id': instance.ruangan_id,
+      'nomor_kursi': instance.nomor_kursi,
+      'periode_id': instance.periode_id,
     };

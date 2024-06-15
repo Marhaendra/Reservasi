@@ -5,24 +5,24 @@ part 'period_entity.g.dart';
 
 @JsonSerializable()
 class PeriodeEntity extends Equatable {
-  final int periodeId;
-  final String namaPeriode;
-  final String jamMulai;
-  final String jamSelesai;
+  final int periode_id;
+  final String nama_periode;
+  final String jam_mulai;
+  final String jam_selesai;
 
   const PeriodeEntity({
-    required this.periodeId,
-    required this.namaPeriode,
-    required this.jamMulai,
-    required this.jamSelesai,
+    required this.periode_id,
+    required this.nama_periode,
+    required this.jam_mulai,
+    required this.jam_selesai,
   });
 
   @override
   List<Object?> get props => [
-        periodeId,
-        namaPeriode,
-        jamMulai,
-        jamSelesai,
+        periode_id,
+        nama_periode,
+        jam_mulai,
+        jam_selesai,
       ];
 
   factory PeriodeEntity.fromJson(Map<String, dynamic> json) =>

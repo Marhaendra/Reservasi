@@ -5,33 +5,33 @@ part 'reservation_post_entity.g.dart';
 
 @JsonSerializable()
 class ReservationPostEntity extends Equatable {
-  final int userId;
+  final int user_id;
   final String nama;
-  final String tanggalReservasi;
-  final int kursiId;
-  final int ruanganId;
-  final int nomorKursi;
-  final int periodeId;
+  final String tanggal_reservasi;
+  final int kursi_id;
+  final int ruangan_id;
+  final int nomor_kursi;
+  final int periode_id;
 
   const ReservationPostEntity({
-    required this.userId,
+    required this.user_id,
     required this.nama,
-    required this.tanggalReservasi,
-    required this.kursiId,
-    required this.ruanganId,
-    required this.nomorKursi,
-    required this.periodeId,
+    required this.tanggal_reservasi,
+    required this.kursi_id,
+    required this.ruangan_id,
+    required this.nomor_kursi,
+    required this.periode_id,
   });
 
   @override
   List<Object?> get props => [
-        userId,
+        user_id,
         nama,
-        tanggalReservasi,
-        kursiId,
-        ruanganId,
-        nomorKursi,
-        periodeId,
+        tanggal_reservasi,
+        kursi_id,
+        ruangan_id,
+        nomor_kursi,
+        periode_id,
       ];
 
   factory ReservationPostEntity.fromJson(Map<String, dynamic> json) =>

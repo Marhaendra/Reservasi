@@ -8,16 +8,16 @@ part of 'period_entity.dart';
 
 PeriodeEntity _$PeriodeEntityFromJson(Map<String, dynamic> json) =>
     PeriodeEntity(
-      periodeId: (json['periodeId'] as num).toInt(),
-      namaPeriode: json['namaPeriode'] as String,
-      jamMulai: json['jamMulai'] as String,
-      jamSelesai: json['jamSelesai'] as String,
+      periode_id: (json['periode_id'] as num).toInt(),
+      nama_periode: json['nama_periode'] as String,
+      jam_mulai: json['jam_mulai'] as String,
+      jam_selesai: json['jam_selesai'] as String,
     );
 
 Map<String, dynamic> _$PeriodeEntityToJson(PeriodeEntity instance) =>
     <String, dynamic>{
-      'periodeId': instance.periodeId,
-      'namaPeriode': instance.namaPeriode,
-      'jamMulai': instance.jamMulai,
-      'jamSelesai': instance.jamSelesai,
+      'periode_id': instance.periode_id,
+      'nama_periode': instance.nama_periode,
+      'jam_mulai': instance.jam_mulai,
+      'jam_selesai': instance.jam_selesai,
     };
