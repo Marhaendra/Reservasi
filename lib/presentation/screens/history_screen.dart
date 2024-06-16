@@ -17,6 +17,12 @@ class _HistoryScreen extends State<HistoryScreen> {
   HistoryController historyController = Get.find<HistoryController>();
   CalendarController calendarController = Get.find<CalendarController>();
 
+  // List of labels
+  final List<String> labels = ['Aktif', 'Absen', 'Dibatalkan'];
+
+  // Track selected state for each label
+  int selectedIndex = -1;
+
   @override
   void initState() {
     super.initState();
@@ -35,7 +41,6 @@ class _HistoryScreen extends State<HistoryScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Use a Stack to overlay the text on top of the image
             Stack(
               children: [
                 Positioned(
@@ -50,6 +55,7 @@ class _HistoryScreen extends State<HistoryScreen> {
                     ),
                   ),
                 ),
+                historyListFilter(),
                 main(),
               ],
             ),
@@ -68,26 +74,83 @@ class _HistoryScreen extends State<HistoryScreen> {
             future: historyController.getAllReservasiById(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator(
-                  backgroundColor: MyTheme.primary.withOpacity(.1),
-                  color: MyTheme.primary,
-                ); // Show a loading indicator while waiting for data
+                return Padding(
+                  padding: const EdgeInsets.only(top: 48),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      backgroundColor: MyTheme.primary.withOpacity(.1),
+                      color: MyTheme.primary,
+                    ),
+                  ),
+                );
               } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
+                return Center(
+                  child: Text('Error: ${snapshot.error}'),
+                );
               } else {
-                return bookedHistoryList();
+                // Filter reservations based on the selected index
+                List<ReservationGetModel> filteredReservations =
+                    selectedIndex == -1
+                        ? historyController.allReservationById
+                        : historyController
+                            .allReservationById
+                            .where((reservation) =>
+                                reservation.status == labels[selectedIndex])
+                            .toList();
+
+                return bookedHistoryList(filteredReservations);
               }
             },
           ),
-          // history()
         ],
       ),
     );
   }
 
-  Widget bookedHistoryList() {
+  Widget historyListFilter() {
     return Container(
-      constraints: const BoxConstraints(maxHeight: 650),
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      padding: const EdgeInsets.all(16), // Add some padding
+      child: Wrap(
+        spacing: 8.0, // spacing between chips
+        children: List<Widget>.generate(
+          labels.length,
+          (int index) {
+            return ChoiceChip(
+              label: Text(
+                labels[index],
+                style: TextStyle(
+                  fontSize: 12,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w400,
+                  color: selectedIndex == index
+                      ? MyTheme.primary
+                      : MyTheme.black, // Set text color based on selection
+                ),
+              ),
+              selected: selectedIndex == index,
+              selectedColor: MyTheme.white,
+              backgroundColor: MyTheme.white,
+              shadowColor: MyTheme.white1,
+              checkmarkColor: MyTheme.primary,
+              disabledColor: MyTheme.white,
+              side: const BorderSide(color: MyTheme.primary, width: 0.1),
+              onSelected: (bool isSelected) {
+                setState(() {
+                  selectedIndex = isSelected ? index : -1;
+                });
+              },
+            );
+          },
+        ).toList(),
+      ),
+    );
+  }
+
+  Widget bookedHistoryList(List<ReservationGetModel> reservations) {
+    return Container(
+      margin: EdgeInsets.only(top: 44),
+      constraints: const BoxConstraints(maxHeight: 630),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -96,17 +159,16 @@ class _HistoryScreen extends State<HistoryScreen> {
               color: MyTheme.primary,
               backgroundColor: MyTheme.white1,
               onRefresh: () async {
-                historyController.allReservationById();
+                historyController.getAllReservasiById();
               },
               child: Stack(
                 children: [
                   ListView.builder(
                     physics: const BouncingScrollPhysics(),
                     scrollDirection: Axis.vertical,
-                    itemCount: historyController.allReservationById.length,
+                    itemCount: reservations.length,
                     itemBuilder: (context, index) {
-                      ReservationGetModel reservation =
-                          historyController.allReservationById[index];
+                      ReservationGetModel reservation = reservations[index];
                       return bookedHistoryCard(reservation);
                     },
                   ),
@@ -252,7 +314,7 @@ class _HistoryScreen extends State<HistoryScreen> {
           Text(
             placeholder,
             style: GoogleFonts.poppins(
-                fontWeight: FontWeight.w500, fontSize: 12, color: gray),
+                fontWeight: FontWeight.w500, fontSize: 12, color: MyTheme.grey),
           ),
           const SizedBox(
             height: 8,
@@ -270,7 +332,9 @@ class _HistoryScreen extends State<HistoryScreen> {
               Text(
                 value,
                 style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w500, fontSize: 12, color: black),
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12,
+                    color: MyTheme.black),
               )
             ],
           ),
@@ -287,7 +351,6 @@ class _HistoryScreen extends State<HistoryScreen> {
         children: [
           GestureDetector(
             onTap: () {
-              print("Icon and text tapped");
               Navigator.pop(context);
             },
             child: Row(
@@ -318,8 +381,6 @@ class _HistoryScreen extends State<HistoryScreen> {
                   child: GestureDetector(
                     onTap: () {
                       // Handle the tap action for the ticket icon
-                      print("Ticket icon tapped");
-                      // Add your specific action here
                     },
                     child: const PhosphorIcon(
                       PhosphorIconsRegular.ticket,
@@ -334,8 +395,6 @@ class _HistoryScreen extends State<HistoryScreen> {
                   child: GestureDetector(
                     onTap: () {
                       // Handle the tap action for the user icon
-                      print("User icon tapped");
-                      // Add your specific action here
                     },
                     child: const PhosphorIcon(
                       PhosphorIconsRegular.user,
