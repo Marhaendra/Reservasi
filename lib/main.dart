@@ -75,7 +75,7 @@ class MyApp extends StatelessWidget {
               '/home': (context) => HomeScreen(),
               '/history': (context) => const HistoryScreen(),
               '/profile': (context) => const ProfileScreen(),
-              '/eprofile': (context) => const EditProfileScreen(),
+              '/eprofile': (context) => EditProfileScreen(),
               '/help': (context) => const HelpScreen(),
               '/search': (context) => SearchScreen(
                     showLocations: true,

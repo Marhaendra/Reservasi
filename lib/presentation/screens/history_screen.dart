@@ -5,6 +5,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:reservasi/features/data/models/reservation_get_model.dart';
 import 'package:reservasi/presentation/controllers/calendar_controller.dart';
 import 'package:reservasi/presentation/controllers/history_controller.dart';
+import 'package:reservasi/presentation/screens/profile_screen.dart';
 import 'package:reservasi/theme.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -394,7 +395,11 @@ class _HistoryScreen extends State<HistoryScreen> {
                   padding: const EdgeInsets.only(left: 8),
                   child: GestureDetector(
                     onTap: () {
-                      // Handle the tap action for the user icon
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ProfileScreen()),
+                      );
                     },
                     child: const PhosphorIcon(
                       PhosphorIconsRegular.user,

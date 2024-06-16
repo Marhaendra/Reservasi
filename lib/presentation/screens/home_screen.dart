@@ -523,7 +523,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: GoogleFonts.poppins(
                           fontSize: 10, color: MyTheme.white),
                     ),
-                    duration: const Duration(milliseconds: 1500),
+                    duration: const Duration(milliseconds: 2500),
                     // Width of the SnackBar.
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16,

@@ -1,4 +1,5 @@
 import 'package:reservasi/core/constants/constants.dart';
+import 'package:reservasi/features/data/models/edit_profile_model.dart';
 import 'package:reservasi/features/data/models/login_model.dart';
 import 'package:reservasi/features/data/models/register_model.dart';
 import 'package:reservasi/features/data/models/reservation_check_model.dart';
@@ -82,4 +83,8 @@ abstract class ApiService {
     @Header("Authorization") String token,
     @Path('id') int id,
   );
+
+  @PATCH('/users/profile/{id}')
+  Future<EditProfileResponse> editProfil(@Header("Authorization") String token,
+      @Path('id') int id, @Body() Map<String, dynamic> body);
 }

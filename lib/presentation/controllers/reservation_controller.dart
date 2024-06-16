@@ -194,8 +194,8 @@ class ReservationController extends GetxController {
 
       if (reservationExists) {
         Get.snackbar(
-          "Reservation Exists",
-          "You already have a reservation for this date and period.",
+          "Sudah Dipesan",
+          "Kamu udah pesen buat tanggal dan waktu ini.",
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white,

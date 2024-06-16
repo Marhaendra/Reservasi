@@ -1,9 +1,12 @@
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserManager {
   static const _keyToken = 'token';
   static const _keyUserId = 'userId';
   static const _keyNama = 'nama';
+
+  static RxString nama = ''.obs;
 
   // Save token to SharedPreferences
   static Future<void> saveToken(String token) async {
@@ -37,6 +40,11 @@ class UserManager {
     return prefs.getString(_keyNama);
   }
 
+  static Future<void> initializeNama() async {
+    final prefs = await SharedPreferences.getInstance();
+    UserManager.nama.value = prefs.getString(_keyNama) ?? '';
+  }
+
   // Remove token from SharedPreferences (Logout)
   static Future<void> clearUserManager() async {
     final prefs = await SharedPreferences.getInstance();
@@ -49,6 +57,7 @@ class UserManager {
     await prefs.remove(
       _keyNama,
     );
+    UserManager.nama.value = '';
   }
 }
 

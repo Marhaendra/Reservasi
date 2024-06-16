@@ -1,16 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:reservasi/helper/user_manager.dart';
+import 'package:reservasi/presentation/controllers/profile_controller.dart';
 import 'package:reservasi/presentation/screens/editProfile_screen.dart';
 import 'package:reservasi/presentation/screens/help_screen.dart';
+import 'package:reservasi/presentation/screens/history_screen.dart';
+import 'package:reservasi/presentation/screens/splash_screen.dart';
 import 'package:reservasi/theme.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key});
+  @override
+  _ProfileScreen createState() => _ProfileScreen();
+}
+
+class _ProfileScreen extends State<ProfileScreen> {
+  ProfileController profileController = Get.find<ProfileController>();
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+    UserManager.initializeNama();
+  }
+
+  @override
+  Widget build(
+    BuildContext context,
+  ) {
     return Scaffold(
       appBar: AppBar(
         title: _header(context),
@@ -50,62 +68,68 @@ class ProfileScreen extends StatelessWidget {
       padding: const EdgeInsets.only(right: 16, left: 16, top: 70),
       child: Column(
         children: [
-          profileButton(context),
+          profileButton(),
         ],
       ),
     );
   }
 
-  Container profileButton(BuildContext context) {
+  Container profileButton() {
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          Container(
-            alignment: Alignment.center,
-            child: Text(
-              'User1234',
-              style: GoogleFonts.poppins(
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-                color: MyTheme.white,
+          Obx(() {
+            // Fetch the first user's name if available
+            String userNama = UserManager.nama.value;
+
+            return Container(
+              alignment: Alignment.center,
+              child: Text(
+                userNama,
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  color: MyTheme.white,
+                ),
               ),
-            ),
-          ),
+            );
+          }),
           const SizedBox(height: 40),
           GestureDetector(
             onTap: () {
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => EditProfileScreen()),
               );
-              // Logic for the button tap
             },
             child: Container(
               height: 40,
               decoration: BoxDecoration(
-                  color: const Color(0xFFFDFDFD),
-                  borderRadius: BorderRadius.circular(6),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x19000000),
-                      blurRadius: 10,
-                      offset: Offset(0, 0),
-                      spreadRadius: 0,
-                    )
-                  ]),
+                color: const Color(0xFFFDFDFD),
+                borderRadius: BorderRadius.circular(6),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x19000000),
+                    blurRadius: 10,
+                    offset: Offset(0, 0),
+                    spreadRadius: 0,
+                  )
+                ],
+              ),
               child: Center(
                 child: Text(
                   'Edit',
                   style: GoogleFonts.poppins(
-                      fontSize: 14, color: black, fontWeight: FontWeight.w500),
+                    fontSize: 14,
+                    color: black,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ),
           ),
-          const SizedBox(
-            height: 12,
-          ),
+          const SizedBox(height: 12),
           GestureDetector(
             onTap: () {
               Navigator.push(
@@ -116,32 +140,39 @@ class ProfileScreen extends StatelessWidget {
             child: Container(
               height: 40,
               decoration: BoxDecoration(
-                  color: const Color(0xFFFDFDFD),
-                  borderRadius: BorderRadius.circular(6),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x19000000),
-                      blurRadius: 10,
-                      offset: Offset(0, 0),
-                      spreadRadius: 0,
-                    )
-                  ]),
+                color: const Color(0xFFFDFDFD),
+                borderRadius: BorderRadius.circular(6),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x19000000),
+                    blurRadius: 10,
+                    offset: Offset(0, 0),
+                    spreadRadius: 0,
+                  )
+                ],
+              ),
               child: Center(
                 child: Text(
                   'Bantuan',
                   style: GoogleFonts.poppins(
-                      fontSize: 14, color: black, fontWeight: FontWeight.w500),
+                    fontSize: 14,
+                    color: black,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ),
           ),
-          const SizedBox(
-            height: 12,
-          ),
+          const SizedBox(height: 12),
           GestureDetector(
             onTap: () {
               // Logic for the button tap
               UserManager.clearUserManager();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => SplashScreen()),
+                (route) => false,
+              );
             },
             child: Container(
               height: 40,
@@ -153,7 +184,10 @@ class ProfileScreen extends StatelessWidget {
                 child: Text(
                   'Keluar',
                   style: GoogleFonts.poppins(
-                      fontSize: 14, color: red, fontWeight: FontWeight.w500),
+                    fontSize: 14,
+                    color: red,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ),
@@ -241,9 +275,11 @@ class ProfileScreen extends StatelessWidget {
                   padding: const EdgeInsets.only(right: 8),
                   child: GestureDetector(
                     onTap: () {
-                      // Handle the tap action for the ticket icon
-                      print("Ticket icon tapped");
-                      // Add your specific action here
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const HistoryScreen()),
+                      );
                     },
                     child: const PhosphorIcon(
                       PhosphorIconsRegular.ticket,
