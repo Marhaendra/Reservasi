@@ -45,6 +45,7 @@ class ReservationController extends GetxController {
   ReservationController(this._apiService, this._database);
 
   List<int> existingNomorKursi = [];
+  List<int> brokenNomorKursi = [];
 
   @override
   void onInit() {
@@ -282,7 +283,15 @@ class ReservationController extends GetxController {
       seats.forEach((seat) {
         existingNomorKursi.add(seat.nomor_kursi);
       });
+
+      brokenNomorKursi.clear();
+      seats.forEach((seat) {
+        if (seat.isBroken == 1) {
+          brokenNomorKursi.add(seat.nomor_kursi);
+        }
+      });
       print('exKursi: $existingNomorKursi');
+      print('brokenKursi: $brokenNomorKursi');
     } catch (error) {
       print('error reservationcontroller: $error');
     }
@@ -295,11 +304,12 @@ class ReservationController extends GetxController {
     int seatLength = seat.length;
     int periodLength = periodList.length;
 
-    generateSessionList(periodLength, seatLength, existingNomorKursi);
+    generateSessionList(
+        periodLength, seatLength, existingNomorKursi, brokenNomorKursi);
   }
 
-  void generateSessionList(
-      int periodLength, int seatLength, List<int> existingNomorKursi) {
+  void generateSessionList(int periodLength, int seatLength,
+      List<int> existingNomorKursi, List<int> brokenNomorKursi) {
     final CalendarController calendarController =
         Get.find<CalendarController>();
     DateTime selectedDay = calendarController.selectedDay.value;
@@ -314,18 +324,29 @@ class ReservationController extends GetxController {
       (indexSession) => List<Map<String, dynamic>>.generate(
         seatLength,
         (indexSeat) {
-          final isAvailable = existingNomorKursi.contains(indexSeat + 1);
+          final seatNumber = indexSeat + 1;
+          final isAvailable = existingNomorKursi.contains(seatNumber);
+          final isBroken = brokenNomorKursi.contains(seatNumber);
 
           // Check if the session is missed for today
           final isMissedForToday =
               missedSessionPeriod.contains(periodList[indexSession]) &&
                   selectedDayFormatted == isTodayFormatted;
 
+          String status;
+          if (isMissedForToday) {
+            status = "filled";
+          } else if (isBroken) {
+            status = "filled";
+          } else if (isAvailable) {
+            status = "available";
+          } else {
+            status = "filled";
+          }
+
           return {
-            "id": "ID-${indexSession + 1}-${indexSeat + 1}",
-            "status": isMissedForToday
-                ? "filled"
-                : (isAvailable ? "available" : "filled"),
+            "id": "ID-${indexSession + 1}-${seatNumber}",
+            "status": status,
             "isSelected": false,
           };
         },

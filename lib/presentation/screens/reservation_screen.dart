@@ -139,7 +139,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                       child: Row(
                         children: [
                           ItemStatus(
-                            status: "Kosong",
+                            status: "Tersedia",
                             color: MyTheme.white,
                             border: MyTheme.primary,
                           ),
@@ -147,7 +147,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                             width: 12,
                           ),
                           ItemStatus(
-                            status: "Terisi",
+                            status: "Tidak tersedia",
                             color: MyTheme.grey,
                             border: MyTheme.grey,
                           ),
