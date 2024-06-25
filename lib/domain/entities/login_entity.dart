@@ -7,16 +7,16 @@ part 'login_entity.g.dart';
 class LoginEntity extends Equatable {
   final int id;
   final String role;
-  final String nama;
+  final String name;
 
   const LoginEntity({
     required this.id,
     required this.role,
-    required this.nama,
+    required this.name,
   });
 
   @override
-  List<Object?> get props => [id, role, nama];
+  List<Object?> get props => [id, role, name];
 
   factory LoginEntity.fromJson(Map<String, dynamic> json) =>
       _$LoginEntityFromJson(json);

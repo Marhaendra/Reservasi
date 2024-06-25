@@ -1,31 +1,51 @@
-import 'package:floor/floor.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:reservasi/domain/entities/login_entity.dart';
 
 part 'login_model.g.dart';
 
-@Entity(tableName: 'auth', primaryKeys: ['id'])
 @JsonSerializable()
 class LoginModel extends LoginEntity {
-  final String? token;
-
   LoginModel({
     required int id,
     required String role,
-    required String nama,
-    this.token,
-  }) : super(id: id, role: role, nama: nama);
+    required String name,
+  }) : super(id: id, role: role, name: name);
 
-  factory LoginModel.fromJson(Map<String, dynamic> map) => LoginModel(
-        id: map['userData'][0]['id'],
-        token: map['token'],
-        role: map['userData'][0]['role'],
-        nama: map['userData'][0]['nama'],
-      );
-
-  @override
+  factory LoginModel.fromJson(Map<String, dynamic> json) =>
+      _$LoginModelFromJson(json);
   Map<String, dynamic> toJson() => _$LoginModelToJson(this);
 
   @override
-  List<Object?> get props => super.props..addAll([token]);
+  List<Object?> get props => super.props;
+}
+
+@JsonSerializable()
+class LoginResponse {
+  final String token;
+  final LoginModel userData;
+
+  LoginResponse({
+    required this.token,
+    required this.userData,
+  });
+
+  factory LoginResponse.fromJson(Map<String, dynamic> json) =>
+      _$LoginResponseFromJson(json);
+  Map<String, dynamic> toJson() => _$LoginResponseToJson(this);
+}
+
+@JsonSerializable()
+class LoginGoogleResponse {
+  final LoginModel data;
+  final String token;
+
+  LoginGoogleResponse({
+    required this.data,
+    required this.token,
+  });
+
+  factory LoginGoogleResponse.fromJson(Map<String, dynamic> json) =>
+      _$LoginGoogleResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$LoginGoogleResponseToJson(this);
 }

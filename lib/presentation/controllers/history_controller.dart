@@ -20,8 +20,8 @@ class HistoryController extends GetxController {
         return;
       }
 
-      print('Token in getReservasiById: $token');
-      print('ID in getReservasiById: $id');
+      // print('Token in getReservasiById: $token');
+      // print('ID in getReservasiById: $id');
 
       ReservationGetResponse reservationGetResponse =
           await _apiService.getReservasiById(token, id);

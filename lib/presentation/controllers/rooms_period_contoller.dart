@@ -1,15 +1,19 @@
 import 'package:get/get.dart';
-import 'package:reservasi/features/data/data_sources/local/app_database.dart';
+import 'package:reservasi/features/data/data_sources/remote/api_service.dart';
 import 'package:reservasi/features/data/models/rooms_period_model.dart';
+import 'package:reservasi/helper/user_manager.dart';
+import 'package:reservasi/presentation/controllers/rooms_seats_controller.dart';
 
 class RoomsPeriodController extends GetxController {
   RxInt periodLength = 0.obs;
   RxList<int> periodList = <int>[].obs;
   RxList<RoomsPeriodModel> periodRooms = <RoomsPeriodModel>[].obs;
 
-  final AppDatabase _appDatabase;
+  // final AppDatabase _appDatabase;
+  final ApiService _apiService;
+  // List<RoomsPeriodModel> periods = [].obs;
 
-  RoomsPeriodController(this._appDatabase);
+  RoomsPeriodController(this._apiService);
 
   @override
   void onInit() {
@@ -17,17 +21,39 @@ class RoomsPeriodController extends GetxController {
     fetchRoomsPeriod();
   }
 
+  void getRuanganPeriode() async {
+    try {
+      final token = await UserManager.getToken();
+      RoomsPeriodResponse roomsPeriodResponse =
+          await _apiService.getRuanganPeriode(token!);
+
+      final RoomsSeatsController roomsSeatsController =
+          Get.find<RoomsSeatsController>();
+      int ruanganId = roomsSeatsController.selectedRoomId.value;
+
+      // Filter the periods based on ruangan_id and is_active
+      periodRooms.value = roomsPeriodResponse.data
+          .where((period) =>
+              period.ruangan_id == ruanganId && period.is_active == 1)
+          .toList(); // Log the filtered periods
+      print('periodROOM: $periodRooms');
+    } catch (error) {
+      print(error);
+    }
+  }
+
   Future<void> fetchRoomsPeriod() async {
     try {
       // Fetch rooms period data from DAO
-      final roomsPeriod =
-          await _appDatabase.roomsPeriodDao.findAllRoomsPeriod();
-      periodRooms.assignAll(roomsPeriod);
+      // final roomsPeriod =
+      //     await _appDatabase.roomsPeriodDao.findAllRoomsPeriod();
+      // periodRooms.assignAll(roomsPeriod);
 
       // Extract periode_id values and assign to periodList
-      periodList.assignAll(roomsPeriod.map((room) => room.periode_id));
+      getRuanganPeriode();
+      periodList.assignAll(periodRooms.map((room) => room.periode_id));
 
-      periodLength.value = roomsPeriod.length;
+      periodLength.value = periodRooms.length;
       print('periodList: $periodList, periodLength: $periodLength');
     } catch (error) {
       // Handle error if any

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reservasi/presentation/screens/login_screen.dart';
 import 'package:reservasi/presentation/screens/register_screen.dart';
 import 'package:reservasi/theme.dart';
+
+import '../controllers/login_controller.dart';
 
 class LandingScreen extends StatelessWidget {
   @override
@@ -32,7 +35,7 @@ class LandingScreen extends StatelessWidget {
               const SizedBox(
                 height: 12,
               ),
-              _signInGoogle(),
+              _signInGoogle(context),
               const SizedBox(
                 height: 24,
               ),
@@ -92,48 +95,44 @@ class LandingScreen extends StatelessWidget {
     );
   }
 
-  SizedBox _signInGoogle() {
-    return SizedBox(
-      width: 40,
-      height: 40,
-      child: Stack(
-        children: [
-          ElevatedButton(
-            onPressed: () {
-              // logic
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0XFFFFFFFF),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+  GestureDetector _signInGoogle(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        LoginController loginController = Get.put(LoginController());
+        loginController.signInWithGoogle(context);
+        print('OAuth pressed');
+      },
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 20),
+        height: 44,
+        decoration: BoxDecoration(
+          color: MyTheme.white,
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: MyTheme.primary.withOpacity(0.1), width: 2),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              "assets/images/google.png",
+              height: 20,
+              width: 20,
+              fit: BoxFit.cover,
             ),
-            child: const SizedBox(
-              height: 24,
-              width: 24,
-              child: Center(
-                child: Text(''),
-              ),
+            SizedBox(width: 8),
+            Text(
+              'Masuk dengan Google',
+              style: GoogleFonts.poppins(fontSize: 14, color: MyTheme.black),
             ),
-          ),
-          Positioned.fill(
-            child: Center(
-              child: Image.asset(
-                "assets/images/google.png",
-                height: 20,
-                width: 20,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Padding _signIn(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -146,9 +145,9 @@ class LandingScreen extends StatelessWidget {
               );
             },
             child: Container(
-              height: 40,
+              height: 44,
               decoration: BoxDecoration(
-                color: const Color(0xFF6497F5).withOpacity(0.1),
+                color: MyTheme.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Center(
@@ -159,42 +158,42 @@ class LandingScreen extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 20),
-          SizedBox(
-            width: 324,
-            height: 20,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  width: 132,
-                  height: 0.50,
-                  decoration: const BoxDecoration(color: Colors.black),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'ATAU',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.poppins(
-                    color: Colors.black,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    height: 0.10,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  width: 132,
-                  height: 0.50,
-                  decoration: const BoxDecoration(color: Colors.black),
-                ),
-              ],
-            ),
-          ),
+          // const SizedBox(height: 20),
+          // SizedBox(
+          //   width: 324,
+          //   height: 20,
+          //   child: Row(
+          //     mainAxisSize: MainAxisSize.min,
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     crossAxisAlignment: CrossAxisAlignment.center,
+          //     children: [
+          //       Container(
+          //         width: 132,
+          //         height: 0.50,
+          //         decoration: const BoxDecoration(color: Colors.black),
+          //       ),
+          //       const SizedBox(width: 8),
+          //       Text(
+          //         'ATAU',
+          //         textAlign: TextAlign.center,
+          //         style: GoogleFonts.poppins(
+          //           color: Colors.black,
+          //           fontSize: 14,
+          //           fontWeight: FontWeight.w400,
+          //           height: 0.10,
+          //         ),
+          //       ),
+          //       const SizedBox(width: 8),
+          //       Container(
+          //         width: 132,
+          //         height: 0.50,
+          //         decoration: const BoxDecoration(color: Colors.black),
+          //       ),
+          //     ],
+          //   ),
+          // ),
           const SizedBox(
-            height: 12,
+            height: 4,
           ),
         ],
       ),

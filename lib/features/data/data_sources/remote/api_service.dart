@@ -21,7 +21,13 @@ abstract class ApiService {
   Future<RegisterModel> register(@Body() Map<String, dynamic> body);
 
   @POST('/login')
-  Future<LoginModel> login(@Body() Map<String, dynamic> body);
+  Future<LoginResponse> login(@Body() Map<String, dynamic> body);
+
+  @GET('/login/google')
+  Future<void> loginGoogle();
+
+  @GET('/login/google/callback')
+  Future<LoginGoogleResponse> loginGoogleCallback(@Query('code') String code);
 
   @GET('/ruangan')
   Future<RoomsResponse> getRuangan(@Header("Authorization") String token);

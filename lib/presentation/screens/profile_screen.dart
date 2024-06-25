@@ -168,6 +168,7 @@ class _ProfileScreen extends State<ProfileScreen> {
             onTap: () {
               // Logic for the button tap
               UserManager.clearUserManager();
+              print(UserManager.getToken());
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => SplashScreen()),

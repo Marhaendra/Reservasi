@@ -1,11 +1,8 @@
 import 'package:dio/dio.dart';
-import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:reservasi/features/data/data_sources/local/app_database.dart';
 import 'package:reservasi/features/data/data_sources/remote/api_service.dart';
-import 'package:reservasi/features/data/models/reservation_check_model.dart';
 import 'package:reservasi/features/data/models/reservation_get_model.dart';
 import 'package:reservasi/features/data/models/reservation_post_model.dart';
 import 'package:reservasi/features/data/models/rooms_period_model.dart';
@@ -25,6 +22,8 @@ class ReservationController extends GetxController {
   RxList<RoomsPeriodModel> periodRooms = <RoomsPeriodModel>[].obs;
   final RoomsPeriodController roomsPeriodController =
       Get.find<RoomsPeriodController>();
+  final RoomsSeatsController roomsSeatsController =
+      Get.find<RoomsSeatsController>();
 
   var indexSession = 0.obs;
   var selectedSeats = <String>[].obs;
@@ -40,9 +39,9 @@ class ReservationController extends GetxController {
   RxList<int> missedSessionPeriod = <int>[].obs;
 
   final ApiService _apiService;
-  final AppDatabase _database;
+  // final AppDatabase _database;
 
-  ReservationController(this._apiService, this._database);
+  ReservationController(this._apiService);
 
   List<int> existingNomorKursi = [];
   List<int> brokenNomorKursi = [];
@@ -300,7 +299,7 @@ class ReservationController extends GetxController {
   Future<void> initializeSession() async {
     await missedSession();
     await fetchAvailableKursi();
-    var seat = await _database.seatsDao.findAllSeats();
+    var seat = roomsSeatsController.seatList;
     int seatLength = seat.length;
     int periodLength = periodList.length;
 
