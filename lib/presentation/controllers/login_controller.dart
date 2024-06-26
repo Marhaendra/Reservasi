@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:reservasi/features/data/data_sources/remote/api_service.dart';
 import 'package:reservasi/features/data/models/login_model.dart';
 import 'package:reservasi/helper/user_manager.dart';
@@ -7,6 +7,70 @@ import 'package:reservasi/helper/user_manager.dart';
 class LoginController extends GetxController {
   final ApiService _apiService = Get.find<ApiService>();
   var loginUser = <LoginResponse>[].obs;
+
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: [
+      'email',
+      'https://www.googleapis.com/auth/userinfo.profile',
+    ],
+    serverClientId:
+        '296555994363-c3g3ttla97hmn749d326ttg56dulhguh.apps.googleusercontent.com', // Replace with your server client ID from Google API Console
+  );
+
+  Future<void> signOutGoogle() async {
+    try {
+      await _googleSignIn.signOut();
+      await UserManager.saveIsGoogleSignIn(false);
+
+      print('signOutGoogle');
+    } catch (error) {
+      print('Error signing out: $error');
+    }
+  }
+
+  Future<void> signInGoogle() async {
+    try {
+      print('Starting Google sign-in');
+      final GoogleSignInAccount? gUser = await _googleSignIn.signIn();
+
+      if (gUser == null) {
+        print('Google sign-in aborted');
+        return;
+      }
+
+      print('Google sign-in successful');
+      final String? authCode = gUser.serverAuthCode;
+      print('authCode: $authCode');
+
+      if (authCode != null) {
+        print('Sending authCode to backend');
+        final response = await _apiService.loginGoogleCallback(authCode);
+
+        if (response != null &&
+            response.token.isNotEmpty &&
+            response.data != null) {
+          // Handle successful login response
+          print('Login successful with Google:');
+          print('User data: ${response.data}');
+          print('Token: ${response.token}');
+
+          // Save token to SharedPreferences or manage as needed
+          await UserManager.saveToken(response.token);
+          await UserManager.saveId(response.data.id);
+          await UserManager.saveNama(response.data.name);
+          await UserManager.saveIsGoogleSignIn(true);
+          // Navigate to desired screen after successful login
+          Get.offAllNamed('/home'); // Replace with your home screen route
+        } else {
+          print('Invalid login response');
+        }
+      } else {
+        print('Failed to get authCode from Google');
+      }
+    } catch (error) {
+      print('Error during Google login: $error');
+    }
+  }
 
   void postLogin({
     required String email,
@@ -42,46 +106,6 @@ class LoginController extends GetxController {
     } catch (e) {
       // Handle error
       print('Error during login: $e');
-    }
-  }
-
-  Future<void> signInWithGoogle(BuildContext context) async {
-    try {
-      // Call the API method to initiate Google Sign-In
-      await _apiService.loginGoogle();
-
-      // Typically, after calling loginGoogle(), the OAuth flow will open a web view
-      // or browser window where users can select their Google account and authenticate.
-      // You handle the callback in handleGoogleLoginCallback().
-    } catch (e) {
-      print('Error signing in with Google: $e');
-    }
-  }
-
-  Future<void> handleGoogleLoginCallback(String code) async {
-    try {
-      final response = await _apiService.loginGoogleCallback(code);
-
-      if (response != null &&
-          response.token.isNotEmpty &&
-          response.data != null) {
-        // Handle successful login response
-        print('Login successful with Google:');
-        print('User data: ${response.data}');
-        print('Token: ${response.token}');
-
-        // Save token to SharedPreferences or manage as needed
-        await UserManager.saveToken(response.token);
-        await UserManager.saveId(response.data.id);
-        await UserManager.saveNama(response.data.name);
-
-        // Navigate to desired screen after successful login
-        Get.offAllNamed('/home'); // Replace with your home screen route
-      } else {
-        print('Invalid login response');
-      }
-    } catch (e) {
-      print('Error handling Google login callback: $e');
     }
   }
 }

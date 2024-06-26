@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reservasi/presentation/screens/home_screen.dart';
 import 'package:reservasi/presentation/screens/login_screen.dart';
 import 'package:reservasi/presentation/screens/register_screen.dart';
 import 'package:reservasi/theme.dart';
@@ -99,8 +100,11 @@ class LandingScreen extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         LoginController loginController = Get.put(LoginController());
-        loginController.signInWithGoogle(context);
-        print('OAuth pressed');
+        loginController.signInGoogle();
+
+        // Navigator.push(
+        //     context, MaterialPageRoute(builder: (context) => HomeScreen()));
+        // print('OAuth pressed');
       },
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 20),

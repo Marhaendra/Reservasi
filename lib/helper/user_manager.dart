@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -5,6 +7,7 @@ class UserManager {
   static const _keyToken = 'token';
   static const _keyUserId = 'userId';
   static const _keyNama = 'nama';
+  static const _keyGoogleSignIn = 'googleSignIn';
 
   static RxString nama = ''.obs;
 
@@ -24,6 +27,11 @@ class UserManager {
     await prefs.setString(_keyNama, nama);
   }
 
+  static Future<void> saveIsGoogleSignIn(bool isGoogleSignIn) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyGoogleSignIn, isGoogleSignIn);
+  }
+
   // Retrieve token from SharedPreferences
   static Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
@@ -38,6 +46,11 @@ class UserManager {
   static Future<String?> getNama() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_keyNama);
+  }
+
+  static Future<bool?> getIsGoogleSignIn() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_keyGoogleSignIn);
   }
 
   static Future<void> initializeNama() async {

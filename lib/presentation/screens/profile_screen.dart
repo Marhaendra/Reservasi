@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:reservasi/helper/user_manager.dart';
+import 'package:reservasi/presentation/controllers/login_controller.dart';
 import 'package:reservasi/presentation/controllers/profile_controller.dart';
 import 'package:reservasi/presentation/screens/editProfile_screen.dart';
 import 'package:reservasi/presentation/screens/help_screen.dart';
@@ -165,10 +166,20 @@ class _ProfileScreen extends State<ProfileScreen> {
           ),
           const SizedBox(height: 12),
           GestureDetector(
-            onTap: () {
-              // Logic for the button tap
-              UserManager.clearUserManager();
-              print(UserManager.getToken());
+            onTap: () async {
+              final isGoogleSignIn = await UserManager.getIsGoogleSignIn();
+
+              if (isGoogleSignIn == true) {
+                // If user signed in with Google, sign out and clear preferences
+                LoginController loginController = Get.put(LoginController());
+                await loginController.signOutGoogle();
+                await UserManager.clearUserManager();
+              } else {
+                // If not signed in with Google, just clear preferences
+                await UserManager.clearUserManager();
+              }
+
+              // Navigate to SplashScreen and remove all routes from stack
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => SplashScreen()),
