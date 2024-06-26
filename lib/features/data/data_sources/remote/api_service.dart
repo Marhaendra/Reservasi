@@ -8,6 +8,7 @@ import 'package:reservasi/features/data/models/reservation_post_model.dart';
 import 'package:reservasi/features/data/models/rooms_model.dart';
 import 'package:reservasi/features/data/models/rooms_period_model.dart';
 import 'package:reservasi/features/data/models/seats_model.dart';
+import 'package:reservasi/features/data/models/user_model.dart';
 import 'package:retrofit/http.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
@@ -86,6 +87,12 @@ abstract class ApiService {
 
   @PATCH('/reservasi/checkout/{id}')
   Future<ReservationCheckResponse> checkOut(
+    @Header("Authorization") String token,
+    @Path('id') int id,
+  );
+
+  @GET('/users/{id}')
+  Future<UserResponse> getUserById(
     @Header("Authorization") String token,
     @Path('id') int id,
   );

@@ -1,10 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:reservasi/features/data/models/reservation_get_model.dart';
+import 'package:reservasi/helper/user_manager.dart';
 import 'package:reservasi/presentation/controllers/calendar_controller.dart';
 import 'package:reservasi/presentation/controllers/location_controller.dart';
+import 'package:reservasi/presentation/controllers/login_controller.dart';
 import 'package:reservasi/presentation/controllers/reservation_controller.dart';
 import 'package:reservasi/presentation/controllers/rooms_period_contoller.dart';
 import 'package:reservasi/presentation/controllers/rooms_seats_controller.dart';
@@ -32,11 +35,14 @@ class _HomeScreenState extends State<HomeScreen> {
   RoomsPeriodController roomsPeriodController =
       Get.find<RoomsPeriodController>();
 
+  LoginController loginController = Get.put(LoginController());
+
   final GlobalKey _tableCalendarKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
+    loginController.getUserData();
     reservationController.getReservasiById();
   }
 
@@ -514,6 +520,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             GestureDetector(
               onTap: () async {
+                // First check if either Lokasi or Ruang is in the default state
                 if (locationController.selectedLocation.value == "Lokasi" ||
                     roomsController.selectedRoom.value == "Ruang") {
                   // Show Snackbar if either Lokasi or Ruang is in the default state
@@ -524,7 +531,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontSize: 10, color: MyTheme.white),
                     ),
                     duration: const Duration(milliseconds: 2500),
-                    // Width of the SnackBar.
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 16 // Inner padding for SnackBar content.
@@ -536,30 +542,69 @@ class _HomeScreenState extends State<HomeScreen> {
                     backgroundColor: MyTheme.red,
                   ));
                 } else {
-                  // Show loading dialog
+                  // Check user status
+                  loginController.getUserData();
+                  String waktu_pemblokiran =
+                      loginController.userData.first.waktu_pemblokiran;
+                  final status = await UserManager.getStatus();
+                  print('status: $status');
 
-                  Get.dialog(
-                    Center(child: CircularProgressIndicator()),
-                    barrierDismissible: false,
-                  );
+                  if (status == 'nonaktif') {
+                    // Show dialog if user status is 'nonaktif'
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          backgroundColor: MyTheme.white,
+                          title: Text(
+                            'Akun Nonaktif',
+                            style: TextStyle(
+                                color: MyTheme.black, fontFamily: 'poppin'),
+                          ),
+                          content: Text(
+                            'Anda tidak dapat melakukan reservasi sampai $waktu_pemblokiran.',
+                            style: TextStyle(
+                                color: MyTheme.black, fontFamily: 'poppin'),
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text('OK',
+                                  style: TextStyle(
+                                      color: MyTheme.red,
+                                      fontFamily: 'poppin')),
+                              onPressed: () {
+                                Navigator.of(context).pop(); // Close the dialog
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  } else {
+                    // Show loading dialog
+                    Get.dialog(
+                      Center(child: CircularProgressIndicator()),
+                      barrierDismissible: false,
+                    );
 
-                  // Load reservation data
-                  roomsController.fetchCombinedRooms();
-                  roomsPeriodController.fetchRoomsPeriod();
-                  reservationController.missedSession();
-                  reservationController.fetchAvailableKursi();
-                  await reservationController.initializeSession();
+                    // Load reservation data
+                    roomsController.fetchCombinedRooms();
+                    roomsPeriodController.fetchRoomsPeriod();
+                    reservationController.missedSession();
+                    reservationController.fetchAvailableKursi();
+                    await reservationController.initializeSession();
 
-                  // Close loading dialog
+                    // Close loading dialog
+                    Get.back();
 
-                  Get.back();
-                  // Navigate to ReservationScreen if Lokasi and Ruang are not in default state
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ReservationScreen(),
-                    ),
-                  );
+                    // Navigate to ReservationScreen if Lokasi and Ruang are not in default state
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ReservationScreen(),
+                      ),
+                    );
+                  }
                 }
               },
               child: Container(

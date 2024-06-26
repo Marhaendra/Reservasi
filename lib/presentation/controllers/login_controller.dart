@@ -2,20 +2,43 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:reservasi/features/data/data_sources/remote/api_service.dart';
 import 'package:reservasi/features/data/models/login_model.dart';
+import 'package:reservasi/features/data/models/user_model.dart';
 import 'package:reservasi/helper/user_manager.dart';
 
 class LoginController extends GetxController {
   final ApiService _apiService = Get.find<ApiService>();
   var loginUser = <LoginResponse>[].obs;
+  var userData = <UserModel>[].obs;
 
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: [
-      'email',
-      'https://www.googleapis.com/auth/userinfo.profile',
-    ],
-    serverClientId:
-        '296555994363-c3g3ttla97hmn749d326ttg56dulhguh.apps.googleusercontent.com', // Replace with your server client ID from Google API Console
-  );
+  Future<void> getUserData() async {
+    try {
+      final token = await UserManager.getToken();
+      final id = await UserManager.getUserId();
+
+      if (token == null || id == null) {
+        print('Token or User ID is null');
+        return;
+      }
+
+      final response = await _apiService.getUserById(token, id);
+
+      if (response != null && response.data.isNotEmpty) {
+        final user = response.data.first;
+        userData.add(user);
+
+        // Debugging logs
+        print('status : ${user.status}');
+        print('userData: $userData');
+
+        // Save status to SharedPreferences
+        await UserManager.saveStatus(user.status);
+      } else {
+        print('Invalid login response or empty data');
+      }
+    } catch (error) {
+      print('Error fetching user data: $error');
+    }
+  }
 
   Future<void> signOutGoogle() async {
     try {
@@ -108,4 +131,13 @@ class LoginController extends GetxController {
       print('Error during login: $e');
     }
   }
+
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: [
+      'email',
+      'https://www.googleapis.com/auth/userinfo.profile',
+    ],
+    serverClientId:
+        '296555994363-c3g3ttla97hmn749d326ttg56dulhguh.apps.googleusercontent.com',
+  );
 }
