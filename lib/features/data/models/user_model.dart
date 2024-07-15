@@ -13,7 +13,7 @@ class UserModel extends UserEntity {
     required String tanggal_daftar,
     required String role,
     required String status,
-    required String waktu_pemblokiran,
+    String? waktu_pemblokiran, // Made nullable
   }) : super(
             user_id: user_id,
             nama: nama,

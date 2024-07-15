@@ -480,8 +480,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               todayDecoration: BoxDecoration(
                                 color: MyTheme.primary.withOpacity(0.1),
-                                shape: BoxShape
-                                    .circle, // Add this line to make today a circle
+                                shape: BoxShape.circle,
                               ),
                             ),
                           ),
@@ -492,7 +491,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
 
                 if (result != null && result['focusedDay'] != null) {
-                  // Update the value of Tanggal
                   calendarController.daySelect(
                       result['selectedDay']!, result['focusedDay']!);
                 }
@@ -520,10 +518,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             GestureDetector(
               onTap: () async {
-                // First check if either Lokasi or Ruang is in the default state
                 if (locationController.selectedLocation.value == "Lokasi" ||
                     roomsController.selectedRoom.value == "Ruang") {
-                  // Show Snackbar if either Lokasi or Ruang is in the default state
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text(
                       'Silakan pilih Lokasi dan Ruang sebelum melakukan pencarian.',
@@ -532,9 +528,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     duration: const Duration(milliseconds: 2500),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 16 // Inner padding for SnackBar content.
-                        ),
+                        horizontal: 16, vertical: 16),
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -542,68 +536,66 @@ class _HomeScreenState extends State<HomeScreen> {
                     backgroundColor: MyTheme.red,
                   ));
                 } else {
-                  // Check user status
                   loginController.getUserData();
-                  String waktu_pemblokiran =
-                      loginController.userData.first.waktu_pemblokiran;
-                  final status = await UserManager.getStatus();
-                  print('status: $status');
+                  if (loginController.userData.isNotEmpty) {
+                    String? waktu_pemblokiran =
+                        loginController.userData.first.waktu_pemblokiran;
+                    final status = await UserManager.getStatus();
+                    print('status: $status');
 
-                  if (status == 'nonaktif') {
-                    // Show dialog if user status is 'nonaktif'
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          backgroundColor: MyTheme.white,
-                          title: Text(
-                            'Akun Nonaktif',
-                            style: TextStyle(
-                                color: MyTheme.black, fontFamily: 'poppin'),
-                          ),
-                          content: Text(
-                            'Anda tidak dapat melakukan reservasi sampai $waktu_pemblokiran.',
-                            style: TextStyle(
-                                color: MyTheme.black, fontFamily: 'poppin'),
-                          ),
-                          actions: <Widget>[
-                            TextButton(
-                              child: Text('OK',
-                                  style: TextStyle(
-                                      color: MyTheme.red,
-                                      fontFamily: 'poppin')),
-                              onPressed: () {
-                                Navigator.of(context).pop(); // Close the dialog
-                              },
+                    if (status == 'nonaktif') {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            backgroundColor: MyTheme.white,
+                            title: Text(
+                              'Akun Nonaktif',
+                              style: TextStyle(
+                                  color: MyTheme.black, fontFamily: 'poppin'),
                             ),
-                          ],
-                        );
-                      },
-                    );
+                            content: Text(
+                              'Anda tidak dapat melakukan reservasi sampai $waktu_pemblokiran.',
+                              style: TextStyle(
+                                  color: MyTheme.black, fontFamily: 'poppin'),
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text('OK',
+                                    style: TextStyle(
+                                        color: MyTheme.red,
+                                        fontFamily: 'poppin')),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    } else {
+                      Get.dialog(
+                        Center(child: CircularProgressIndicator()),
+                        barrierDismissible: false,
+                      );
+
+                      roomsController.fetchCombinedRooms();
+                      roomsPeriodController.fetchRoomsPeriod();
+                      reservationController.missedSession();
+                      reservationController.fetchAvailableKursi();
+                      await reservationController.initializeSession();
+
+                      Get.back();
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ReservationScreen(),
+                        ),
+                      );
+                    }
                   } else {
-                    // Show loading dialog
-                    Get.dialog(
-                      Center(child: CircularProgressIndicator()),
-                      barrierDismissible: false,
-                    );
-
-                    // Load reservation data
-                    roomsController.fetchCombinedRooms();
-                    roomsPeriodController.fetchRoomsPeriod();
-                    reservationController.missedSession();
-                    reservationController.fetchAvailableKursi();
-                    await reservationController.initializeSession();
-
-                    // Close loading dialog
-                    Get.back();
-
-                    // Navigate to ReservationScreen if Lokasi and Ruang are not in default state
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ReservationScreen(),
-                      ),
-                    );
+                    // Handle case when userData is empty if needed
                   }
                 }
               },

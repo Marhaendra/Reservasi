@@ -14,7 +14,7 @@ UserEntity _$UserEntityFromJson(Map<String, dynamic> json) => UserEntity(
       tanggal_daftar: json['tanggal_daftar'] as String,
       role: json['role'] as String,
       status: json['status'] as String,
-      waktu_pemblokiran: json['waktu_pemblokiran'] as String,
+      waktu_pemblokiran: json['waktu_pemblokiran'] as String?,
     );
 
 Map<String, dynamic> _$UserEntityToJson(UserEntity instance) =>

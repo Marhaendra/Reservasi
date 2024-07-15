@@ -14,6 +14,7 @@ class LoginController extends GetxController {
     try {
       final token = await UserManager.getToken();
       final id = await UserManager.getUserId();
+      print("getUserData");
 
       if (token == null || id == null) {
         print('Token or User ID is null');

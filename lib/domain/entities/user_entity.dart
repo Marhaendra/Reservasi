@@ -12,7 +12,7 @@ class UserEntity extends Equatable {
   final String tanggal_daftar;
   final String role;
   final String status;
-  final String waktu_pemblokiran;
+  final String? waktu_pemblokiran;
 
   const UserEntity({
     required this.user_id,
