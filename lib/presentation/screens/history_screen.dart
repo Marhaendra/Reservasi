@@ -151,7 +151,7 @@ class _HistoryScreen extends State<HistoryScreen> {
   Widget bookedHistoryList(List<ReservationGetModel> reservations) {
     return Container(
       margin: EdgeInsets.only(top: 44),
-      constraints: const BoxConstraints(maxHeight: 630),
+      constraints: BoxConstraints(maxHeight: Get.height * 0.765),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:reservasi/presentation/screens/home_screen.dart';
 import 'package:reservasi/presentation/screens/login_screen.dart';
 import 'package:reservasi/presentation/screens/register_screen.dart';
 import 'package:reservasi/theme.dart';
-
 import '../controllers/login_controller.dart';
 
 class LandingScreen extends StatelessWidget {
@@ -101,10 +99,6 @@ class LandingScreen extends StatelessWidget {
       onTap: () {
         LoginController loginController = Get.put(LoginController());
         loginController.signInGoogle();
-
-        // Navigator.push(
-        //     context, MaterialPageRoute(builder: (context) => HomeScreen()));
-        // print('OAuth pressed');
       },
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 20),
@@ -162,40 +156,6 @@ class LandingScreen extends StatelessWidget {
               ),
             ),
           ),
-          // const SizedBox(height: 20),
-          // SizedBox(
-          //   width: 324,
-          //   height: 20,
-          //   child: Row(
-          //     mainAxisSize: MainAxisSize.min,
-          //     mainAxisAlignment: MainAxisAlignment.center,
-          //     crossAxisAlignment: CrossAxisAlignment.center,
-          //     children: [
-          //       Container(
-          //         width: 132,
-          //         height: 0.50,
-          //         decoration: const BoxDecoration(color: Colors.black),
-          //       ),
-          //       const SizedBox(width: 8),
-          //       Text(
-          //         'ATAU',
-          //         textAlign: TextAlign.center,
-          //         style: GoogleFonts.poppins(
-          //           color: Colors.black,
-          //           fontSize: 14,
-          //           fontWeight: FontWeight.w400,
-          //           height: 0.10,
-          //         ),
-          //       ),
-          //       const SizedBox(width: 8),
-          //       Container(
-          //         width: 132,
-          //         height: 0.50,
-          //         decoration: const BoxDecoration(color: Colors.black),
-          //       ),
-          //     ],
-          //   ),
-          // ),
           const SizedBox(
             height: 4,
           ),

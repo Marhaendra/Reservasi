@@ -111,7 +111,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
     return Container(
       margin: const EdgeInsets.only(top: 4),
       width: double.infinity,
-      height: 610,
+      height: Get.height * 0.75,
       child: PageView.builder(
         itemCount: calendarController.dateList.length,
         controller: pageController,

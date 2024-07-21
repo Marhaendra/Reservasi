@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reservasi/theme.dart';
 
@@ -168,7 +169,7 @@ class _AccordionFAQState extends State<AccordionFAQ> {
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: Container(
         width: 460,
-        height: 606,
+        height: Get.height * 0.825,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,

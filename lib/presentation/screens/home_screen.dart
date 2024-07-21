@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -48,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _getReserved() {
     return Obx(() {
-      if (reservationController.reservationById.isEmpty) {
+      if (reservationController.todayReservationById.isEmpty) {
         return orderCardBlank();
       } else {
         return orderedList();
@@ -120,7 +119,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget orderedList() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8),
-      constraints: const BoxConstraints(maxHeight: 345),
+      constraints: BoxConstraints(
+        maxHeight: Get.height * 0.3784,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -230,7 +231,22 @@ class _HomeScreenState extends State<HomeScreen> {
     bool isCheckedIn = reservation.waktu_checkin != null;
     bool isCheckedOut = reservation.waktu_checkout != null;
 
-    DateTime startTime = DateFormat('HH:mm').parse(reservation.jam_mulai);
+    // Gabungkan tanggal dan waktu untuk menghitung startTime yang tepat
+    DateTime reservationDate =
+        DateFormat('dd/MM/yyyy').parse(reservation.tanggal_reservasi);
+    TimeOfDay reservationTime = TimeOfDay(
+      hour: int.parse(reservation.jam_mulai.split(':')[0]),
+      minute: int.parse(reservation.jam_mulai.split(':')[1]),
+    );
+
+    DateTime startTime = DateTime(
+      reservationDate.year,
+      reservationDate.month,
+      reservationDate.day,
+      reservationTime.hour,
+      reservationTime.minute,
+    );
+
     DateTime oneHourBeforeStartTime = startTime.subtract(Duration(hours: 1));
     DateTime currentTime = DateTime.now();
     bool isDisabled = currentTime.isBefore(oneHourBeforeStartTime);
@@ -388,7 +404,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ? Colors.grey
                               : isCheckedIn
                                   ? Colors.red
-                                  : Colors.blue,
+                                  : Colors.grey,
                         ),
                       ),
                     ),

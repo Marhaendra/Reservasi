@@ -9,7 +9,8 @@ class UserModel extends UserEntity {
     required int user_id,
     required String nama,
     required String email,
-    required String no_telepon,
+    String? no_telepon, // Made nullable
+    String? password, // Made nullable
     required String tanggal_daftar,
     required String role,
     required String status,
@@ -19,6 +20,7 @@ class UserModel extends UserEntity {
             nama: nama,
             email: email,
             no_telepon: no_telepon,
+            password: password,
             tanggal_daftar: tanggal_daftar,
             role: role,
             status: status,
