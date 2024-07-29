@@ -117,6 +117,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget orderedList() {
+    Map<String, List<ReservationGetModel>> groupedReservations =
+        reservationController.groupReservationsByRoomAndPeriod(
+            reservationController.reservationById);
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8),
       constraints: BoxConstraints(
@@ -146,12 +149,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   ListView.builder(
                     physics: const BouncingScrollPhysics(),
                     scrollDirection: Axis.vertical,
-                    itemCount:
-                        reservationController.todayReservationById.length,
+                    itemCount: groupedReservations.length,
                     itemBuilder: (context, index) {
-                      ReservationGetModel reservation =
-                          reservationController.todayReservationById[index];
-                      return orderCard(reservation);
+                      String key = groupedReservations.keys.elementAt(index);
+                      List<ReservationGetModel> reservations =
+                          groupedReservations[key]!;
+
+                      return orderCard(reservations);
                     },
                   ),
                 ],
@@ -169,17 +173,6 @@ class _HomeScreenState extends State<HomeScreen> {
         height: 160,
         width: double.maxFinite,
         padding: const EdgeInsets.all(16),
-        // decoration: BoxDecoration(
-        //     borderRadius: BorderRadius.circular(12),
-        //     color: white,
-        //     boxShadow: const [
-        //       BoxShadow(
-        //         color: Color(0x19000000),
-        //         blurRadius: 10,
-        //         offset: Offset(0, 0),
-        //         spreadRadius: 0,
-        //       )
-        //     ]),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -191,52 +184,50 @@ class _HomeScreenState extends State<HomeScreen> {
                       fontWeight: FontWeight.w700,
                       color: MyTheme.black1)),
             ),
-            // Padding(
-            //   padding: EdgeInsets.zero,
-            //   child: Row(
-            //     children: [
-            //       Expanded(
-            //         child: GestureDetector(
-            //           onTap: () {},
-            //           child: Container(
-            //             padding: const EdgeInsets.symmetric(
-            //                 horizontal: 10, vertical: 10.5),
-            //             decoration: BoxDecoration(
-            //               color: primary.withOpacity(.1),
-            //               borderRadius: BorderRadius.circular(6),
-            //             ),
-            //             child: Center(
-            //               child: Text(
-            //                 "Pesan Sekarang",
-            //                 style: GoogleFonts.poppins(
-            //                   fontWeight: FontWeight.w500,
-            //                   fontSize: 12,
-            //                   color: primary,
-            //                 ),
-            //               ),
-            //             ),
-            //           ),
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
           ],
         ),
       ),
     );
   }
 
-  Widget orderCard(ReservationGetModel reservation) {
-    bool isCheckedIn = reservation.waktu_checkin != null;
-    bool isCheckedOut = reservation.waktu_checkout != null;
+  Widget orderCard(List<ReservationGetModel> reservations) {
+    if (reservations.isEmpty) {
+      return Container();
+    }
 
-    // Gabungkan tanggal dan waktu untuk menghitung startTime yang tepat
+    // Define the reservation group key
+    String groupKey =
+        '${reservations.first.nama_ruangan}-${reservations.first.nama_periode}';
+
+    // Extract reservation IDs
+    Map<String, List<int>> reservasiIds =
+        reservationController.extractReservasiIds(
+            reservationController.groupReservationsByRoomAndPeriod(
+                reservationController.reservationById));
+
+    // Get reservasi_id for the current group
+    List<int>? currentReservasiIds = reservasiIds[groupKey];
+
+    if (currentReservasiIds == null || currentReservasiIds.isEmpty) {
+      return Container();
+    }
+
+    print(currentReservasiIds);
+
+    String namaRuangan = reservations.first.nama_ruangan;
+    String namaPeriode = reservations.first.nama_periode;
+
+    List<String> nomorKursiList =
+        reservations.map((res) => res.nomor_kursi.toString()).toList();
+
+    bool isCheckedIn = reservations.first.waktu_checkin != null;
+    bool isCheckedOut = reservations.first.waktu_checkout != null;
+
     DateTime reservationDate =
-        DateFormat('dd/MM/yyyy').parse(reservation.tanggal_reservasi);
+        DateFormat('dd/MM/yyyy').parse(reservations.first.tanggal_reservasi);
     TimeOfDay reservationTime = TimeOfDay(
-      hour: int.parse(reservation.jam_mulai.split(':')[0]),
-      minute: int.parse(reservation.jam_mulai.split(':')[1]),
+      hour: int.parse(reservations.first.jam_mulai.split(':')[0]),
+      minute: int.parse(reservations.first.jam_mulai.split(':')[1]),
     );
 
     DateTime startTime = DateTime(
@@ -275,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    reservation.nama_ruangan,
+                    namaRuangan,
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.w500,
                       fontSize: 12,
@@ -285,7 +276,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Text(
                     DateFormat('dd MMMM').format(
                       DateFormat('dd/MM/yyyy')
-                          .parse(reservation.tanggal_reservasi),
+                          .parse(reservations.first.tanggal_reservasi),
                     ),
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.w400,
@@ -302,22 +293,20 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        reservation.nama_periode,
+                        namaPeriode,
                         style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 12,
                           color: Colors.black,
                         ),
                       ),
-                      const SizedBox(
-                        width: 4,
-                      ),
+                      const SizedBox(width: 4),
                       Text(
-                        '${reservation.jam_mulai.substring(0, 5)} - ${reservation.jam_selesai.substring(0, 5)}',
+                        '${reservations.first.jam_mulai.substring(0, 5)} - ${reservations.first.jam_selesai.substring(0, 5)}',
                         style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w400,
                           fontSize: 12,
-                          color: Colors.grey,
+                          color: MyTheme.grey,
                         ),
                       ),
                     ],
@@ -327,8 +316,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           Row(
-            children: generateContainersWithPadding(
-                [reservation.nomor_kursi.toString()], 8),
+            children: generateContainersWithPadding(nomorKursiList, 8),
           ),
           Row(
             children: [
@@ -337,8 +325,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   onTap: isCheckedIn
                       ? null
                       : () async {
+                          // Cancel the first reservation in the group
                           await reservationController
-                              .cancelReservation(reservation.reservasi_id);
+                              .cancelReservation(currentReservasiIds);
                           await reservationController.getReservasiById();
                         },
                   child: Container(
@@ -346,8 +335,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         horizontal: 10, vertical: 10.5),
                     decoration: BoxDecoration(
                       color: isCheckedIn
-                          ? Colors.grey.withOpacity(.1)
-                          : Colors.red.withOpacity(.1),
+                          ? MyTheme.grey.withOpacity(.1)
+                          : MyTheme.red.withOpacity(.1),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Center(
@@ -356,7 +345,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 12,
-                          color: isCheckedIn ? Colors.grey : Colors.red,
+                          color: isCheckedIn ? MyTheme.grey : MyTheme.red,
                         ),
                       ),
                     ),
@@ -371,23 +360,22 @@ class _HomeScreenState extends State<HomeScreen> {
                       : () async {
                           if (isCheckedIn) {
                             await reservationController
-                                .checkOut(reservation.reservasi_id);
-                            await reservationController.getReservasiById();
+                                .checkOut(currentReservasiIds);
                           } else {
                             await reservationController
-                                .checkIn(reservation.reservasi_id);
-                            await reservationController.getReservasiById();
+                                .checkIn(currentReservasiIds);
                           }
+                          await reservationController.getReservasiById();
                         },
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10, vertical: 10.5),
                     decoration: BoxDecoration(
                       color: isCheckedOut || isDisabled
-                          ? Colors.grey.withOpacity(.1)
+                          ? MyTheme.grey.withOpacity(.1)
                           : isCheckedIn
-                              ? Colors.red.withOpacity(.1)
-                              : Colors.blue.withOpacity(.1),
+                              ? MyTheme.red.withOpacity(.1)
+                              : MyTheme.primary.withOpacity(.1),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Center(
@@ -400,11 +388,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 12,
-                          color: isCheckedOut
-                              ? Colors.grey
+                          color: isCheckedOut || isDisabled
+                              ? MyTheme.grey
                               : isCheckedIn
-                                  ? Colors.red
-                                  : Colors.grey,
+                                  ? MyTheme.red
+                                  : MyTheme.primary,
                         ),
                       ),
                     ),

@@ -39,7 +39,6 @@ class ReservationController extends GetxController {
   RxList<int> missedSessionPeriod = <int>[].obs;
 
   final ApiService _apiService;
-  // final AppDatabase _database;
 
   ReservationController(this._apiService);
 
@@ -52,37 +51,56 @@ class ReservationController extends GetxController {
     initializeSession();
   }
 
-  Future<void> cancelReservation(int reservasi_id) async {
+  Future<void> cancelReservation(List<int> reservasiIds) async {
     try {
       final token = await UserManager.getToken();
 
-      final response = await _apiService.cancel(token!, reservasi_id);
-      cancelToday.add(response as String);
-      print('checkOutToday: $cancelToday - $reservasi_id');
+      for (int i = 0; i < reservasiIds.length; i++) {
+        try {
+          final response = await _apiService.cancel(token!, reservasiIds[i]);
+          cancelToday.add(response.data.first as String);
+        } catch (error) {
+          print(error);
+        }
+      }
+      print('All reservations canceled successfully!');
+      print('cancelToday: $cancelToday');
     } catch (error) {
       print(error);
     }
   }
 
-  Future<void> checkOut(int reservasi_id) async {
+  Future<void> checkOut(List<int> reservasiIds) async {
     try {
       final token = await UserManager.getToken();
 
-      final response = await _apiService.checkOut(token!, reservasi_id);
-      checkOutToday.add(response as String);
-      print('checkOutToday: $checkOutToday - $reservasi_id');
+      for (int i = 0; i < reservasiIds.length; i++) {
+        try {
+          final response = await _apiService.checkOut(token!, reservasiIds[i]);
+          checkOutToday.add(response.data.first as String);
+        } catch (error) {
+          print(error);
+        }
+      }
+      print('All reservations checked out successfully!');
     } catch (error) {
       print(error);
     }
   }
 
-  Future<void> checkIn(int reservasi_id) async {
+  Future<void> checkIn(List<int> reservasiIds) async {
     try {
       final token = await UserManager.getToken();
 
-      final response = await _apiService.checkIn(token!, reservasi_id);
-      checkInToday.add(response as String);
-      print('checkInToday: $checkInToday - $reservasi_id');
+      for (int i = 0; i < reservasiIds.length; i++) {
+        try {
+          final response = await _apiService.checkIn(token!, reservasiIds[i]);
+          checkInToday.add(response.data.first as String);
+        } catch (error) {
+          print(error);
+        }
+      }
+      print('All reservations checked in successfully!');
     } catch (error) {
       print(error);
     }
@@ -98,8 +116,8 @@ class ReservationController extends GetxController {
         return;
       }
 
-      print('Token in getReservasiById: $token');
-      print('ID in getReservasiById: $id');
+      // print('Token in getReservasiById: $token');
+      // print('ID in getReservasiById: $id');
 
       ReservationGetResponse reservationGetResponse =
           await _apiService.getReservasiById(token, id);
@@ -118,8 +136,8 @@ class ReservationController extends GetxController {
           .toList();
 
       // Print the response to inspect it
-      print('Response from API: $reservationById');
-      print('todayReservation: $todayReservationById');
+      // print('Response from API: $reservationById');
+      // print('todayReservation: $todayReservationById');
     } catch (error) {
       print('Error fetching reservations: $error');
     }
@@ -419,5 +437,32 @@ class ReservationController extends GetxController {
 
   bool isSeatSelected() {
     return selectedSeats.isNotEmpty;
+  }
+
+  Map<String, List<ReservationGetModel>> groupReservationsByRoomAndPeriod(
+      List<ReservationGetModel> reservations) {
+    Map<String, List<ReservationGetModel>> groupedReservations = {};
+
+    for (var reservation in reservations) {
+      String key = '${reservation.nama_ruangan}-${reservation.nama_periode}';
+      if (groupedReservations.containsKey(key)) {
+        groupedReservations[key]!.add(reservation);
+      } else {
+        groupedReservations[key] = [reservation];
+      }
+    }
+
+    return groupedReservations;
+  }
+
+  Map<String, List<int>> extractReservasiIds(
+      Map<String, List<ReservationGetModel>> groupedReservations) {
+    Map<String, List<int>> reservasiIds = {};
+
+    groupedReservations.forEach((key, reservations) {
+      reservasiIds[key] = reservations.map((res) => res.reservasi_id).toList();
+    });
+
+    return reservasiIds;
   }
 }

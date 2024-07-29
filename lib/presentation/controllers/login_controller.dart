@@ -14,7 +14,7 @@ class LoginController extends GetxController {
     try {
       final token = await UserManager.getToken();
       final id = await UserManager.getUserId();
-      print("getUserData");
+      // print("getUserData");
 
       if (token == null || id == null) {
         print('Token or User ID is null');
@@ -28,8 +28,8 @@ class LoginController extends GetxController {
         userData.add(user);
 
         // Debugging logs
-        print('status : ${user.status}');
-        print('userData: $userData');
+        // print('status : ${user.status}');
+        // print('userData: $userData');
 
         // Save status to SharedPreferences
         await UserManager.saveStatus(user.status);
@@ -96,7 +96,7 @@ class LoginController extends GetxController {
     }
   }
 
-  void postLogin({
+  Future<void> postLogin({
     required String email,
     required String password,
   }) async {

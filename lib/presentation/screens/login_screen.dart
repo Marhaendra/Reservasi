@@ -6,9 +6,15 @@ import 'package:reservasi/presentation/controllers/login_controller.dart';
 import 'package:reservasi/presentation/screens/home_screen.dart';
 import 'package:reservasi/theme.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailText = TextEditingController();
   final TextEditingController _passwordText = TextEditingController();
+  bool _isLoading = false;
 
   void updatePassword(String password) {
     // Update the password value directly
@@ -19,44 +25,46 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Stack(
           children: [
-            const SizedBox(
-              height: 60,
-            ),
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    'Masuk',
-                    style: GoogleFonts.poppins(
-                      fontSize: 24,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                )
+                const SizedBox(height: 60),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        'Masuk',
+                        style: GoogleFonts.poppins(
+                          fontSize: 24,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                Column(
+                  children: [
+                    const SizedBox(height: 32),
+                    _email(),
+                    const SizedBox(height: 16),
+                    PasswordField(updatePassword, _passwordText),
+                    const SizedBox(height: 32),
+                    _signIn(context)
+                  ],
+                ),
               ],
             ),
-            Column(
-              children: [
-                const SizedBox(
-                  height: 32,
-                ),
-                _email(),
-                const SizedBox(
-                  height: 16,
-                ),
-                PasswordField(updatePassword, _passwordText),
-                const SizedBox(
-                  height: 32,
-                ),
-                _signIn(context)
-              ],
-            ),
+            if (_isLoading)
+              Center(
+                child: CircularProgressIndicator(
+                    backgroundColor: MyTheme.primary.withOpacity(.1),
+                    color: MyTheme.primary),
+              ),
           ],
         ),
       ),
@@ -72,14 +80,26 @@ class LoginScreen extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () async {
+              // Close the keyboard
+              FocusScope.of(context).unfocus();
+
+              setState(() {
+                _isLoading = true;
+              });
+
               LoginController loginController = Get.put(LoginController());
 
               // Get the values entered in the text fields
               String email = _emailText.text;
               String password = _passwordText.text;
 
-              // Call postRegister method from the controller with the input values
-              loginController.postLogin(email: email, password: password);
+              // Call postLogin method from the controller with the input values
+              await loginController.postLogin(email: email, password: password);
+
+              // Ensure that the loading indicator is hidden
+              setState(() {
+                _isLoading = false;
+              });
 
               // Navigate to homescreen
               Navigator.pushReplacement(
@@ -112,8 +132,9 @@ class LoginScreen extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
       decoration: BoxDecoration(
-          color: const Color(0xFFF6F6F6),
-          borderRadius: BorderRadius.circular(12)),
+        color: const Color(0xFFF6F6F6),
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: TextFormField(
         controller: _emailText,
         decoration: InputDecoration(
